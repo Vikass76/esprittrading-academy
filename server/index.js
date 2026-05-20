@@ -1,6 +1,11 @@
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
+const fs = require('fs');
+
+// Garantit que le dossier uploads existe (filesystem éphémère sur Render)
+const uploadsDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -34,6 +39,6 @@ app.get('*', (req, res) => {
 // Init DB
 require('./db');
 
-app.listen(PORT, () => {
-  console.log(`Serveur démarré sur http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Serveur démarré sur http://0.0.0.0:${PORT}`);
 });
