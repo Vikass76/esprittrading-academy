@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trading Academy</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════ PAGE LOGIN ═══════════════════════════ -->
+<div id="login-page">
+  <div class="login-container">
+    <div class="login-logo">
+      <div class="logo-icon">◈</div>
+      <h1>Trading Academy</h1>
+      <p>Connectez-vous pour accéder à votre espace</p>
+    </div>
+    <div class="login-card">
+      <form id="login-form">
+        <div class="form-group">
+          <label for="username">Identifiant</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Votre identifiant"
+            autocomplete="username"
+            autofocus
+            required
+          />
+        </div>
+        <div class="form-group" style="margin-top:18px;">
+          <label for="password">Mot de passe</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+        <div id="login-error" class="login-error hidden"></div>
+        <button type="submit" class="btn btn-primary btn-full" id="login-btn">
+          Se connecter
+        </button>
+      </form>
+    </div>
+    <p class="login-footer">Trading Academy &copy; 2025</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ APP APRÈS CONNEXION ═══════════════════ -->
+<div id="app" class="hidden">
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a class="navbar-brand" href="#">
+      <div class="brand-icon">◈</div>
+      Trading Academy
+    </a>
+    <div class="navbar-nav" id="nav-tabs">
+      <button class="nav-link active" data-tab="formation">Formation</button>
+      <button class="nav-link" data-tab="journal">Journal</button>
+      <button class="nav-link admin-only hidden" data-tab="admin">Admin</button>
+    </div>
+    <div class="navbar-user">
+      <span class="username" id="nav-username"></span>
+      <button class="btn btn-secondary btn-sm" id="change-pwd-btn">Mot de passe</button>
+      <button class="btn btn-secondary btn-sm" id="logout-btn">Déconnexion</button>
+    </div>
+  </nav>
+
+  <!-- CONTENU -->
+  <main class="main-content">
+
+    <!-- ─── FORMATION ─── -->
+    <section id="tab-formation" class="tab-section">
+      <div style="margin-bottom:24px;">
+        <h2 style="font-size:1.4rem; margin-bottom:4px;">Formation</h2>
+        <p class="text-muted" style="font-size:0.9rem;">Vos modules et vidéos de cours</p>
+      </div>
+      <div id="modules-container">
+        <div class="empty-state">
+          <div class="empty-icon">📚</div>
+          <p>Aucun module disponible pour l'instant.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── JOURNAL ─── -->
+    <section id="tab-journal" class="tab-section hidden">
+      <div class="journal-header">
+        <div>
+          <h2 style="font-size:1.4rem; margin-bottom:4px;">Journal de trading</h2>
+          <p class="text-muted" style="font-size:0.9rem;">Suivez et analysez vos trades</p>
+        </div>
+        <button class="btn btn-primary" id="add-trade-btn">+ Ajouter un trade</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="journal-stats">
+        <div class="stat-card">
+          <div class="stat-label">Total trades</div>
+          <div class="stat-value" id="stat-total">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Win rate</div>
+          <div class="stat-value" id="stat-winrate">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total RR</div>
+          <div class="stat-value" id="stat-rr">0R</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Best trade</div>
+          <div class="stat-value" id="stat-best" style="font-size:1.3rem;">—</div>
+        </div>
+      </div>
+
+      <!-- Filtres -->
+      <div class="filters">
+        <select id="filter-pair">
+          <option value="">Toutes les paires</option>
+          <option value="EURUSD">EURUSD</option>
+          <option value="GOLD">GOLD</option>
+          <option value="GBPUSD">GBPUSD</option>
+          <option value="USDJPY">USDJPY</option>
+          <option value="NASDAQ">NASDAQ</option>
+          <option value="US30">US30</option>
+          <option value="BTCUSD">BTCUSD</option>
+        </select>
+        <select id="filter-result">
+          <option value="">WIN & LOSS</option>
+          <option value="WIN">WIN</option>
+          <option value="LOSS">LOSS</option>
+        </select>
+        <input type="date" id="filter-from" title="Date début" />
+        <input type="date" id="filter-to" title="Date fin" />
+        <button class="btn btn-secondary btn-sm" id="filter-reset">Réinitialiser</button>
+      </div>
+
+      <!-- Tableau -->
+      <div class="card" style="padding:0; overflow:hidden;">
+        <div class="trades-table-wrap">
+          <table class="trades-table" id="trades-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Paire</th>
+                <th>Résultat</th>
+                <th>RR</th>
+                <th>Screenshot</th>
+                <th>Notes</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="trades-body">
+              <tr>
+                <td colspan="7">
+                  <div class="empty-state">
+                    <div class="empty-icon">📊</div>
+                    <p>Aucun trade enregistré.</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── ADMIN ─── -->
+    <section id="tab-admin" class="tab-section hidden">
+      <div style="margin-bottom:24px;">
+        <h2 style="font-size:1.4rem; margin-bottom:4px;">Administration</h2>
+        <p class="text-muted" style="font-size:0.9rem;">Gérez les comptes élèves et le contenu</p>
+      </div>
+      <div class="admin-grid">
+
+        <!-- Comptes élèves -->
+        <div class="card">
+          <div class="section-title">👤 Élèves</div>
+          <form id="create-user-form" style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+            <input type="text" id="new-username" placeholder="Identifiant" style="flex:1; min-width:120px; padding:9px 14px; border:1.5px solid var(--border); border-radius:10px; font-family:inherit; outline:none;" />
+            <input type="password" id="new-password" placeholder="Mot de passe" style="flex:1; min-width:120px; padding:9px 14px; border:1.5px solid var(--border); border-radius:10px; font-family:inherit; outline:none;" />
+            <button type="submit" class="btn btn-primary btn-sm">Créer</button>
+          </form>
+          <div id="users-list"></div>
+        </div>
+
+        <!-- Modules -->
+        <div class="card">
+          <div class="section-title">📁 Modules</div>
+          <form id="create-module-form" style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+            <input type="text" id="new-module-title" placeholder="Titre du module" style="flex:1; padding:9px 14px; border:1.5px solid var(--border); border-radius:10px; font-family:inherit; outline:none;" />
+            <button type="submit" class="btn btn-primary btn-sm">Créer</button>
+          </form>
+          <div id="modules-admin-list"></div>
+        </div>
+
+        <!-- Vidéos -->
+        <div class="card" style="grid-column: 1 / -1;">
+          <div class="section-title">🎬 Ajouter une vidéo</div>
+          <form id="add-video-form" style="display:grid; grid-template-columns: 1fr 1fr; gap:14px;">
+            <div class="form-group">
+              <label>Module</label>
+              <select id="video-module-id"></select>
+            </div>
+            <div class="form-group">
+              <label>Titre</label>
+              <input type="text" id="video-title" placeholder="Titre de la vidéo" />
+            </div>
+            <div class="form-group" style="grid-column:1/-1;">
+              <label>URL (YouTube, Vimeo…)</label>
+              <input type="url" id="video-url" placeholder="https://www.youtube.com/watch?v=..." />
+            </div>
+            <div class="form-group" style="grid-column:1/-1;">
+              <label>Description (optionnel)</label>
+              <input type="text" id="video-desc" placeholder="Courte description" />
+            </div>
+            <div style="grid-column:1/-1;">
+              <button type="submit" class="btn btn-primary">Ajouter la vidéo</button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ═══════════════════════════ MODALS ═══════════════════════════════ -->
+
+<!-- Modal : ajouter un trade -->
+<div class="modal-overlay hidden" id="trade-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Nouveau trade</h3>
+      <button class="modal-close" id="trade-modal-close">✕</button>
+    </div>
+    <form id="trade-form" enctype="multipart/form-data">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <div class="form-group">
+          <label>Paire</label>
+          <select name="pair" id="trade-pair" required>
+            <option value="">Sélectionner</option>
+            <option>EURUSD</option>
+            <option>GOLD</option>
+            <option>GBPUSD</option>
+            <option>USDJPY</option>
+            <option>NASDAQ</option>
+            <option>US30</option>
+            <option>BTCUSD</option>
+            <option value="OTHER">Autre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Résultat</label>
+          <select name="result" id="trade-result" required>
+            <option value="">Sélectionner</option>
+            <option value="WIN">WIN ✅</option>
+            <option value="LOSS">LOSS ❌</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Risk/Reward (RR)</label>
+          <input type="text" name="rr" placeholder="+2R / -1R" required />
+        </div>
+        <div class="form-group">
+          <label>Date du trade</label>
+          <input type="date" name="trade_date" required />
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Screenshot (optionnel)</label>
+          <input type="file" name="screenshot" accept="image/*" style="padding:8px 12px;" />
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Notes (optionnel)</label>
+          <textarea name="notes" placeholder="Analyse, émotions, contexte de marché…"></textarea>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:20px; justify-content:flex-end;">
+        <button type="button" class="btn btn-secondary" id="trade-cancel">Annuler</button>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal : changer mot de passe -->
+<div class="modal-overlay hidden" id="pwd-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Changer le mot de passe</h3>
+      <button class="modal-close" id="pwd-modal-close">✕</button>
+    </div>
+    <form id="pwd-form">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="form-group">
+          <label>Mot de passe actuel</label>
+          <input type="password" id="pwd-current" placeholder="••••••••" required />
+        </div>
+        <div class="form-group">
+          <label>Nouveau mot de passe</label>
+          <input type="password" id="pwd-new" placeholder="••••••••" required />
+        </div>
+        <div class="form-group">
+          <label>Confirmer</label>
+          <input type="password" id="pwd-confirm" placeholder="••••••••" required />
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:20px; justify-content:flex-end;">
+        <button type="button" class="btn btn-secondary" id="pwd-cancel">Annuler</button>
+        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal : voir screenshot agrandi -->
+<div class="modal-overlay hidden" id="img-modal" style="cursor:zoom-out;">
+  <img id="img-modal-src" src="" alt="Screenshot" style="max-width:90vw; max-height:90vh; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.4);" />
+</div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>
