@@ -21,26 +21,23 @@ const upload = multer({
   }
 });
 
-// Lister les trades de l'utilisateur connecté
 router.get('/', requireAuth, (req, res) => {
   const { pair, result, from, to } = req.query;
   let query = 'SELECT * FROM trades WHERE user_id = ?';
   const params = [req.session.userId];
 
-  if (pair) { query += ' AND pair = ?'; params.push(pair); }
-  if (result) { query += ' AND result = ?'; params.push(result); }
-  if (from) { query += ' AND trade_date >= ?'; params.push(from); }
-  if (to) { query += ' AND trade_date <= ?'; params.push(to); }
+  if (pair)   { query += ' AND pair = ?';         params.push(pair); }
+  if (result) { query += ' AND result = ?';       params.push(result); }
+  if (from)   { query += ' AND trade_date >= ?';  params.push(from); }
+  if (to)     { query += ' AND trade_date <= ?';  params.push(to); }
 
   query += ' ORDER BY trade_date DESC, created_at DESC';
   const trades = db.prepare(query).all(...params);
   res.json(trades);
 });
 
-// Ajouter un trade
 router.post('/', requireAuth, upload.single('screenshot'), (req, res) => {
   const { pair, result, rr, notes, trade_date } = req.body;
-
   if (!pair || !result || !rr || !trade_date) {
     return res.status(400).json({ error: 'Paire, résultat, RR et date sont requis' });
   }
@@ -49,14 +46,12 @@ router.post('/', requireAuth, upload.single('screenshot'), (req, res) => {
   }
 
   const screenshot = req.file ? `/uploads/${req.file.filename}` : null;
-  const insert = db.prepare(
+  const row = db.prepare(
     'INSERT INTO trades (user_id, pair, result, rr, screenshot, notes, trade_date) VALUES (?, ?, ?, ?, ?, ?, ?)'
-  );
-  const row = insert.run(req.session.userId, pair, result, rr, screenshot, notes || '', trade_date);
+  ).run(req.session.userId, pair, result, rr, screenshot, notes || '', trade_date);
   res.json({ id: row.lastInsertRowid, pair, result, rr, screenshot, notes, trade_date });
 });
 
-// Supprimer un trade
 router.delete('/:id', requireAuth, (req, res) => {
   const trade = db.prepare('SELECT id FROM trades WHERE id = ? AND user_id = ?').get(req.params.id, req.session.userId);
   if (!trade) return res.status(404).json({ error: 'Trade introuvable' });

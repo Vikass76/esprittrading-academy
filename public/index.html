@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Trading Academy</title>
+  <title>Esprit Trading</title>
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
@@ -12,9 +12,10 @@
 <div id="login-page">
   <div class="login-container">
     <div class="login-logo">
-      <div class="logo-icon">◈</div>
-      <h1>Trading Academy</h1>
-      <p>Connectez-vous pour accéder à votre espace</p>
+      <img src="/logo.jpg" alt="Esprit Trading" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:2px solid rgba(244,199,15,0.5)">
+      <h1>Esprit Trading</h1>
+      <p style="font-size:14px;font-weight:600;color:rgba(0,0,0,0.6);margin-bottom:4px">Accompagnement OTE 705</p>
+      <p style="margin-top:24px">Connectez-vous pour accéder à votre espace</p>
     </div>
     <div class="login-card">
       <form id="login-form">
@@ -47,7 +48,7 @@
         </button>
       </form>
     </div>
-    <p class="login-footer">Trading Academy &copy; 2025</p>
+    <p class="login-footer">Esprit Trading &copy; 2025</p>
   </div>
 </div>
 
@@ -57,12 +58,16 @@
   <!-- NAVBAR -->
   <nav class="navbar">
     <a class="navbar-brand" href="#">
-      <div class="brand-icon">◈</div>
-      Trading Academy
+      <img src="/logo.jpg" style="width:44px;height:44px;border-radius:50%;object-fit:cover;margin-right:10px;vertical-align:middle">
+      <span style="display:inline-flex;flex-direction:column;vertical-align:middle">
+        <span style="font-weight:800;font-size:17px;line-height:1.2">Esprit Trading</span>
+        <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgb(194,149,10)">Accompagnement OTE 705</span>
+      </span>
     </a>
     <div class="navbar-nav" id="nav-tabs">
       <button class="nav-link active" data-tab="formation">Formation</button>
       <button class="nav-link" data-tab="journal">Journal</button>
+      <button class="nav-link" data-tab="outils">Outils</button>
       <button class="nav-link admin-only hidden" data-tab="admin">Admin</button>
     </div>
     <div class="navbar-user">
@@ -91,142 +96,250 @@
 
     <!-- ─── JOURNAL ─── -->
     <section id="tab-journal" class="tab-section hidden">
+
       <div class="journal-header">
         <div>
           <h2 style="font-size:1.4rem; margin-bottom:4px;">Journal de trading</h2>
-          <p class="text-muted" style="font-size:0.9rem;">Suivez et analysez vos trades</p>
+          <p class="text-muted" style="font-size:0.9rem;">Suivez et analysez vos performances</p>
         </div>
-        <button class="btn btn-primary" id="add-trade-btn">+ Ajouter un trade</button>
+        <button class="btn btn-primary" id="add-trade-btn">+ Nouveau trade</button>
       </div>
 
       <!-- Stats -->
       <div class="journal-stats">
-        <div class="stat-card">
+        <div class="stat-card" id="stat-card-total">
           <div class="stat-label">Total trades</div>
-          <div class="stat-value" id="stat-total">0</div>
+          <div class="stat-value" id="stat-total">—</div>
+          <div class="stat-sub" id="stat-wl">—</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" id="stat-card-wr">
           <div class="stat-label">Win rate</div>
           <div class="stat-value" id="stat-winrate">—</div>
+          <div class="stat-sub" id="stat-wr-sub">sur tous les trades</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" id="stat-card-rr">
           <div class="stat-label">Total RR</div>
-          <div class="stat-value" id="stat-rr">0R</div>
+          <div class="stat-value" id="stat-rr">—</div>
+          <div class="stat-sub" id="stat-rr-sub">cumulé</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" id="stat-card-best">
           <div class="stat-label">Best trade</div>
-          <div class="stat-value" id="stat-best" style="font-size:1.3rem;">—</div>
+          <div class="stat-value" id="stat-best">—</div>
+          <div class="stat-sub" id="stat-best-sub">meilleur RR</div>
         </div>
       </div>
 
-      <!-- Filtres -->
-      <div class="filters">
-        <select id="filter-pair">
-          <option value="">Toutes les paires</option>
-          <option value="EURUSD">EURUSD</option>
-          <option value="GOLD">GOLD</option>
-          <option value="GBPUSD">GBPUSD</option>
-          <option value="USDJPY">USDJPY</option>
-          <option value="NASDAQ">NASDAQ</option>
-          <option value="US30">US30</option>
-          <option value="BTCUSD">BTCUSD</option>
-        </select>
-        <select id="filter-result">
-          <option value="">WIN & LOSS</option>
-          <option value="WIN">WIN</option>
-          <option value="LOSS">LOSS</option>
-        </select>
-        <input type="date" id="filter-from" title="Date début" />
-        <input type="date" id="filter-to" title="Date fin" />
-        <button class="btn btn-secondary btn-sm" id="filter-reset">Réinitialiser</button>
+      <!-- Toolbar filtres -->
+      <div class="journal-toolbar">
+        <div class="filters">
+          <select id="filter-pair">
+            <option value="">Toutes les paires</option>
+            <option value="EURUSD">EURUSD</option>
+            <option value="GOLD">GOLD</option>
+            <option value="GBPUSD">GBPUSD</option>
+            <option value="USDJPY">USDJPY</option>
+            <option value="NASDAQ">NASDAQ</option>
+            <option value="US30">US30</option>
+            <option value="BTCUSD">BTCUSD</option>
+          </select>
+          <select id="filter-result">
+            <option value="">WIN &amp; LOSS</option>
+            <option value="WIN">WIN ✅</option>
+            <option value="LOSS">LOSS ❌</option>
+          </select>
+          <input type="date" id="filter-from" title="Date début" />
+          <input type="date" id="filter-to" title="Date fin" />
+          <button class="btn btn-secondary btn-sm" id="filter-reset">Réinitialiser</button>
+        </div>
+        <div id="trades-count" style="font-size:0.82rem; color:var(--text-muted);"></div>
+      </div>
+
+      <!-- Graphique performance -->
+      <div class="rr-chart-card hidden" id="rr-chart-card">
+        <div class="rr-chart-title">Performance — RR cumulé</div>
+        <canvas id="rr-chart" height="100"></canvas>
       </div>
 
       <!-- Tableau -->
-      <div class="card" style="padding:0; overflow:hidden;">
-        <div class="trades-table-wrap">
-          <table class="trades-table" id="trades-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Paire</th>
-                <th>Résultat</th>
-                <th>RR</th>
-                <th>Screenshot</th>
-                <th>Notes</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="trades-body">
-              <tr>
-                <td colspan="7">
-                  <div class="empty-state">
-                    <div class="empty-icon">📊</div>
-                    <p>Aucun trade enregistré.</p>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <div class="trades-table-wrap">
+        <table class="trades-table" id="trades-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Paire</th>
+              <th>Résultat</th>
+              <th>RR</th>
+              <th>Screenshot</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="trades-body">
+            <tr>
+              <td colspan="6">
+                <div class="empty-state">
+                  <div class="empty-icon">📊</div>
+                  <p>Aucun trade enregistré.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- ─── OUTILS ─── -->
+    <section id="tab-outils" class="tab-section hidden">
+      <div style="margin-bottom:24px;">
+        <h2 style="font-size:1.4rem; margin-bottom:4px;">Outils</h2>
+        <p class="text-muted" style="font-size:0.9rem;">Calculateurs pour votre trading</p>
+      </div>
+      <div class="tools-grid">
+        <div class="card tools-card">
+          <div class="tools-card-title">🧮 Calculateur de taille de lot</div>
+          <div class="lot-form">
+            <div class="form-group">
+              <label>Instrument</label>
+              <select id="lot-instrument">
+                <option value="EURUSD">EURUSD</option>
+                <option value="GBPUSD">GBPUSD</option>
+                <option value="GOLD">GOLD</option>
+                <option value="NAS100">NAS100</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Solde du compte ($)</label>
+              <input type="number" id="lot-balance" placeholder="10 000" min="0" step="100" />
+            </div>
+            <div class="form-group">
+              <label>Risque (%)</label>
+              <input type="number" id="lot-risk" placeholder="1" min="0.01" max="100" step="0.1" />
+            </div>
+            <div class="form-group">
+              <label>Stop Loss (pips)</label>
+              <input type="number" id="lot-sl" placeholder="50" min="0.1" step="0.1" />
+            </div>
+            <div class="form-group" style="grid-column:1/-1;">
+              <label>Valeur du pip ($/lot) — auto</label>
+              <input type="number" id="lot-pipvalue" readonly tabindex="-1" />
+            </div>
+          </div>
+          <div class="lot-result hidden" id="lot-result">
+            <div class="lot-result-row">
+              <div class="lot-result-item">
+                <div class="lot-result-label">Taille de lot</div>
+                <div class="lot-result-value" id="lot-out-size">—</div>
+              </div>
+              <div class="lot-result-item">
+                <div class="lot-result-label">Unités</div>
+                <div class="lot-result-value" id="lot-out-units">—</div>
+              </div>
+              <div class="lot-result-item">
+                <div class="lot-result-label">Montant risqué</div>
+                <div class="lot-result-value" id="lot-out-risk">—</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- ─── ADMIN ─── -->
     <section id="tab-admin" class="tab-section hidden">
-      <div style="margin-bottom:24px;">
-        <h2 style="font-size:1.4rem; margin-bottom:4px;">Administration</h2>
-        <p class="text-muted" style="font-size:0.9rem;">Gérez les comptes élèves et le contenu</p>
+      <div style="margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h2 style="font-size:1.4rem; margin-bottom:4px;">Administration</h2>
+          <p class="text-muted" style="font-size:0.9rem;">Gérez le contenu et les comptes élèves</p>
+        </div>
+        <div class="admin-tabs">
+          <button class="admin-tab active" data-atab="content">📹 Contenu</button>
+          <button class="admin-tab" data-atab="users">👥 Élèves</button>
+        </div>
       </div>
-      <div class="admin-grid">
 
-        <!-- Comptes élèves -->
-        <div class="card">
-          <div class="section-title">👤 Élèves</div>
-          <form id="create-user-form" style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+      <!-- Tab : Contenu -->
+      <div id="atab-content" class="admin-tab-section">
+        <div class="admin-content-grid">
+
+          <!-- Colonne gauche : liste modules/vidéos -->
+          <div id="modules-admin-list"></div>
+
+          <!-- Colonne droite : formulaires compacts -->
+          <div class="admin-forms-panel">
+
+            <!-- Nouveau module -->
+            <div class="card" style="padding:18px;">
+              <div class="section-title" style="font-size:0.9rem; margin-bottom:10px;">📁 Nouveau module</div>
+              <form id="create-module-form" style="display:flex; gap:8px;">
+                <input type="text" id="new-module-title" placeholder="Titre du module" style="flex:1; padding:9px 12px; border:1.5px solid var(--border); border-radius:10px; font-family:inherit; outline:none; font-size:0.88rem;" />
+                <button type="submit" class="btn btn-primary btn-sm">Créer</button>
+              </form>
+            </div>
+
+            <!-- Nouvelle vidéo -->
+            <div class="card" style="padding:18px;">
+              <div class="section-title" style="font-size:0.9rem; margin-bottom:10px;">🎬 Nouvelle vidéo</div>
+              <form id="add-video-form" style="display:flex; flex-direction:column; gap:12px;">
+                <div class="form-group">
+                  <label>Module</label>
+                  <select id="video-module-id"></select>
+                </div>
+                <div class="form-group">
+                  <label>Titre</label>
+                  <input type="text" id="video-title" placeholder="Titre de la vidéo" />
+                </div>
+                <div class="form-group">
+                  <label>Image de couverture</label>
+                  <input type="file" id="video-cover" accept="image/*" style="padding:6px 10px;" />
+                </div>
+                <div class="form-group">
+                  <label>Source vidéo</label>
+                  <div style="display:flex; gap:14px; margin-bottom:6px;">
+                    <label style="display:flex; align-items:center; gap:5px; font-size:0.85rem; cursor:pointer; font-weight:400;">
+                      <input type="radio" name="video-source" value="url" id="source-url" checked /> URL
+                    </label>
+                    <label style="display:flex; align-items:center; gap:5px; font-size:0.85rem; cursor:pointer; font-weight:400;">
+                      <input type="radio" name="video-source" value="file" id="source-file" /> Fichier
+                    </label>
+                  </div>
+                  <div id="input-url-wrap">
+                    <input type="url" id="video-url" placeholder="https://youtube.com/..." />
+                  </div>
+                  <div id="input-file-wrap" class="hidden">
+                    <input type="file" id="video-file" accept="video/*" style="padding:6px 10px;" />
+                    <div id="upload-progress-wrap" class="hidden" style="margin-top:8px;">
+                      <div style="height:5px; border-radius:3px; background:var(--border); overflow:hidden;">
+                        <div id="upload-progress-bar" style="height:100%; width:0%; background:var(--gold); transition:width 0.2s;"></div>
+                      </div>
+                      <div id="upload-progress-label" style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">0%</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Description (optionnel)</label>
+                  <input type="text" id="video-desc" placeholder="Courte description" />
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm" id="add-video-btn" style="align-self:flex-start;">Ajouter la vidéo</button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab : Élèves -->
+      <div id="atab-users" class="admin-tab-section hidden">
+        <div class="card" style="max-width:580px;">
+          <div class="section-title">👤 Créer un élève</div>
+          <form id="create-user-form" style="display:flex; gap:10px; margin-bottom:24px; flex-wrap:wrap;">
             <input type="text" id="new-username" placeholder="Identifiant" style="flex:1; min-width:120px; padding:9px 14px; border:1.5px solid var(--border); border-radius:10px; font-family:inherit; outline:none;" />
             <input type="password" id="new-password" placeholder="Mot de passe" style="flex:1; min-width:120px; padding:9px 14px; border:1.5px solid var(--border); border-radius:10px; font-family:inherit; outline:none;" />
             <button type="submit" class="btn btn-primary btn-sm">Créer</button>
           </form>
           <div id="users-list"></div>
         </div>
-
-        <!-- Modules -->
-        <div class="card">
-          <div class="section-title">📁 Modules</div>
-          <form id="create-module-form" style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
-            <input type="text" id="new-module-title" placeholder="Titre du module" style="flex:1; padding:9px 14px; border:1.5px solid var(--border); border-radius:10px; font-family:inherit; outline:none;" />
-            <button type="submit" class="btn btn-primary btn-sm">Créer</button>
-          </form>
-          <div id="modules-admin-list"></div>
-        </div>
-
-        <!-- Vidéos -->
-        <div class="card" style="grid-column: 1 / -1;">
-          <div class="section-title">🎬 Ajouter une vidéo</div>
-          <form id="add-video-form" style="display:grid; grid-template-columns: 1fr 1fr; gap:14px;">
-            <div class="form-group">
-              <label>Module</label>
-              <select id="video-module-id"></select>
-            </div>
-            <div class="form-group">
-              <label>Titre</label>
-              <input type="text" id="video-title" placeholder="Titre de la vidéo" />
-            </div>
-            <div class="form-group" style="grid-column:1/-1;">
-              <label>URL (YouTube, Vimeo…)</label>
-              <input type="url" id="video-url" placeholder="https://www.youtube.com/watch?v=..." />
-            </div>
-            <div class="form-group" style="grid-column:1/-1;">
-              <label>Description (optionnel)</label>
-              <input type="text" id="video-desc" placeholder="Courte description" />
-            </div>
-            <div style="grid-column:1/-1;">
-              <button type="submit" class="btn btn-primary">Ajouter la vidéo</button>
-            </div>
-          </form>
-        </div>
-
       </div>
+
     </section>
 
   </main>
@@ -325,9 +438,131 @@
   <img id="img-modal-src" src="" alt="Screenshot" style="max-width:90vw; max-height:90vh; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.4);" />
 </div>
 
+<!-- Modal : détail d'un trade -->
+<div class="trade-detail-overlay hidden" id="trade-detail-modal">
+  <div class="trade-detail-modal">
+
+    <!-- En-tête beige -->
+    <div class="trade-detail-top">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+        <div>
+          <div class="trade-detail-pair" id="detail-pair"></div>
+          <div class="trade-detail-meta">
+            <span id="detail-result-badge"></span>
+            <span style="font-size:0.85rem; color:var(--text-muted);" id="detail-date"></span>
+          </div>
+        </div>
+        <button class="modal-close" id="trade-detail-close" style="flex-shrink:0; margin-top:2px;">✕</button>
+      </div>
+    </div>
+
+    <!-- Corps -->
+    <div class="trade-detail-body">
+
+      <!-- RR + Date -->
+      <div class="trade-detail-stats-row">
+        <div class="detail-stat-box">
+          <div class="label">Risk / Reward</div>
+          <div class="value" id="detail-rr"></div>
+        </div>
+        <div class="detail-stat-box">
+          <div class="label">Date</div>
+          <div class="value" style="font-size:1.1rem;" id="detail-date2"></div>
+        </div>
+      </div>
+
+      <!-- Screenshot -->
+      <div class="trade-detail-screenshot hidden" id="detail-screenshot-wrap">
+        <img id="detail-screenshot-img" src="" alt="Screenshot" />
+      </div>
+
+      <!-- Notes -->
+      <div class="trade-detail-notes" id="detail-notes-wrap">
+        <div class="label">Notes</div>
+        <div class="text" id="detail-notes"></div>
+      </div>
+
+    </div>
+
+    <!-- Pied -->
+    <div class="trade-detail-footer">
+      <button class="btn btn-danger btn-sm" id="detail-delete-btn">Supprimer ce trade</button>
+      <button class="btn btn-secondary btn-sm" id="trade-detail-close2">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal : modifier une vidéo -->
+<div class="modal-overlay hidden" id="edit-video-modal">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-header">
+      <h3>Modifier la vidéo</h3>
+      <button class="modal-close" id="edit-video-modal-close">✕</button>
+    </div>
+    <form id="edit-video-form" style="display:flex; flex-direction:column; gap:16px;">
+      <input type="hidden" id="edit-video-id" />
+      <div class="form-group">
+        <label>Titre</label>
+        <input type="text" id="edit-video-title" required />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" id="edit-video-desc" placeholder="Courte description" />
+      </div>
+      <div class="form-group">
+        <label>Image de couverture</label>
+        <div id="edit-cover-preview" style="display:none; margin-bottom:8px;">
+          <img id="edit-cover-img" src="" alt="" style="width:100%; max-height:110px; object-fit:cover; border-radius:8px; border:1px solid var(--border);" />
+        </div>
+        <input type="file" id="edit-video-cover" accept="image/*" style="padding:6px 10px;" />
+      </div>
+      <div class="form-group">
+        <label>Vidéo</label>
+        <div style="display:flex; gap:14px; margin-bottom:8px;">
+          <label style="display:flex; align-items:center; gap:5px; font-size:0.85rem; cursor:pointer; font-weight:400;">
+            <input type="radio" name="edit-source" value="keep" id="edit-source-keep" checked /> Conserver
+          </label>
+          <label style="display:flex; align-items:center; gap:5px; font-size:0.85rem; cursor:pointer; font-weight:400;">
+            <input type="radio" name="edit-source" value="url" id="edit-source-url" /> Nouvelle URL
+          </label>
+          <label style="display:flex; align-items:center; gap:5px; font-size:0.85rem; cursor:pointer; font-weight:400;">
+            <input type="radio" name="edit-source" value="file" id="edit-source-file" /> Nouveau fichier
+          </label>
+        </div>
+        <div id="edit-url-wrap" class="hidden">
+          <input type="url" id="edit-video-url" placeholder="https://youtube.com/..." />
+        </div>
+        <div id="edit-file-wrap" class="hidden">
+          <input type="file" id="edit-video-file" accept="video/*" style="padding:6px 10px;" />
+          <div id="edit-progress-wrap" class="hidden" style="margin-top:8px;">
+            <div style="height:5px; border-radius:3px; background:var(--border); overflow:hidden;">
+              <div id="edit-progress-bar" style="height:100%; width:0%; background:var(--gold); transition:width 0.2s;"></div>
+            </div>
+            <div id="edit-progress-label" style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">0%</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button type="button" class="btn btn-secondary" id="edit-video-cancel">Annuler</button>
+        <button type="submit" class="btn btn-primary" id="edit-video-btn">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal : lecteur vidéo local -->
+<div class="modal-overlay hidden" id="video-modal" style="cursor:default;">
+  <div style="position:relative; width:min(900px, 92vw);">
+    <button id="video-modal-close" style="position:absolute; top:-36px; right:0; background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer; line-height:1;">✕</button>
+    <video id="video-modal-player" controls style="width:100%; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.6); background:#000; display:block;"></video>
+    <div id="video-modal-title" style="color:#fff; font-weight:600; margin-top:10px; font-size:1rem;"></div>
+  </div>
+</div>
+
 <!-- Toast container -->
 <div id="toast-container"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="/js/app.js"></script>
 </body>
 </html>

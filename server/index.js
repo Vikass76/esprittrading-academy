@@ -3,10 +3,6 @@ const session = require('express-session');
 const path = require('path');
 const fs = require('fs');
 
-// Garantit que le dossier uploads existe (filesystem éphémère sur Render)
-const uploadsDir = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -17,13 +13,18 @@ app.use(session({
   secret: 'trading-platform-secret-key-2024',
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 } // 7 jours
+  cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Uploads
+const uploadsDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+app.use('/uploads', express.static(uploadsDir));
+app.use('/uploads/covers', express.static(path.join(__dirname, '../uploads/covers')));
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -39,6 +40,6 @@ app.get('*', (req, res) => {
 // Init DB
 require('./db');
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Serveur démarré sur http://0.0.0.0:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Serveur démarré sur http://localhost:${PORT}`);
 });

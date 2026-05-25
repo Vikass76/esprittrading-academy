@@ -46,6 +46,12 @@ db.exec(`
   );
 `);
 
+// Migration : ajouter colonne cover si absente
+const cols = db.prepare('PRAGMA table_info(videos)').all();
+if (!cols.find(c => c.name === 'cover')) {
+  db.exec('ALTER TABLE videos ADD COLUMN cover TEXT');
+}
+
 // Créer le compte admin par défaut si inexistant
 const adminExists = db.prepare('SELECT id FROM users WHERE role = ?').get('admin');
 if (!adminExists) {
