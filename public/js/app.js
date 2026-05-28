@@ -55,6 +55,7 @@ function showApp(me) {
   $('login-page').classList.add('hidden');
   $('app').classList.remove('hidden');
   $('nav-username').textContent = me.username;
+  $('mobile-nav-username').textContent = me.username;
 
   if (me.role === 'admin') {
     document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
@@ -102,6 +103,7 @@ document.querySelectorAll('.nav-link[data-tab]').forEach(btn => {
   btn.addEventListener('click', () => {
     const tab = btn.dataset.tab;
     switchTab(tab);
+    closeMobileMenu();
     if (tab === 'journal') loadTrades();
     if (tab === 'admin') loadAdminData();
   });
@@ -111,7 +113,7 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-section').forEach(s => s.classList.add('hidden'));
   document.querySelectorAll('.nav-link[data-tab]').forEach(b => b.classList.remove('active'));
   $(`tab-${tab}`).classList.remove('hidden');
-  document.querySelector(`.nav-link[data-tab="${tab}"]`).classList.add('active');
+  document.querySelectorAll(`.nav-link[data-tab="${tab}"]`).forEach(b => b.classList.add('active'));
 }
 
 /* ── FORMATION ── */
@@ -129,7 +131,7 @@ function isLocalVideo(url) {
 function renderModules(modules) {
   const container = $('modules-container');
   if (!modules.length) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📚</div><p>Aucun module disponible pour l'instant.</p></div>`;
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="ti ti-books"></i></div><p>Aucun module disponible pour l'instant.</p></div>`;
     return;
   }
   container.innerHTML = modules.map((m, i) => `
@@ -147,7 +149,7 @@ function renderModules(modules) {
           const thumb = v.cover || (ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : null);
           const thumbHtml = thumb
             ? `<div class="video-icon" style="background:url(${thumb}) center/cover; border-radius:10px;"></div>`
-            : `<div class="video-icon" style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:10px;">▶</div>`;
+            : `<div class="video-icon video-icon-dark"><i class="ti ti-player-play-filled"></i></div>`;
 
           if (isLocalVideo(v.url)) {
             return `
@@ -247,11 +249,16 @@ function renderTrades(trades) {
   countEl.textContent = trades.length ? `${trades.length} trade${trades.length > 1 ? 's' : ''}` : '';
 
   if (!trades.length) {
-    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📊</div><p>Aucun trade enregistré.</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon"><i class="ti ti-chart-line"></i></div><p>Aucun trade enregistré.</p></div></td></tr>`;
     return;
   }
 
-  tbody.innerHTML = trades.map(t => `
+  const displayed = [...trades].sort((a, b) => {
+    const d = b.trade_date.localeCompare(a.trade_date);
+    return d !== 0 ? d : b.id - a.id;
+  });
+
+  tbody.innerHTML = displayed.map(t => `
     <tr class="trade-row" data-id="${t.id}">
       <td class="trade-date-cell">${formatDate(t.trade_date)}</td>
       <td><span class="trade-pair-chip">${t.pair}</span></td>
@@ -509,7 +516,7 @@ function getAdminThumbHtml(v) {
   const ytId = getYouTubeId(v.url);
   const thumb = v.cover || (ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : null);
   if (thumb) return `<img class="admin-video-thumb" src="${thumb}" alt="" />`;
-  return `<div class="admin-video-thumb-placeholder">▶</div>`;
+  return `<div class="admin-video-thumb-placeholder"><i class="ti ti-player-play-filled"></i></div>`;
 }
 
 async function loadAdminModules() {
@@ -519,7 +526,7 @@ async function loadAdminModules() {
     const sel = $('video-module-id');
 
     if (!modules.length) {
-      el.innerHTML = `<div class="card"><p class="text-muted" style="font-size:0.88rem;">Aucun module. Créez-en un à droite.</p></div>`;
+      el.innerHTML = `<div class="card"><div class="empty-state" style="padding:32px 16px;"><div class="empty-icon"><i class="ti ti-folder-open"></i></div><p>Aucun module. Créez-en un à droite.</p></div></div>`;
     } else {
       const videosAll = await api('GET', '/videos');
       videoCache.clear();
@@ -531,7 +538,7 @@ async function loadAdminModules() {
           <div class="admin-module-block">
             <div class="admin-module-header">
               <span class="admin-module-name">
-                <span style="color:var(--text-muted);">📁</span> ${m.title}
+                <i class="ti ti-folder" style="color:var(--gold-dark);font-size:1rem;"></i> ${m.title}
                 <span class="module-badge">${vids.length} vidéo${vids.length !== 1 ? 's' : ''}</span>
               </span>
               <button class="btn btn-danger btn-sm delete-module" data-id="${m.id}">✕ Supprimer</button>
@@ -782,7 +789,10 @@ function renderRRChart(trades) {
 
   const sorted = [...trades]
     .filter(t => t.trade_date)
-    .sort((a, b) => a.trade_date.localeCompare(b.trade_date));
+    .sort((a, b) => {
+      const d = a.trade_date.localeCompare(b.trade_date);
+      return d !== 0 ? d : a.id - b.id;
+    });
 
   if (!sorted.length) {
     card.classList.add('hidden');
@@ -841,7 +851,7 @@ function renderRRChart(trades) {
           ticks: {
             font: { size: 10 },
             color: '#6b6b6b',
-            callback: v => `${v >= 0 ? '+' : ''}${v}R`
+            callback: v => `${v >= 0 ? '+' : ''}${parseFloat(v.toFixed(2))}R`
           }
         }
       }
@@ -880,3 +890,93 @@ function calcLotSize() {
 $('lot-instrument').addEventListener('change', calcLotSize);
 ['lot-balance', 'lot-risk', 'lot-sl'].forEach(id => $(id).addEventListener('input', calcLotSize));
 calcLotSize();
+
+/* ── MENU MOBILE ── */
+function closeMobileMenu() {
+  $('mobile-menu').classList.remove('open');
+  $('nav-hamburger').classList.remove('open');
+}
+
+$('nav-hamburger').addEventListener('click', () => {
+  const isOpen = $('mobile-menu').classList.toggle('open');
+  $('nav-hamburger').classList.toggle('open', isOpen);
+});
+
+// Fermer en cliquant en dehors du menu
+document.addEventListener('click', e => {
+  if (!$('mobile-menu').classList.contains('open')) return;
+  if (!$('mobile-menu').contains(e.target) && e.target !== $('nav-hamburger') && !$('nav-hamburger').contains(e.target)) {
+    closeMobileMenu();
+  }
+});
+
+$('mobile-change-pwd-btn').addEventListener('click', () => {
+  closeMobileMenu();
+  $('pwd-form').reset();
+  $('pwd-modal').classList.remove('hidden');
+});
+
+$('mobile-logout-btn').addEventListener('click', async () => {
+  closeMobileMenu();
+  await api('POST', '/auth/logout');
+  currentRole = '';
+  allTrades = [];
+  $('login-form').reset();
+  showLogin();
+});
+
+/* ── MODAL MODIFIER TRADE ── */
+function openEditTradeModal(t) {
+  $('edit-trade-id').value     = t.id;
+  $('edit-trade-pair').value   = t.pair;
+  $('edit-trade-result').value = t.result;
+  $('edit-trade-rr').value     = t.rr;
+  $('edit-trade-date').value   = t.trade_date;
+  $('edit-trade-notes').value  = t.notes || '';
+  $('edit-trade-screenshot').value = '';
+
+  if (t.screenshot) {
+    $('edit-trade-screenshot-img').src = t.screenshot;
+    $('edit-trade-screenshot-preview').classList.remove('hidden');
+  } else {
+    $('edit-trade-screenshot-preview').classList.add('hidden');
+  }
+
+  $('edit-trade-modal').classList.remove('hidden');
+}
+
+function closeEditTradeModal() {
+  $('edit-trade-modal').classList.add('hidden');
+}
+
+$('detail-edit-btn').addEventListener('click', () => {
+  const t = allTrades.find(x => x.id === detailTradeId);
+  if (t) openEditTradeModal(t);
+});
+
+$('edit-trade-modal-close').addEventListener('click', closeEditTradeModal);
+$('edit-trade-cancel').addEventListener('click', closeEditTradeModal);
+$('edit-trade-modal').addEventListener('click', e => {
+  if (e.target === $('edit-trade-modal')) closeEditTradeModal();
+});
+
+$('edit-trade-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const id   = $('edit-trade-id').value;
+  const form = new FormData();
+  form.append('pair',       $('edit-trade-pair').value);
+  form.append('result',     $('edit-trade-result').value);
+  form.append('rr',         $('edit-trade-rr').value);
+  form.append('trade_date', $('edit-trade-date').value);
+  form.append('notes',      $('edit-trade-notes').value);
+  const screenshotFile = $('edit-trade-screenshot').files[0];
+  if (screenshotFile) form.append('screenshot', screenshotFile);
+
+  try {
+    await api('PATCH', `/trades/${id}`, form, true);
+    toast('Trade mis à jour !', 'success');
+    closeEditTradeModal();
+    closeTradeDetail();
+    loadTrades();
+  } catch (err) { toast(err.message, 'error'); }
+});

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Esprit Trading</title>
   <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css" />
 </head>
 <body>
 
@@ -72,10 +73,27 @@
     </div>
     <div class="navbar-user">
       <span class="username" id="nav-username"></span>
-      <button class="btn btn-secondary btn-sm" id="change-pwd-btn">Mot de passe</button>
-      <button class="btn btn-secondary btn-sm" id="logout-btn">Déconnexion</button>
+      <button class="btn btn-secondary btn-sm nav-action-btn" id="change-pwd-btn">Mot de passe</button>
+      <button class="btn btn-secondary btn-sm nav-action-btn" id="logout-btn">Déconnexion</button>
     </div>
+    <button class="hamburger-btn" id="nav-hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
+
+  <!-- Menu mobile -->
+  <div id="mobile-menu">
+    <button class="nav-link" data-tab="formation">Formation</button>
+    <button class="nav-link" data-tab="journal">Journal</button>
+    <button class="nav-link" data-tab="outils">Outils</button>
+    <button class="nav-link admin-only hidden" data-tab="admin">Admin</button>
+    <div class="mobile-menu-divider"></div>
+    <div class="mobile-menu-user">
+      <span class="mobile-menu-username" id="mobile-nav-username"></span>
+      <button class="btn btn-sm" id="mobile-change-pwd-btn">Mot de passe</button>
+      <button class="btn btn-sm" id="mobile-logout-btn">Déconnexion</button>
+    </div>
+  </div>
 
   <!-- CONTENU -->
   <main class="main-content">
@@ -196,7 +214,7 @@
       </div>
       <div class="tools-grid">
         <div class="card tools-card">
-          <div class="tools-card-title">🧮 Calculateur de taille de lot</div>
+          <div class="tools-card-title"><i class="ti ti-calculator"></i> Calculateur de taille de lot</div>
           <div class="lot-form">
             <div class="form-group">
               <label>Instrument</label>
@@ -252,8 +270,8 @@
           <p class="text-muted" style="font-size:0.9rem;">Gérez le contenu et les comptes élèves</p>
         </div>
         <div class="admin-tabs">
-          <button class="admin-tab active" data-atab="content">📹 Contenu</button>
-          <button class="admin-tab" data-atab="users">👥 Élèves</button>
+          <button class="admin-tab active" data-atab="content"><i class="ti ti-video"></i> Contenu</button>
+          <button class="admin-tab" data-atab="users"><i class="ti ti-users"></i> Élèves</button>
         </div>
       </div>
 
@@ -269,7 +287,7 @@
 
             <!-- Nouveau module -->
             <div class="card" style="padding:18px;">
-              <div class="section-title" style="font-size:0.9rem; margin-bottom:10px;">📁 Nouveau module</div>
+              <div class="section-title" style="font-size:0.9rem; margin-bottom:10px;"><i class="ti ti-folder-plus"></i> Nouveau module</div>
               <form id="create-module-form" style="display:flex; gap:8px;">
                 <input type="text" id="new-module-title" placeholder="Titre du module" style="flex:1; padding:9px 12px; border:1.5px solid var(--border); border-radius:10px; font-family:inherit; outline:none; font-size:0.88rem;" />
                 <button type="submit" class="btn btn-primary btn-sm">Créer</button>
@@ -278,7 +296,7 @@
 
             <!-- Nouvelle vidéo -->
             <div class="card" style="padding:18px;">
-              <div class="section-title" style="font-size:0.9rem; margin-bottom:10px;">🎬 Nouvelle vidéo</div>
+              <div class="section-title" style="font-size:0.9rem; margin-bottom:10px;"><i class="ti ti-video-plus"></i> Nouvelle vidéo</div>
               <form id="add-video-form" style="display:flex; flex-direction:column; gap:12px;">
                 <div class="form-group">
                   <label>Module</label>
@@ -330,7 +348,7 @@
       <!-- Tab : Élèves -->
       <div id="atab-users" class="admin-tab-section hidden">
         <div class="card" style="max-width:580px;">
-          <div class="section-title">👤 Créer un élève</div>
+          <div class="section-title"><i class="ti ti-user-plus"></i> Créer un élève</div>
           <form id="create-user-form" style="display:flex; gap:10px; margin-bottom:24px; flex-wrap:wrap;">
             <input type="text" id="new-username" placeholder="Identifiant" style="flex:1; min-width:120px; padding:9px 14px; border:1.5px solid var(--border); border-radius:10px; font-family:inherit; outline:none;" />
             <input type="password" id="new-password" placeholder="Mot de passe" style="flex:1; min-width:120px; padding:9px 14px; border:1.5px solid var(--border); border-radius:10px; font-family:inherit; outline:none;" />
@@ -487,8 +505,73 @@
     <!-- Pied -->
     <div class="trade-detail-footer">
       <button class="btn btn-danger btn-sm" id="detail-delete-btn">Supprimer ce trade</button>
-      <button class="btn btn-secondary btn-sm" id="trade-detail-close2">Fermer</button>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-secondary btn-sm" id="detail-edit-btn">Modifier</button>
+        <button class="btn btn-secondary btn-sm" id="trade-detail-close2">Fermer</button>
+      </div>
     </div>
+  </div>
+</div>
+
+<!-- Modal : modifier un trade -->
+<div class="modal-overlay hidden" id="edit-trade-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Modifier le trade</h3>
+      <button class="modal-close" id="edit-trade-modal-close">✕</button>
+    </div>
+    <form id="edit-trade-form">
+      <input type="hidden" id="edit-trade-id" />
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <div class="form-group">
+          <label>Paire</label>
+          <select id="edit-trade-pair" required>
+            <option value="">Sélectionner</option>
+            <option>EURUSD</option>
+            <option>GOLD</option>
+            <option>GBPUSD</option>
+            <option>USDJPY</option>
+            <option>NASDAQ</option>
+            <option>US30</option>
+            <option>BTCUSD</option>
+            <option value="OTHER">Autre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Résultat</label>
+          <select id="edit-trade-result" required>
+            <option value="">Sélectionner</option>
+            <option value="WIN">WIN ✅</option>
+            <option value="LOSS">LOSS ❌</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Risk/Reward (RR)</label>
+          <input type="text" id="edit-trade-rr" placeholder="+2R / -1R" required />
+        </div>
+        <div class="form-group">
+          <label>Date du trade</label>
+          <input type="date" id="edit-trade-date" required />
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Notes (optionnel)</label>
+          <textarea id="edit-trade-notes" placeholder="Analyse, émotions, contexte de marché…"></textarea>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Screenshot</label>
+          <div id="edit-trade-screenshot-preview" class="hidden" style="margin-bottom:8px;">
+            <img id="edit-trade-screenshot-img" src="" alt="Screenshot actuel"
+              style="width:100%; max-height:140px; object-fit:contain; border-radius:8px; border:1px solid var(--border); background:#111; display:block;" />
+            <p style="font-size:0.78rem; color:var(--text-muted); margin-top:5px;">Screenshot actuel — sélectionnez un fichier pour le remplacer</p>
+          </div>
+          <input type="file" id="edit-trade-screenshot" accept="image/*" style="padding:8px 12px;" />
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:20px; justify-content:flex-end;">
+        <button type="button" class="btn btn-secondary" id="edit-trade-cancel">Annuler</button>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </div>
+    </form>
   </div>
 </div>
 

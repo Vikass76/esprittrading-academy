@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const db = require('../db');
 const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
@@ -50,6 +51,33 @@ router.post('/', requireAuth, upload.single('screenshot'), (req, res) => {
     'INSERT INTO trades (user_id, pair, result, rr, screenshot, notes, trade_date) VALUES (?, ?, ?, ?, ?, ?, ?)'
   ).run(req.session.userId, pair, result, rr, screenshot, notes || '', trade_date);
   res.json({ id: row.lastInsertRowid, pair, result, rr, screenshot, notes, trade_date });
+});
+
+router.patch('/:id', requireAuth, upload.single('screenshot'), (req, res) => {
+  const trade = db.prepare('SELECT * FROM trades WHERE id = ? AND user_id = ?').get(req.params.id, req.session.userId);
+  if (!trade) return res.status(404).json({ error: 'Trade introuvable' });
+
+  const pair       = req.body.pair       !== undefined ? req.body.pair       : trade.pair;
+  const result     = req.body.result     !== undefined ? req.body.result     : trade.result;
+  const rr         = req.body.rr         !== undefined ? req.body.rr         : trade.rr;
+  const notes      = req.body.notes      !== undefined ? req.body.notes      : trade.notes;
+  const trade_date = req.body.trade_date !== undefined ? req.body.trade_date : trade.trade_date;
+
+  if (!['WIN', 'LOSS'].includes(result)) return res.status(400).json({ error: 'Résultat invalide' });
+  if (!pair || !rr || !trade_date) return res.status(400).json({ error: 'Paire, RR et date sont requis' });
+
+  let screenshot = trade.screenshot;
+  if (req.file) {
+    if (trade.screenshot?.startsWith('/uploads/')) {
+      fs.unlink(path.join(__dirname, '../../', trade.screenshot), () => {});
+    }
+    screenshot = `/uploads/${req.file.filename}`;
+  }
+
+  db.prepare('UPDATE trades SET pair = ?, result = ?, rr = ?, notes = ?, trade_date = ?, screenshot = ? WHERE id = ?')
+    .run(pair, result, rr, notes || '', trade_date, screenshot, req.params.id);
+
+  res.json({ id: Number(req.params.id), pair, result, rr, notes: notes || '', trade_date, screenshot });
 });
 
 router.delete('/:id', requireAuth, (req, res) => {
