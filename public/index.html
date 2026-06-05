@@ -296,7 +296,8 @@
     <form id="trade-form">
       <div class="grid3">
         <div class="fg"><label>Paire *</label>
-          <select name="pair" required><option value="">—</option><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>GOLD</option><option>XAUUSD</option><option>NASDAQ</option><option>US30</option><option>SP500</option><option>BTCUSD</option><option>ETHUSD</option><option>GBPJPY</option><option>EURJPY</option><option>AUDUSD</option><option>USDCAD</option></select></div>
+          <input type="text" id="pair-search-input" placeholder="Ex: EURUSD, BTCUSD..." autocomplete="off" style="width:100%"/>
+          <input type="hidden" id="pair-search-hidden" name="pair"/></div>
         <div class="fg"><label>Direction *</label>
           <select name="direction" required><option value="LONG">LONG</option><option value="SHORT">SHORT</option></select></div>
         <div class="fg"><label>Résultat *</label>
@@ -307,11 +308,7 @@
         <div class="fg"><label>P&L ($)</label><input type="number" name="pnl" step="0.01" placeholder="150"/></div>
         <div class="fg"><label>Lot size</label><input type="number" name="lot_size" step="0.01" placeholder="0.10"/></div>
       </div>
-      <div class="grid3" style="margin-top:12px">
-        <div class="fg"><label>Prix d'entrée</label><input type="number" name="entry_price" step="0.00001"/></div>
-        <div class="fg"><label>Stop Loss</label><input type="number" name="stop_loss" step="0.00001"/></div>
-        <div class="fg"><label>Take Profit</label><input type="number" name="take_profit" step="0.00001"/></div>
-      </div>
+
       <div class="grid3" style="margin-top:12px">
         <div class="fg"><label>Date *</label><input type="date" name="trade_date" required/></div>
         <div class="fg"><label>Heure entrée</label><input type="time" name="entry_time"/></div>
@@ -319,7 +316,7 @@
       </div>
       <div class="grid3" style="margin-top:12px">
         <div class="fg"><label>Session</label>
-          <select name="session"><option value="">—</option><option>London</option><option>New York</option><option>Asia</option><option>London/NY</option></select></div>
+          <select name="session"><option value="">—</option><option>London</option><option>New York</option><option>Asia</option></select></div>
         <div class="fg"><label>Setup</label><input type="text" name="setup" placeholder="OTE, FVG, BOS..."/></div>
         <div class="fg"><label>Timeframe</label>
           <select name="timeframe"><option value="">—</option><option>M1</option><option>M2</option><option>M3</option><option>M5</option><option>M15</option><option>M30</option><option>H1</option><option>H4</option><option>D1</option></select></div>
@@ -393,7 +390,7 @@
         <div class="fg"><label>Date</label><input type="date" id="e-date" name="trade_date"/></div>
       </div>
       <div class="grid3" style="margin-top:12px">
-        <div class="fg"><label>Session</label><select id="e-sess" name="session"><option value="">—</option><option>London</option><option>New York</option><option>Asia</option><option>London/NY</option></select></div>
+        <div class="fg"><label>Session</label><select id="e-sess" name="session"><option value="">—</option><option>London</option><option>New York</option><option>Asia</option></select></div>
         <div class="fg"><label>Setup</label><input type="text" id="e-setup" name="setup"/></div>
         <div class="fg"><label>État mental</label><select id="e-emo" name="emotions"><option value="">—</option><option>Serein</option><option>Stressé</option><option>Anxieux</option><option>Confiant</option><option>Neutre</option><option>Euphorique</option><option>Découragé</option></select></div>
       </div>

@@ -330,7 +330,15 @@ $('trade-modal').addEventListener('click', e => { if(e.target===$('trade-modal')
 $('trade-form').addEventListener('submit', async e => {
   e.preventDefault();
   try {
-    await api('POST','/trades',new FormData($('trade-form')),true);
+    const form = new FormData($('trade-form'));
+    const result = form.get('result');
+    let rr = parseFloat(form.get('rr')) || 0;
+    let pnl = parseFloat(form.get('pnl')) || 0;
+    if (result === 'WIN')  { rr = Math.abs(rr); pnl = Math.abs(pnl); }
+    if (result === 'LOSS') { rr = -Math.abs(rr); pnl = -Math.abs(pnl); }
+    if (result === 'BE')   { rr = 0; pnl = 0; }
+    form.set('rr', rr); form.set('pnl', pnl);
+    await api('POST','/trades', form, true);
     $('trade-modal').classList.add('hidden');
     toast('Trade enregistré','success');
     trades=[]; loadTrades(); await loadAccounts(); await loadDashboard(); stats=null;
