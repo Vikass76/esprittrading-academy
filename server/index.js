@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
@@ -17,15 +18,18 @@ app.use(session({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const { router: authRouter, passport } = require('./routes/auth');
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(express.static(path.join(__dirname, '../public')));
 
 const uploadsDir = path.join(__dirname, '../uploads');
-const coversDir = path.join(uploadsDir, 'covers');
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
-if (!fs.existsSync(coversDir)) fs.mkdirSync(coversDir, { recursive: true });
 app.use('/uploads', express.static(uploadsDir));
 
-app.use('/api/auth', require('./routes/auth'));
+app.use('/api/auth', authRouter);
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/videos', require('./routes/videos'));
 app.use('/api/trades', require('./routes/trades'));

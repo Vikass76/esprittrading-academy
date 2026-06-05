@@ -810,3 +810,32 @@ document.querySelectorAll('#add-trade-btn,#dash-add-btn,#mob-add').forEach(btn =
     setTimeout(()=>{ initPairSearch(); const pi=document.getElementById('pair-search-input');if(pi)pi.value=''; const ph=document.getElementById('pair-search-hidden');if(ph)ph.value=''; },50);
   });
 });
+
+// ═══ REGISTER ═══
+document.getElementById('show-register')?.addEventListener('click', () => {
+  document.getElementById('login-view').classList.add('hidden');
+  document.getElementById('register-view').classList.remove('hidden');
+});
+document.getElementById('show-login')?.addEventListener('click', () => {
+  document.getElementById('register-view').classList.add('hidden');
+  document.getElementById('login-view').classList.remove('hidden');
+});
+
+document.getElementById('register-form')?.addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('register-btn');
+  const err = document.getElementById('register-error');
+  err.classList.add('hidden');
+  btn.textContent = 'Création...'; btn.disabled = true;
+  try {
+    const data = await api('POST', '/auth/register', {
+      firstname: document.getElementById('reg-firstname').value,
+      lastname: document.getElementById('reg-lastname').value,
+      email: document.getElementById('reg-email').value,
+      password: document.getElementById('reg-password').value
+    });
+    showApp(data);
+  } catch(ex) {
+    err.textContent = ex.message; err.classList.remove('hidden');
+  } finally { btn.textContent = 'Créer mon compte'; btn.disabled = false; }
+});
