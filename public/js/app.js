@@ -293,7 +293,7 @@ function renderTrades(list) {
       <td class="${pnl>=0?'pnl-p':'pnl-n'}">${pnl?(pnl>=0?'+$':'-$')+Math.abs(pnl).toFixed(2):'—'}</td>
       <td style="font-size:.76rem;color:var(--text-muted)">${t.session||'—'}</td>
       <td style="font-size:.76rem">${t.setup||'—'}</td>
-      <td>${t.screenshot?`<img class="ss-thumb" src="${t.screenshot}" alt="" onclick="openImg('${t.screenshot}',event)"/>`:'—'}</td>
+      <td>${t.screenshot?`<img class="ss-thumb" src="${t.screenshot}" title="LTF" onclick="openImg('${t.screenshot}',event)"/>`:'—'}</td><td>${t.screenshot2?`<img class="ss-thumb" src="${t.screenshot2}" title="HTF" onclick="openImg('${t.screenshot2}',event)"/>`:'—'}</td>
     </tr>`;
   }).join('');
   tbody.querySelectorAll('tr[data-id]').forEach(row => row.addEventListener('click', e => {
@@ -319,6 +319,7 @@ $('f-reset').addEventListener('click', () => {
 /* ── NOUVEAU TRADE ── */
 function openAddTrade() {
   $('trade-form').reset();
+  setTimeout(()=>{ initPairSearch(); const pi=document.getElementById('pair-search-input');if(pi)pi.value=''; const ph=document.getElementById('pair-search-hidden');if(ph)ph.value=''; },50);
   $('trade-form').querySelector('[name="trade_date"]').value = new Date().toISOString().split('T')[0];
   $('trade-modal').classList.remove('hidden');
 }
@@ -788,13 +789,9 @@ function initPairSearch() {
   input.addEventListener('blur',()=>{setTimeout(()=>{drop.style.display='none';if(!hidden.value&&input.value)hidden.value=input.value.toUpperCase();},200);});
 }
 
-// Override openAddTrade
-const _origOpenAdd = openAddTrade;
-function openAddTrade() {
-  _origOpenAdd();
-  setTimeout(()=>{
-    initPairSearch();
-    const pi=document.getElementById('pair-search-input'); if(pi) pi.value='';
-    const ph=document.getElementById('pair-search-hidden'); if(ph) ph.value='';
-  },50);
-}
+// Init pair search on open
+document.querySelectorAll('#add-trade-btn,#dash-add-btn,#mob-add').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setTimeout(()=>{ initPairSearch(); const pi=document.getElementById('pair-search-input');if(pi)pi.value=''; const ph=document.getElementById('pair-search-hidden');if(ph)ph.value=''; },50);
+  });
+});
