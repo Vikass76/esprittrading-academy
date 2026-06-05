@@ -34,6 +34,7 @@ const axOpts = { grid:{color:'rgba(0,0,0,0.04)'}, ticks:{color:'#9ca3af',font:{s
 function kill(c) { if(c) c.destroy(); return null; }
 function mkChart(id, type, data, opts={}) {
   const canvas = $(id); if (!canvas) return null;
+  const ex = Chart.getChart(canvas); if (ex) ex.destroy();
   return new Chart(canvas, { type, data, options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, ...opts }});
 }
 
@@ -53,7 +54,7 @@ function showApp(me) {
   if (me.role === 'admin') document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
   if (me.role === 'student' || me.role === 'admin') { $('formation-student').classList.remove('hidden'); $('formation-community').classList.add('hidden'); }
   else { $('formation-student').classList.add('hidden'); $('formation-community').classList.remove('hidden'); }
-  loadAccounts().then(() => { if (accounts.length) selAcc = accounts[0].id; renderAccBar(); switchTab('dashboard'); loadDashboard(); });
+  loadAccounts().then(() => { switchTab('dashboard'); loadDashboard(); });
 }
 
 /* ── LOGIN ── */
@@ -96,32 +97,54 @@ async function loadAccounts() {
   try { accounts = await api('GET','/trades/accounts'); renderAccBar(); updateAccSel(); } catch {}
 }
 function renderAccBar() {
-  const bar = $('acc-bar');
-  const chips = accounts.map(a => {
-    const pct = a.initial_balance ? ((a.current_balance - a.initial_balance)/a.initial_balance*100).toFixed(1) : 0;
-    const on = selAcc === a.id;
-    return `<div class="acc-chip${on?' on':''}" data-id="${a.id}">
-      <span class="acc-type at-${a.type}">${a.type}</span>
-      <span class="aname">${a.name}</span>
-      <span class="abal">$${Number(a.current_balance).toLocaleString('fr-FR',{maximumFractionDigits:0})} <span style="color:${pct>=0?'var(--green)':'var(--red)'}">${pct>=0?'+':''}${pct}%</span></span>
-      <button style="background:none;border:none;color:var(--text-muted);cursor:pointer;padding:0;font-size:.8rem;display:flex;align-items:center" onclick="delAcc(${a.id},event)" title="Supprimer"><i class="ti ti-x"></i></button>
-    </div>`;
-  }).join('');
-  bar.innerHTML = `${chips}<button class="btn btn-secondary btn-sm" id="add-acc-btn"><i class="ti ti-plus"></i> Compte</button>`;
-  bar.querySelectorAll('.acc-chip').forEach(c => c.addEventListener('click', e => {
-    if (e.target.closest('button')) return;
-    const id = parseInt(c.dataset.id);
-    selAcc = selAcc === id ? null : id;
-    renderAccBar(); loadDashboard();
-  }));
-  $('add-acc-btn').addEventListener('click', () => $('acc-modal').classList.remove('hidden'));
+  const list = document.getElementById('sb-acc-list');
+  if (!list) return;
+  if (!accounts.length) {
+    list.innerHTML = '<div style="font-size:.72rem;color:var(--text-muted);padding:2px 4px">Aucun compte</div>';
+  } else {
+    list.innerHTML = accounts.map(a => {
+      const pct = a.initial_balance ? ((a.current_balance - a.initial_balance)/a.initial_balance*100).toFixed(1) : 0;
+      const on = selAcc === a.id;
+      const bg = on ? 'var(--gold-light)' : 'transparent';
+      const border = on ? 'var(--gold)' : 'transparent';
+      const nameColor = on ? 'var(--gold-dark)' : 'var(--text)';
+      const typeBg = a.type==='live' ? '#dcfce7' : a.type==='demo' ? '#dbeafe' : 'var(--gold-light)';
+      const typeColor = a.type==='live' ? 'var(--green)' : a.type==='demo' ? 'var(--blue)' : 'var(--gold-dark)';
+      const pctColor = parseFloat(pct)>=0 ? 'var(--green)' : 'var(--red)';
+      const bal = Number(a.current_balance).toLocaleString('fr-FR',{maximumFractionDigits:0});
+      return '<div class="sb-acc-item" data-id="'+a.id+'" style="display:flex;align-items:center;justify-content:space-between;padding:7px 8px;border-radius:8px;cursor:pointer;margin-bottom:2px;background:'+bg+';border:1px solid '+border+'">'
+        +'<div><div style="font-size:.78rem;font-weight:600;color:'+nameColor+'">'+a.name+'</div>'
+        +'<div style="font-size:.68rem;color:var(--text-muted)">$'+bal+' <span style="color:'+pctColor+'">'+(parseFloat(pct)>=0?'+':'')+pct+'%</span></div></div>'
+        +'<div style="display:flex;align-items:center;gap:3px">'
+        +'<span style="font-size:.58rem;font-weight:700;text-transform:uppercase;padding:1px 5px;border-radius:3px;background:'+typeBg+';color:'+typeColor+'">'+a.type+'</span>'
+        +'<button onclick="delAcc('+a.id+',event)" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:.7rem;padding:2px"><i class="ti ti-x"></i></button>'
+        +'</div></div>';
+    }).join('');
+    list.querySelectorAll('.sb-acc-item').forEach(el => {
+      el.addEventListener('click', e => {
+        if (e.target.closest('button')) return;
+        const id = parseInt(el.dataset.id);
+        selAcc = selAcc === id ? null : id;
+        renderAccBar();
+        loadDashboard();
+        if (!document.getElementById('tab-journal').classList.contains('hidden')) loadTrades();
+        if (!document.getElementById('tab-calendar').classList.contains('hidden')) renderCal();
+        if (!document.getElementById('tab-analytics').classList.contains('hidden')) loadAnalytics();
+      });
+    });
+  }
+  const addBtn = document.getElementById('sb-add-acc');
+  if (addBtn) addBtn.onclick = () => document.getElementById('acc-modal').classList.remove('hidden');
 }
 async function delAcc(id, e) {
   e.stopPropagation();
   if (!confirm('Supprimer ce compte ?')) return;
   await api('DELETE',`/trades/accounts/${id}`);
-  if (selAcc===id) selAcc=null;
-  await loadAccounts(); loadDashboard(); toast('Compte supprimé','success');
+  selAcc = null;
+  await loadAccounts();
+  if (accounts.length) { selAcc = accounts[0].id; }
+  renderAccBar(); loadDashboard(); loadTrades();
+  toast('Compte supprimé','success');
 }
 function updateAccSel() {
   const s = $('trade-acc-sel');
@@ -138,9 +161,20 @@ $('acc-form').addEventListener('submit', async e => {
 });
 
 /* ── DASHBOARD ── */
+
+/* ── DASHBOARD ── */
 async function loadDashboard() {
   try {
-    const p = '';
+    if (!selAcc && accounts.length) { selAcc = accounts[0].id; renderAccBar(); }
+    if (!selAcc) {
+      renderKPIs({total:0,wins:0,losses:0,be:0,winRate:0,totalRR:0,totalPnl:0,avgRR:0,avgWinRR:0,avgLossRR:0,bestRR:0,worstRR:0,maxStreak:0,currentStreak:{type:null,count:0}}, 'dash-kpis', 8);
+      cEq=kill(cEq); cPair=kill(cPair); cSess=kill(cSess);
+      renderEmptyChart('c-equity','line',['','','','','']);
+      renderEmptyChart('c-pair','bar',['EURUSD','GBPUSD','GOLD','NASDAQ','BTCUSD']);
+      renderEmptyChart('c-session','doughnut',[]);
+      return;
+    }
+    const p = '?account_id=' + selAcc;
     stats = await api('GET', '/trades/stats' + p);
     renderKPIs(stats, 'dash-kpis', 8);
     const acc = accounts.find(a => a.id === selAcc);
@@ -154,6 +188,8 @@ async function loadDashboard() {
         const data = sorted.map(t => { bal = parseFloat((bal + (parseFloat(t.pnl)||0)).toFixed(2)); return bal; });
         const fmt = v => '$' + Number(v).toLocaleString('fr-FR');
         cEq = mkChart('c-equity','line',{ labels, datasets:[{ data, borderColor: GOLD, backgroundColor: 'rgba(244,199,15,0.05)', pointBackgroundColor: data.map(v => v >= acc.initial_balance ? G : R), pointBorderColor: 'transparent', pointRadius: data.length <= 50 ? 3.5 : 1.5, borderWidth: 2.5, tension: 0.3, fill: true }]},{ plugins:{ legend:{display:false}, tooltip:{callbacks:{label: c => fmt(c.parsed.y)}}}, scales:{ x:{...axOpts,ticks:{...axOpts.ticks,maxTicksLimit:8,maxRotation:0}}, y:{...axOpts,ticks:{...axOpts.ticks,callback: fmt}}}});
+      } else {
+        renderEmptyChart('c-equity','line',['','','','','']);
       }
     } else {
       renderEquity(stats.equityCurve);
@@ -162,7 +198,6 @@ async function loadDashboard() {
     renderSessChart(stats.bySession);
   } catch(ex) { console.error(ex); }
 }
-
 
 function renderKPIs(s, elId, count=8) {
   const el = $(elId); if (!el) return;
@@ -232,12 +267,13 @@ function renderSessChart(bySess) {
 /* ── JOURNAL ── */
 async function loadTrades() {
   try {
+    if (!selAcc) { renderTrades([]); return; }
     const p = new URLSearchParams();
     const pair=$('f-pair').value, res=$('f-result').value, dir=$('f-dir').value;
     const sess=$('f-sess').value, from=$('f-from').value, to=$('f-to').value;
     if(pair) p.set('pair',pair); if(res) p.set('result',res); if(dir) p.set('direction',dir);
     if(sess) p.set('session',sess); if(from) p.set('from',from); if(to) p.set('to',to);
-    trades = await api('GET','/trades?'+p);
+    if (selAcc) p.set('account_id', selAcc); trades = await api('GET','/trades?'+p);
     renderTrades(trades);
   } catch { toast('Erreur chargement trades','error'); }
 }
@@ -296,7 +332,7 @@ $('trade-form').addEventListener('submit', async e => {
     await api('POST','/trades',new FormData($('trade-form')),true);
     $('trade-modal').classList.add('hidden');
     toast('Trade enregistré','success');
-    trades=[]; await loadAccounts(); loadTrades(); await loadDashboard(); stats=null;
+    trades=[]; loadTrades(); await loadAccounts(); await loadDashboard(); stats=null;
     if(!$('tab-calendar').classList.contains('hidden')) renderCal();
   } catch(ex) { toast(ex.message,'error'); }
 });
@@ -364,10 +400,18 @@ const MFR=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','S
 const DFR=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
 
 async function renderCal() {
+  if (!selAcc) {
+    $('cal-label').textContent = MFR[cM] + ' ' + cY;
+    $('cal-heads').innerHTML = DFR.map(d => '<div class="cal-dh">'+d+'</div>').join('');
+    const f2=new Date(cY,cM,1), d2=new Date(cY,cM+1,0).getDate(), s2=(f2.getDay()+6)%7;
+    let h2=''; for(let i=0;i<s2;i++) h2+='<div class="cal-cell empty"></div>';
+    for(let d=1;d<=d2;d++) h2+='<div class="cal-cell"><div class="cal-dn">'+d+'</div></div>';
+    $('cal-grid').innerHTML=h2; return;
+  }
   const first=new Date(cY,cM,1), last=new Date(cY,cM+1,0);
   const p=new URLSearchParams();
   p.set('from',first.toISOString().split('T')[0]); p.set('to',last.toISOString().split('T')[0]);
-  const list = await api('GET','/trades?'+p);
+  if (selAcc) p.set('account_id', selAcc); const list = await api('GET','/trades?'+p);
   $('cal-label').textContent=`${MFR[cM]} ${cY}`;
   $('cal-heads').innerHTML=DFR.map(d=>`<div class="cal-dh">${d}</div>`).join('');
   const byDay={};
@@ -397,11 +441,20 @@ $('cal-next').addEventListener('click',()=>{cM++;if(cM>11){cM=0;cY++;}renderCal(
 /* ── ANALYTICS ── */
 async function loadAnalytics() {
   try {
-    const p = selAcc?`?account_id=${selAcc}`:'';
+    if (!selAcc) {
+      $('an-kpis').innerHTML=''; trades=[];
+      cDay=kill(cDay); cRRD=kill(cRRD); cSetup=kill(cSetup); cMo=kill(cMo);
+      renderEmptyChart('c-day','bar',['Lundi','Mardi','Mercredi','Jeudi','Vendredi']);
+      renderEmptyChart('c-rrdist','bar',['-2R','-1R','0R','+1R','+2R','+3R']);
+      renderEmptyChart('c-setup','bar',['OTE','FVG','BOS','MSS']);
+      renderEmptyChart('c-monthly','bar',['Jan','Fév','Mar','Avr','Mai','Juin']);
+      renderPairTable([]); return;
+    }
+    const p = '?account_id=' + selAcc;
     const s = await api('GET','/trades/stats'+p);
-    renderKPIs({...s,wins:s.wins,losses:s.losses},'an-kpis',4);
+    renderKPIs(s,'an-kpis',4);
     renderDayChart(s.byDay);
-    if(!trades.length) trades=await api('GET','/trades');
+    trades = await api('GET', '/trades' + p);
     renderRRDist(); renderSetupChart(); renderMonthly();
     renderPairTable(s.byPair);
   } catch(ex){console.error(ex);}
@@ -658,82 +711,90 @@ $('evid-form').addEventListener('submit',async e=>{
   finally{btn.disabled=false;btn.textContent='Enregistrer';$('eprog-wrap').classList.add('hidden');$('eprog').style.width='0%';}
 });
 
-// ═══ COURBE EN DOLLARS ═══
-function renderEquity(curve) {
-  cEq = kill(cEq);
-  if (!curve?.length) return;
-  const acc = accounts.find(a => a.id === selAcc);
-  const initBal = acc ? acc.initial_balance : null;
-  let labels, data, fmt;
-  if (initBal !== null) {
-    let bal = initBal;
-    labels = curve.map(p => fmtDate(p.date));
-    data = curve.map(p => {
-      bal = parseFloat((bal + (parseFloat(p.pnl) || 0)).toFixed(2));
-      return bal;
-    });
-    fmt = v => '$' + Number(v).toLocaleString('fr-FR');
+
+// ═══ RENDER ACC BAR (SIDEBAR) ═══
+function renderAccBar() {
+  const list = document.getElementById('sb-acc-list');
+  if (!list) return;
+  if (!accounts.length) {
+    list.innerHTML = '<div style="font-size:.72rem;color:var(--text-muted);padding:2px 4px">Aucun compte</div>';
   } else {
-    labels = curve.map(p => fmtDate(p.date));
-    data = curve.map(p => p.rr);
-    fmt = v => (v >= 0 ? '+' : '') + v + 'R';
+    list.innerHTML = accounts.map(a => {
+      const pct = a.initial_balance ? ((a.current_balance - a.initial_balance)/a.initial_balance*100).toFixed(1) : 0;
+      const on = selAcc === a.id;
+      const bg = on ? 'var(--gold-light)' : 'transparent';
+      const border = on ? 'var(--gold)' : 'transparent';
+      const nc = on ? 'var(--gold-dark)' : 'var(--text)';
+      const tbg = a.type==='live'?'#dcfce7':a.type==='demo'?'#dbeafe':'var(--gold-light)';
+      const tc = a.type==='live'?'var(--green)':a.type==='demo'?'var(--blue)':'var(--gold-dark)';
+      const pc = parseFloat(pct)>=0?'var(--green)':'var(--red)';
+      const bal = Number(a.current_balance).toLocaleString('fr-FR',{maximumFractionDigits:0});
+      return '<div class="sb-acc-item" data-id="'+a.id+'" style="display:flex;align-items:center;justify-content:space-between;padding:7px 8px;border-radius:8px;cursor:pointer;margin-bottom:2px;background:'+bg+';border:1px solid '+border+'">'
+        +'<div><div style="font-size:.78rem;font-weight:600;color:'+nc+'">'+a.name+'</div>'
+        +'<div style="font-size:.68rem;color:var(--text-muted)">$'+bal+' <span style="color:'+pc+'">'+(parseFloat(pct)>=0?'+':'')+pct+'%</span></div></div>'
+        +'<div style="display:flex;align-items:center;gap:3px">'
+        +'<span style="font-size:.58rem;font-weight:700;text-transform:uppercase;padding:1px 5px;border-radius:3px;background:'+tbg+';color:'+tc+'">'+a.type+'</span>'
+        +'<button onclick="delAcc('+a.id+',event)" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:.7rem;padding:2px"><i class="ti ti-x"></i></button>'
+        +'</div></div>';
+    }).join('');
+    list.querySelectorAll('.sb-acc-item').forEach(el => {
+      el.addEventListener('click', e => {
+        if (e.target.closest('button')) return;
+        const id = parseInt(el.dataset.id);
+        selAcc = selAcc === id ? null : id;
+        renderAccBar(); loadDashboard();
+        if (!document.getElementById('tab-journal').classList.contains('hidden')) loadTrades();
+        if (!document.getElementById('tab-calendar').classList.contains('hidden')) renderCal();
+        if (!document.getElementById('tab-analytics').classList.contains('hidden')) loadAnalytics();
+      });
+    });
   }
-  cEq = mkChart('c-equity','line',{
-    labels,
-    datasets:[{ data, borderColor: GOLD, backgroundColor: 'rgba(244,199,15,0.05)',
-      pointBackgroundColor: initBal ? data.map(v => v >= initBal ? G : R) : data.map(v => v >= 0 ? G : R),
-      pointBorderColor: 'transparent',
-      pointRadius: data.length <= 50 ? 3.5 : 1.5,
-      borderWidth: 2.5, tension: 0.3, fill: true }]
-  },{
-    plugins:{ legend:{display:false}, tooltip:{callbacks:{label: c => fmt(c.parsed.y)}}},
-    scales:{ x:{...axOpts,ticks:{...axOpts.ticks,maxTicksLimit:8,maxRotation:0}}, y:{...axOpts,ticks:{...axOpts.ticks,callback: fmt}}}
-  });
+  const addBtn = document.getElementById('sb-add-acc');
+  if (addBtn) addBtn.onclick = () => document.getElementById('acc-modal').classList.remove('hidden');
 }
 
-// ═══ DASHBOARD avec courbe $ ═══
-async function loadDashboard() {
-  try {
-    const p = selAcc ? '?account_id=' + selAcc : '';
-    stats = await api('GET', '/trades/stats' + p);
-    renderKPIs(stats, 'dash-kpis', 8);
-    const acc = accounts.find(a => a.id === selAcc);
-    if (acc) {
-      const allT = await api('GET', '/trades?account_id=' + selAcc);
-      const sorted = [...allT].sort((a,b) => a.trade_date.localeCompare(b.trade_date));
-      let bal = acc.initial_balance;
-      const curve = sorted.map(t => {
-        bal = parseFloat((bal + (parseFloat(t.pnl)||0)).toFixed(2));
-        return { date: t.trade_date, pnl: parseFloat(t.pnl)||0, rr: parseFloat(t.rr)||0 };
-      });
-      // rebuild with running balance
-      let b2 = acc.initial_balance;
-      const dollarCurve = sorted.map(t => {
-        b2 = parseFloat((b2 + (parseFloat(t.pnl)||0)).toFixed(2));
-        return { date: t.trade_date, pnl: parseFloat(t.pnl)||0, rr: b2 };
-      });
-      // reuse renderEquity but pass balance as rr field trick — use direct chart
-      cEq = kill(cEq);
-      if (sorted.length) {
-        let b3 = acc.initial_balance;
-        const labels = sorted.map(t => fmtDate(t.trade_date));
-        const data = sorted.map(t => { b3 = parseFloat((b3 + (parseFloat(t.pnl)||0)).toFixed(2)); return b3; });
-        const fmt = v => '$' + Number(v).toLocaleString('fr-FR');
-        cEq = mkChart('c-equity','line',{
-          labels,
-          datasets:[{ data, borderColor: GOLD, backgroundColor: 'rgba(244,199,15,0.05)',
-            pointBackgroundColor: data.map(v => v >= acc.initial_balance ? G : R),
-            pointBorderColor: 'transparent', pointRadius: data.length <= 50 ? 3.5 : 1.5,
-            borderWidth: 2.5, tension: 0.3, fill: true }]
-        },{
-          plugins:{ legend:{display:false}, tooltip:{callbacks:{label: c => fmt(c.parsed.y)}}},
-          scales:{ x:{...axOpts,ticks:{...axOpts.ticks,maxTicksLimit:8,maxRotation:0}}, y:{...axOpts,ticks:{...axOpts.ticks,callback: fmt}}}
-        });
-      }
-    } else {
-      renderEquity(stats.equityCurve);
-    }
-    renderPairChart(stats.byPair);
-    renderSessChart(stats.bySession);
-  } catch(ex) { console.error(ex); }
+// ═══ EMPTY CHART ═══
+function renderEmptyChart(id, type, xLabels) {
+  const canvas = document.getElementById(id); if (!canvas) return;
+  const ex = Chart.getChart(canvas); if (ex) ex.destroy();
+  new Chart(canvas, { type: type||'bar', data: { labels: xLabels||[], datasets:[{data:[],borderColor:'rgba(0,0,0,0.05)',backgroundColor:'rgba(0,0,0,0.02)'}]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{ x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#9ca3af',font:{size:10}}}, y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#9ca3af',font:{size:10}},beginAtZero:true}}}});
+}
+
+// ═══ PAIR SEARCH ═══
+const ALL_PAIRS = ['EURUSD','GBPUSD','USDJPY','USDCHF','AUDUSD','NZDUSD','USDCAD','EURGBP','EURJPY','EURCHF','EURAUD','EURNZD','EURCAD','GBPJPY','GBPCHF','GBPAUD','GBPNZD','GBPCAD','AUDJPY','AUDCHF','AUDNZD','AUDCAD','NZDJPY','NZDCHF','NZDCAD','CADJPY','CADCHF','CHFJPY','XAUUSD','GOLD','XAGUSD','SILVER','NAS100','NASDAQ','US30','DOW','US500','SP500','UK100','GER40','DAX','FRA40','JPN225','AUS200','USOIL','UKOIL','NGAS','WTI','BRENT','BTCUSD','ETHUSD','XRPUSD','BNBUSD','SOLUSD','ADAUSD','DOTUSD','DOGEUSD','AVAXUSD','LTCUSD','LINKUSD','UNIUSD','ATOMUSD','XLMUSD','TRXUSD','ETCUSD','MATICUSD','ES','NQ','YM','RTY','CL','GC','SI','ZB','ZN'];
+
+function initPairSearch() {
+  const input = document.getElementById('pair-search-input');
+  const hidden = document.getElementById('pair-search-hidden');
+  if (!input || !hidden) return;
+  const wrap = input.parentElement; wrap.style.position='relative';
+  let drop = document.getElementById('pair-dropdown');
+  if (!drop) { drop=document.createElement('div'); drop.id='pair-dropdown'; drop.style.cssText='position:absolute;top:calc(100% + 2px);left:0;right:0;background:#fff;border:1.5px solid var(--gold);border-radius:8px;max-height:200px;overflow-y:auto;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:none'; wrap.appendChild(drop); }
+  function show(q) {
+    const f=q?ALL_PAIRS.filter(p=>p.toLowerCase().includes(q.toLowerCase())).slice(0,15):ALL_PAIRS.slice(0,15);
+    if (!f.length){drop.style.display='none';return;}
+    drop.innerHTML=f.map(p=>'<div class="pair-opt" data-val="'+p+'" style="padding:8px 14px;cursor:pointer;font-size:.83rem;font-weight:600;transition:background .1s">'+p+'</div>').join('');
+    drop.style.display='block';
+    drop.querySelectorAll('.pair-opt').forEach(el=>{
+      el.addEventListener('mouseover',()=>el.style.background='var(--gold-light)');
+      el.addEventListener('mouseout',()=>el.style.background='');
+      el.addEventListener('mousedown',e=>{e.preventDefault();input.value=el.dataset.val;hidden.value=el.dataset.val;drop.style.display='none';});
+    });
+  }
+  input.addEventListener('input',()=>{hidden.value='';show(input.value);});
+  input.addEventListener('focus',()=>show(input.value));
+  input.addEventListener('blur',()=>{setTimeout(()=>{drop.style.display='none';if(!hidden.value&&input.value)hidden.value=input.value.toUpperCase();},200);});
+}
+
+// Override openAddTrade
+const _origOpenAdd = openAddTrade;
+function openAddTrade() {
+  _origOpenAdd();
+  setTimeout(()=>{
+    initPairSearch();
+    const pi=document.getElementById('pair-search-input'); if(pi) pi.value='';
+    const ph=document.getElementById('pair-search-hidden'); if(ph) ph.value='';
+  },50);
 }
