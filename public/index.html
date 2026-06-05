@@ -1,651 +1,492 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Esprit Trading</title>
-  <link rel="stylesheet" href="/css/style.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Esprit Trading</title>
+<link rel="stylesheet" href="/css/style.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
-<!-- ═══════════════════════════ PAGE LOGIN ═══════════════════════════ -->
+<!-- LOGIN -->
 <div id="login-page">
-  <div class="login-container">
-    <div class="login-logo">
-      <img src="/logo.jpg" alt="Esprit Trading" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:2px solid rgba(244,199,15,0.5)">
+  <div class="login-wrap">
+    <div class="login-brand">
+      <img src="/logo.jpg" alt="Esprit Trading"/>
       <h1>Esprit Trading</h1>
-      <p style="font-size:14px;font-weight:600;color:rgba(0,0,0,0.6);margin-bottom:4px">Accompagnement OTE 705</p>
-      <p style="margin-top:24px">Connectez-vous pour accéder à votre espace</p>
+      <div class="tag">Accompagnement OTE 705</div>
     </div>
     <div class="login-card">
       <form id="login-form">
-        <div class="form-group">
-          <label for="username">Identifiant</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            placeholder="Votre identifiant"
-            autocomplete="username"
-            autofocus
-            required
-          />
-        </div>
-        <div class="form-group" style="margin-top:18px;">
-          <label for="password">Mot de passe</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="••••••••"
-            autocomplete="current-password"
-            required
-          />
-        </div>
+        <div class="fg"><label>Identifiant</label><input type="text" id="username" autocomplete="username" autofocus required/></div>
+        <div class="fg" style="margin-top:12px"><label>Mot de passe</label><input type="password" id="password" autocomplete="current-password" required/></div>
         <div id="login-error" class="login-error hidden"></div>
-        <button type="submit" class="btn btn-primary btn-full" id="login-btn">
-          Se connecter
-        </button>
+        <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top:18px" id="login-btn">Se connecter</button>
       </form>
     </div>
     <p class="login-footer">Esprit Trading &copy; 2025</p>
   </div>
 </div>
 
-<!-- ═══════════════════════════ APP APRÈS CONNEXION ═══════════════════ -->
+<!-- APP -->
 <div id="app" class="hidden">
+  <div class="sb-ov" id="sb-ov"></div>
 
-  <!-- NAVBAR -->
-  <nav class="navbar">
-    <a class="navbar-brand" href="#">
-      <img src="/logo.jpg" style="width:44px;height:44px;border-radius:50%;object-fit:cover;margin-right:10px;vertical-align:middle">
-      <span style="display:inline-flex;flex-direction:column;vertical-align:middle">
-        <span style="font-weight:800;font-size:17px;line-height:1.2">Esprit Trading</span>
-        <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgb(194,149,10)">Accompagnement OTE 705</span>
-      </span>
-    </a>
-    <div class="navbar-nav" id="nav-tabs">
-      <button class="nav-link active" data-tab="formation">Formation</button>
-      <button class="nav-link" data-tab="journal">Journal</button>
-      <button class="nav-link" data-tab="outils">Outils</button>
-      <button class="nav-link admin-only hidden" data-tab="admin">Admin</button>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-logo">
+      <img src="/logo.jpg" alt=""/>
+      <div class="sb-logo-text"><div class="name">Esprit Trading</div><div class="sub">OTE 705</div></div>
     </div>
-    <div class="navbar-user">
-      <span class="username" id="nav-username"></span>
-      <button class="btn btn-secondary btn-sm nav-action-btn" id="change-pwd-btn">Mot de passe</button>
-      <button class="btn btn-secondary btn-sm nav-action-btn" id="logout-btn">Déconnexion</button>
+    <nav class="sb-nav">
+      <div class="sb-section">Principal</div>
+      <button class="nav-item" data-tab="dashboard"><span class="ni"><i class="ti ti-layout-dashboard"></i></span>Dashboard</button>
+      <button class="nav-item" data-tab="journal"><span class="ni"><i class="ti ti-list-details"></i></span>Journal</button>
+      <button class="nav-item" data-tab="calendar"><span class="ni"><i class="ti ti-calendar-month"></i></span>Calendrier</button>
+      <button class="nav-item" data-tab="analytics"><span class="ni"><i class="ti ti-chart-dots-3"></i></span>Analytics</button>
+      <div class="sb-section" style="margin-top:8px">Ressources</div>
+      <button class="nav-item" data-tab="outils"><span class="ni"><i class="ti ti-tool"></i></span>Outils</button>
+      <button class="nav-item" data-tab="formation"><span class="ni"><i class="ti ti-video"></i></span>Formation</button>
+      <div class="sb-section admin-only hidden" style="margin-top:8px">Admin</div>
+      <button class="nav-item admin-only hidden" data-tab="admin"><span class="ni"><i class="ti ti-settings-2"></i></span>Admin</button>
+    </nav>
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-avatar" id="user-initials">?</div>
+        <div class="sb-uname" id="nav-username"></div>
+        <div class="sb-actions" style="display:flex;gap:2px">
+          <button id="change-pwd-btn" title="Mot de passe"><i class="ti ti-key"></i></button>
+          <button id="logout-btn" title="Déconnexion"><i class="ti ti-logout"></i></button>
+        </div>
+      </div>
     </div>
-    <button class="hamburger-btn" id="nav-hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
+  </aside>
 
-  <!-- Menu mobile -->
-  <div id="mobile-menu">
-    <button class="nav-link" data-tab="formation">Formation</button>
-    <button class="nav-link" data-tab="journal">Journal</button>
-    <button class="nav-link" data-tab="outils">Outils</button>
-    <button class="nav-link admin-only hidden" data-tab="admin">Admin</button>
-    <div class="mobile-menu-divider"></div>
-    <div class="mobile-menu-user">
-      <span class="mobile-menu-username" id="mobile-nav-username"></span>
-      <button class="btn btn-sm" id="mobile-change-pwd-btn">Mot de passe</button>
-      <button class="btn btn-sm" id="mobile-logout-btn">Déconnexion</button>
+  <!-- MAIN -->
+  <div class="main-wrap">
+    <div class="mob-header">
+      <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
+      <div style="display:flex;align-items:center;gap:7px">
+        <img src="/logo.jpg" style="width:26px;height:26px;border-radius:50%;object-fit:cover;border:2px solid var(--gold)"/>
+        <span style="font-weight:700;font-size:.88rem;font-family:'DM Sans',sans-serif">Esprit Trading</span>
+      </div>
+      <button class="btn btn-primary btn-sm" id="mob-add">+ Trade</button>
+    </div>
+
+    <div class="page">
+
+      <!-- DASHBOARD -->
+      <section id="tab-dashboard" class="tab-section hidden">
+        <div class="ph">
+          <div><h2>Dashboard</h2><p>Vue d'ensemble de vos performances</p></div>
+          <button class="btn btn-primary" id="dash-add-btn"><i class="ti ti-plus"></i> Nouveau trade</button>
+        </div>
+        <div class="acc-bar" id="acc-bar"></div>
+        <div class="kpi-grid" id="dash-kpis"></div>
+        <div class="chart-row chart-row-1">
+          <div class="ccard ch-260"><div class="ccard-title">Courbe d'équité — RR cumulé</div><div class="ccard-body"><canvas id="c-equity"></canvas></div></div>
+        </div>
+        <div class="chart-row chart-row-2">
+          <div class="ccard ch-200"><div class="ccard-title">Résultats par paire</div><div class="ccard-body"><canvas id="c-pair"></canvas></div></div>
+          <div class="ccard ch-200"><div class="ccard-title">Trades par session</div><div class="ccard-body"><canvas id="c-session"></canvas></div></div>
+        </div>
+      </section>
+
+      <!-- JOURNAL -->
+      <section id="tab-journal" class="tab-section hidden">
+        <div class="ph">
+          <div><h2>Journal</h2><p>Historique détaillé de tous vos trades</p></div>
+          <button class="btn btn-primary" id="add-trade-btn"><i class="ti ti-plus"></i> Nouveau trade</button>
+        </div>
+        <div class="filters">
+          <select class="filter-select" id="f-pair"><option value="">Toutes les paires</option><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>GOLD</option><option>XAUUSD</option><option>NASDAQ</option><option>US30</option><option>SP500</option><option>BTCUSD</option><option>ETHUSD</option><option>GBPJPY</option><option>EURJPY</option></select>
+          <select class="filter-select" id="f-result"><option value="">Tous résultats</option><option value="WIN">WIN</option><option value="LOSS">LOSS</option><option value="BE">Break Even</option></select>
+          <select class="filter-select" id="f-dir"><option value="">Long & Short</option><option value="LONG">LONG</option><option value="SHORT">SHORT</option></select>
+          <select class="filter-select" id="f-sess"><option value="">Toutes sessions</option><option>London</option><option>New York</option><option>Asia</option><option>London/NY</option></select>
+          <input type="date" class="filter-input" id="f-from"/>
+          <input type="date" class="filter-input" id="f-to"/>
+          <button class="btn btn-secondary btn-sm" id="f-reset"><i class="ti ti-x"></i> Reset</button>
+          <span class="filters-count" id="f-count"></span>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl" id="trades-tbl">
+            <thead><tr>
+              <th>Date</th><th>Paire</th><th>Direction</th><th>Résultat</th>
+              <th>RR</th><th>P&L</th><th>Session</th><th>Setup</th><th>Chart</th>
+            </tr></thead>
+            <tbody id="trades-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CALENDAR -->
+      <section id="tab-calendar" class="tab-section hidden">
+        <div class="ph">
+          <div><h2>Calendrier</h2><p>Vue mensuelle de votre activité</p></div>
+          <div class="cal-nav">
+            <button class="btn btn-secondary btn-sm" id="cal-prev"><i class="ti ti-chevron-left"></i></button>
+            <span class="cal-nav-label" id="cal-label"></span>
+            <button class="btn btn-secondary btn-sm" id="cal-next"><i class="ti ti-chevron-right"></i></button>
+          </div>
+        </div>
+        <div class="cal-grid-head" id="cal-heads"></div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section id="tab-analytics" class="tab-section hidden">
+        <div class="ph"><div><h2>Analytics</h2><p>Analyse approfondie de vos performances</p></div></div>
+        <div class="kpi-grid" id="an-kpis"></div>
+        <div class="chart-row chart-row-2" style="margin-bottom:16px">
+          <div class="ccard ch-200"><div class="ccard-title">Performance par jour de la semaine</div><div class="ccard-body"><canvas id="c-day"></canvas></div></div>
+          <div class="ccard ch-200"><div class="ccard-title">Distribution des RR</div><div class="ccard-body"><canvas id="c-rrdist"></canvas></div></div>
+        </div>
+        <div class="chart-row chart-row-2" style="margin-bottom:20px">
+          <div class="ccard ch-200"><div class="ccard-title">Win Rate par setup</div><div class="ccard-body"><canvas id="c-setup"></canvas></div></div>
+          <div class="ccard ch-200"><div class="ccard-title">P&L mensuel</div><div class="ccard-body"><canvas id="c-monthly"></canvas></div></div>
+        </div>
+        <div class="card"><div class="ccard-title" style="margin-bottom:14px">Performance par paire</div><table class="perf-table" id="pair-tbl"></table></div>
+      </section>
+
+      <!-- OUTILS -->
+      <section id="tab-outils" class="tab-section hidden">
+        <div class="ph"><div><h2>Outils</h2><p>Calculateurs et aide à la décision</p></div></div>
+        <div class="tools-grid">
+          <div class="tool">
+            <div class="tool-head"><div class="tool-ico"><i class="ti ti-calculator"></i></div><div><h3>Calculateur de lot</h3><p>Taille de position optimale</p></div></div>
+            <div class="fg"><label>Instrument</label>
+              <select id="l-inst"><option value="EURUSD">EURUSD</option><option value="GBPUSD">GBPUSD</option><option value="USDJPY">USDJPY</option><option value="GOLD">GOLD / XAUUSD</option><option value="NASDAQ">NASDAQ</option><option value="US30">US30</option><option value="BTCUSD">BTCUSD</option><option value="GBPJPY">GBPJPY</option></select></div>
+            <div class="grid2" style="margin-top:10px">
+              <div class="fg"><label>Capital ($)</label><input type="number" id="l-bal" placeholder="10000"/></div>
+              <div class="fg"><label>Risque (%)</label><input type="number" id="l-risk" placeholder="1" step="0.1"/></div>
+            </div>
+            <div class="fg" style="margin-top:10px"><label>Stop Loss (pips)</label><input type="number" id="l-sl" placeholder="20"/></div>
+            <div class="tool-result hidden" id="l-res">
+              <div class="tr-row"><span class="l">Taille de lot</span><span class="v o" id="l-out-sz">—</span></div>
+              <div class="tr-row"><span class="l">Unités</span><span class="v" id="l-out-un">—</span></div>
+              <div class="tr-row"><span class="l">Montant risqué</span><span class="v" id="l-out-ri">—</span></div>
+            </div>
+          </div>
+          <div class="tool">
+            <div class="tool-head"><div class="tool-ico"><i class="ti ti-arrows-up-down"></i></div><div><h3>Calculateur RR</h3><p>Risk/Reward & objectifs</p></div></div>
+            <div class="grid2">
+              <div class="fg"><label>Entrée</label><input type="number" id="r-entry" step="0.00001" placeholder="1.10000"/></div>
+              <div class="fg"><label>Stop Loss</label><input type="number" id="r-sl" step="0.00001" placeholder="1.09800"/></div>
+            </div>
+            <div class="fg" style="margin-top:10px"><label>Take Profit</label><input type="number" id="r-tp" step="0.00001" placeholder="1.10400"/></div>
+            <div class="tool-result hidden" id="r-res">
+              <div class="tr-row"><span class="l">Risk (pips)</span><span class="v" id="r-risk">—</span></div>
+              <div class="tr-row"><span class="l">Reward (pips)</span><span class="v" id="r-rew">—</span></div>
+              <div class="tr-row"><span class="l">Ratio R/R</span><span class="v o" id="r-rat">—</span></div>
+            </div>
+          </div>
+          <div class="tool">
+            <div class="tool-head"><div class="tool-ico"><i class="ti ti-currency-dollar"></i></div><div><h3>Valeur du pip</h3><p>P&L estimé par trade</p></div></div>
+            <div class="fg"><label>Instrument</label>
+              <select id="p-inst"><option value="EURUSD">EURUSD</option><option value="GBPUSD">GBPUSD</option><option value="USDJPY">USDJPY</option><option value="GOLD">GOLD</option><option value="NASDAQ">NASDAQ</option><option value="US30">US30</option></select></div>
+            <div class="grid2" style="margin-top:10px">
+              <div class="fg"><label>Lots</label><input type="number" id="p-lots" placeholder="0.10" step="0.01"/></div>
+              <div class="fg"><label>Nb pips</label><input type="number" id="p-pips" placeholder="20"/></div>
+            </div>
+            <div class="tool-result hidden" id="p-res">
+              <div class="tr-row"><span class="l">Valeur / pip</span><span class="v" id="p-val">—</span></div>
+              <div class="tr-row"><span class="l">P&L estimé</span><span class="v o" id="p-pnl">—</span></div>
+            </div>
+          </div>
+          <div class="tool">
+            <div class="tool-head"><div class="tool-ico"><i class="ti ti-target"></i></div><div><h3>Objectif de compte</h3><p>Projection de croissance</p></div></div>
+            <div class="grid2">
+              <div class="fg"><label>Capital initial ($)</label><input type="number" id="o-cap" placeholder="10000"/></div>
+              <div class="fg"><label>Objectif ($)</label><input type="number" id="o-tgt" placeholder="20000"/></div>
+            </div>
+            <div class="grid2" style="margin-top:10px">
+              <div class="fg"><label>% / mois</label><input type="number" id="o-pct" placeholder="5" step="0.1"/></div>
+              <div class="fg"><label>Trades / mois</label><input type="number" id="o-tr" placeholder="20"/></div>
+            </div>
+            <div class="tool-result hidden" id="o-res">
+              <div class="tr-row"><span class="l">Mois nécessaires</span><span class="v o" id="o-mo">—</span></div>
+              <div class="tr-row"><span class="l">Gain total</span><span class="v" id="o-gain">—</span></div>
+              <div class="tr-row"><span class="l">Trades totaux</span><span class="v" id="o-tot">—</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FORMATION -->
+      <section id="tab-formation" class="tab-section hidden">
+        <div class="ph"><div><h2>Formation</h2><p>Modules et vidéos de cours</p></div></div>
+        <div id="formation-student" class="mod-list"></div>
+        <div id="formation-community" class="hidden">
+          <div class="cta-block">
+            <h2>Passez au niveau supérieur</h2>
+            <p>Rejoignez l'accompagnement OTE 705 et accédez à toutes les formations vidéos, le suivi personnalisé et la communauté privée.</p>
+            <div class="cta-feats">
+              <div class="cta-feat"><div class="ci"><i class="ti ti-target"></i></div><span class="cl">Stratégie complète</span></div>
+              <div class="cta-feat"><div class="ci"><i class="ti ti-video"></i></div><span class="cl">+50 vidéos</span></div>
+              <div class="cta-feat"><div class="ci"><i class="ti ti-messages"></i></div><span class="cl">Suivi personnalisé</span></div>
+              <div class="cta-feat"><div class="ci"><i class="ti ti-chart-line"></i></div><span class="cl">Live trading</span></div>
+            </div>
+            <a href="https://esprittrading.com/accompagnement" target="_blank" class="btn btn-lg" style="background:var(--gold);color:#111;font-weight:700;position:relative">Découvrir l'accompagnement <i class="ti ti-arrow-right"></i></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADMIN -->
+      <section id="tab-admin" class="tab-section hidden admin-only">
+        <div class="ph"><div><h2>Administration</h2></div></div>
+        <div class="atabs">
+          <button class="atab on" data-atab="modules">Modules & Vidéos</button>
+          <button class="atab" data-atab="users">Élèves</button>
+        </div>
+        <div id="atab-modules">
+          <div class="adm-grid">
+            <div><h3 style="font-size:.88rem;margin-bottom:12px">Modules</h3><div id="adm-mods"></div></div>
+            <div>
+              <div class="card" style="margin-bottom:14px">
+                <h3 style="font-size:.85rem;margin-bottom:14px">Nouveau module</h3>
+                <form id="mod-form"><div class="fg"><label>Titre</label><input type="text" id="mod-title" required/></div><button type="submit" class="btn btn-primary btn-full" style="margin-top:10px">Créer</button></form>
+              </div>
+              <div class="card">
+                <h3 style="font-size:.85rem;margin-bottom:14px">Ajouter une vidéo</h3>
+                <form id="vid-form">
+                  <div class="fg"><label>Module</label><select id="vid-mod" required></select></div>
+                  <div class="fg" style="margin-top:10px"><label>Titre</label><input type="text" id="vid-title" required/></div>
+                  <div class="fg" style="margin-top:10px"><label>Description</label><textarea id="vid-desc" style="min-height:50px"></textarea></div>
+                  <div style="margin-top:10px">
+                    <label class="flabel" style="display:block;margin-bottom:6px">Source</label>
+                    <div style="display:flex;gap:14px;margin-bottom:10px">
+                      <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="radio" name="vsrc" id="vsrc-url" value="url" checked/> URL</label>
+                      <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="radio" name="vsrc" id="vsrc-file" value="file"/> Fichier</label>
+                    </div>
+                    <div id="vurl-wrap"><div class="fg"><label>URL YouTube / Lien</label><input type="url" id="vid-url"/></div></div>
+                    <div id="vfile-wrap" class="hidden"><div class="fg"><label>Fichier vidéo</label><input type="file" id="vid-file" accept="video/*"/></div></div>
+                  </div>
+                  <div class="fg" style="margin-top:10px"><label>Miniature (optionnel)</label><input type="file" id="vid-cover" accept="image/*"/></div>
+                  <div class="prog-wrap hidden" id="uprog-wrap"><div class="prog-bg"><div class="prog-fill" id="uprog" style="width:0%"></div></div><div class="prog-lbl" id="uprog-lbl">0%</div></div>
+                  <button type="submit" class="btn btn-primary btn-full" style="margin-top:10px" id="vid-btn">Ajouter</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="atab-users" class="hidden">
+          <div class="adm-grid">
+            <div class="card"><h3 style="font-size:.88rem;margin-bottom:14px">Élèves inscrits</h3><div id="users-list"></div></div>
+            <div class="card"><h3 style="font-size:.88rem;margin-bottom:14px">Ajouter un élève</h3>
+              <form id="user-form">
+                <div class="fg"><label>Identifiant</label><input type="text" id="new-uname" required/></div>
+                <div class="fg" style="margin-top:10px"><label>Mot de passe</label><input type="password" id="new-upwd" required/></div>
+                <button type="submit" class="btn btn-primary btn-full" style="margin-top:14px">Créer l'élève</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
   </div>
-
-  <!-- CONTENU -->
-  <main class="main-content">
-
-    <!-- ─── FORMATION ─── -->
-    <section id="tab-formation" class="tab-section">
-      <div style="margin-bottom:24px;">
-        <h2 style="font-size:1.4rem; margin-bottom:4px;">Formation</h2>
-        <p class="text-muted" style="font-size:0.9rem;">Vos modules et vidéos de cours</p>
-      </div>
-      <div id="modules-container">
-        <div class="empty-state">
-          <div class="empty-icon">📚</div>
-          <p>Aucun module disponible pour l'instant.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── JOURNAL ─── -->
-    <section id="tab-journal" class="tab-section hidden">
-
-      <div class="journal-header">
-        <div>
-          <h2 style="font-size:1.4rem; margin-bottom:4px;">Journal de trading</h2>
-          <p class="text-muted" style="font-size:0.9rem;">Suivez et analysez vos performances</p>
-        </div>
-        <button class="btn btn-primary" id="add-trade-btn">+ Nouveau trade</button>
-      </div>
-
-      <!-- Stats -->
-      <div class="journal-stats">
-        <div class="stat-card" id="stat-card-total">
-          <div class="stat-label">Total trades</div>
-          <div class="stat-value" id="stat-total">—</div>
-          <div class="stat-sub" id="stat-wl">—</div>
-        </div>
-        <div class="stat-card" id="stat-card-wr">
-          <div class="stat-label">Win rate</div>
-          <div class="stat-value" id="stat-winrate">—</div>
-          <div class="stat-sub" id="stat-wr-sub">sur tous les trades</div>
-        </div>
-        <div class="stat-card" id="stat-card-rr">
-          <div class="stat-label">Total RR</div>
-          <div class="stat-value" id="stat-rr">—</div>
-          <div class="stat-sub" id="stat-rr-sub">cumulé</div>
-        </div>
-        <div class="stat-card" id="stat-card-best">
-          <div class="stat-label">Best trade</div>
-          <div class="stat-value" id="stat-best">—</div>
-          <div class="stat-sub" id="stat-best-sub">meilleur RR</div>
-        </div>
-      </div>
-
-      <!-- Toolbar filtres -->
-      <div class="journal-toolbar">
-        <div class="filters">
-          <select id="filter-pair">
-            <option value="">Toutes les paires</option>
-            <option value="EURUSD">EURUSD</option>
-            <option value="GOLD">GOLD</option>
-            <option value="GBPUSD">GBPUSD</option>
-            <option value="USDJPY">USDJPY</option>
-            <option value="NASDAQ">NASDAQ</option>
-            <option value="US30">US30</option>
-            <option value="BTCUSD">BTCUSD</option>
-          </select>
-          <select id="filter-result">
-            <option value="">WIN &amp; LOSS</option>
-            <option value="WIN">WIN ✅</option>
-            <option value="LOSS">LOSS ❌</option>
-          </select>
-          <input type="date" id="filter-from" title="Date début" />
-          <input type="date" id="filter-to" title="Date fin" />
-          <button class="btn btn-secondary btn-sm" id="filter-reset">Réinitialiser</button>
-        </div>
-        <div id="trades-count" style="font-size:0.82rem; color:var(--text-muted);"></div>
-      </div>
-
-      <!-- Graphique performance -->
-      <div class="rr-chart-card hidden" id="rr-chart-card">
-        <div class="rr-chart-title">Performance — RR cumulé</div>
-        <canvas id="rr-chart" height="100"></canvas>
-      </div>
-
-      <!-- Tableau -->
-      <div class="trades-table-wrap">
-        <table class="trades-table" id="trades-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Paire</th>
-              <th>Résultat</th>
-              <th>RR</th>
-              <th>Screenshot</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody id="trades-body">
-            <tr>
-              <td colspan="6">
-                <div class="empty-state">
-                  <div class="empty-icon">📊</div>
-                  <p>Aucun trade enregistré.</p>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-    </section>
-
-    <!-- ─── OUTILS ─── -->
-    <section id="tab-outils" class="tab-section hidden">
-      <div style="margin-bottom:24px;">
-        <h2 style="font-size:1.4rem; margin-bottom:4px;">Outils</h2>
-        <p class="text-muted" style="font-size:0.9rem;">Calculateurs pour votre trading</p>
-      </div>
-      <div class="tools-grid">
-        <div class="card tools-card">
-          <div class="tools-card-title"><i class="ti ti-calculator"></i> Calculateur de taille de lot</div>
-          <div class="lot-form">
-            <div class="form-group">
-              <label>Instrument</label>
-              <select id="lot-instrument">
-                <option value="EURUSD">EURUSD</option>
-                <option value="GBPUSD">GBPUSD</option>
-                <option value="GOLD">GOLD</option>
-                <option value="NAS100">NAS100</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Solde du compte ($)</label>
-              <input type="number" id="lot-balance" placeholder="10 000" min="0" step="100" />
-            </div>
-            <div class="form-group">
-              <label>Risque (%)</label>
-              <input type="number" id="lot-risk" placeholder="1" min="0.01" max="100" step="0.1" />
-            </div>
-            <div class="form-group">
-              <label>Stop Loss (pips)</label>
-              <input type="number" id="lot-sl" placeholder="50" min="0.1" step="0.1" />
-            </div>
-            <div class="form-group" style="grid-column:1/-1;">
-              <label>Valeur du pip ($/lot) — auto</label>
-              <input type="number" id="lot-pipvalue" readonly tabindex="-1" />
-            </div>
-          </div>
-          <div class="lot-result hidden" id="lot-result">
-            <div class="lot-result-row">
-              <div class="lot-result-item">
-                <div class="lot-result-label">Taille de lot</div>
-                <div class="lot-result-value" id="lot-out-size">—</div>
-              </div>
-              <div class="lot-result-item">
-                <div class="lot-result-label">Unités</div>
-                <div class="lot-result-value" id="lot-out-units">—</div>
-              </div>
-              <div class="lot-result-item">
-                <div class="lot-result-label">Montant risqué</div>
-                <div class="lot-result-value" id="lot-out-risk">—</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── ADMIN ─── -->
-    <section id="tab-admin" class="tab-section hidden">
-      <div style="margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
-        <div>
-          <h2 style="font-size:1.4rem; margin-bottom:4px;">Administration</h2>
-          <p class="text-muted" style="font-size:0.9rem;">Gérez le contenu et les comptes élèves</p>
-        </div>
-        <div class="admin-tabs">
-          <button class="admin-tab active" data-atab="content"><i class="ti ti-video"></i> Contenu</button>
-          <button class="admin-tab" data-atab="users"><i class="ti ti-users"></i> Élèves</button>
-        </div>
-      </div>
-
-      <!-- Tab : Contenu -->
-      <div id="atab-content" class="admin-tab-section">
-        <div class="admin-content-grid">
-
-          <!-- Colonne gauche : liste modules/vidéos -->
-          <div id="modules-admin-list"></div>
-
-          <!-- Colonne droite : formulaires compacts -->
-          <div class="admin-forms-panel">
-
-            <!-- Nouveau module -->
-            <div class="card" style="padding:18px;">
-              <div class="section-title" style="font-size:0.9rem; margin-bottom:10px;"><i class="ti ti-folder-plus"></i> Nouveau module</div>
-              <form id="create-module-form" style="display:flex; gap:8px;">
-                <input type="text" id="new-module-title" placeholder="Titre du module" style="flex:1; padding:9px 12px; border:1.5px solid var(--border); border-radius:10px; font-family:inherit; outline:none; font-size:0.88rem;" />
-                <button type="submit" class="btn btn-primary btn-sm">Créer</button>
-              </form>
-            </div>
-
-            <!-- Nouvelle vidéo -->
-            <div class="card" style="padding:18px;">
-              <div class="section-title" style="font-size:0.9rem; margin-bottom:10px;"><i class="ti ti-video-plus"></i> Nouvelle vidéo</div>
-              <form id="add-video-form" style="display:flex; flex-direction:column; gap:12px;">
-                <div class="form-group">
-                  <label>Module</label>
-                  <select id="video-module-id"></select>
-                </div>
-                <div class="form-group">
-                  <label>Titre</label>
-                  <input type="text" id="video-title" placeholder="Titre de la vidéo" />
-                </div>
-                <div class="form-group">
-                  <label>Image de couverture</label>
-                  <input type="file" id="video-cover" accept="image/*" style="padding:6px 10px;" />
-                </div>
-                <div class="form-group">
-                  <label>Source vidéo</label>
-                  <div style="display:flex; gap:14px; margin-bottom:6px;">
-                    <label style="display:flex; align-items:center; gap:5px; font-size:0.85rem; cursor:pointer; font-weight:400;">
-                      <input type="radio" name="video-source" value="url" id="source-url" checked /> URL
-                    </label>
-                    <label style="display:flex; align-items:center; gap:5px; font-size:0.85rem; cursor:pointer; font-weight:400;">
-                      <input type="radio" name="video-source" value="file" id="source-file" /> Fichier
-                    </label>
-                  </div>
-                  <div id="input-url-wrap">
-                    <input type="url" id="video-url" placeholder="https://youtube.com/..." />
-                  </div>
-                  <div id="input-file-wrap" class="hidden">
-                    <input type="file" id="video-file" accept="video/*" style="padding:6px 10px;" />
-                    <div id="upload-progress-wrap" class="hidden" style="margin-top:8px;">
-                      <div style="height:5px; border-radius:3px; background:var(--border); overflow:hidden;">
-                        <div id="upload-progress-bar" style="height:100%; width:0%; background:var(--gold); transition:width 0.2s;"></div>
-                      </div>
-                      <div id="upload-progress-label" style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">0%</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label>Description (optionnel)</label>
-                  <input type="text" id="video-desc" placeholder="Courte description" />
-                </div>
-                <button type="submit" class="btn btn-primary btn-sm" id="add-video-btn" style="align-self:flex-start;">Ajouter la vidéo</button>
-              </form>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- Tab : Élèves -->
-      <div id="atab-users" class="admin-tab-section hidden">
-        <div class="card" style="max-width:580px;">
-          <div class="section-title"><i class="ti ti-user-plus"></i> Créer un élève</div>
-          <form id="create-user-form" style="display:flex; gap:10px; margin-bottom:24px; flex-wrap:wrap;">
-            <input type="text" id="new-username" placeholder="Identifiant" style="flex:1; min-width:120px; padding:9px 14px; border:1.5px solid var(--border); border-radius:10px; font-family:inherit; outline:none;" />
-            <input type="password" id="new-password" placeholder="Mot de passe" style="flex:1; min-width:120px; padding:9px 14px; border:1.5px solid var(--border); border-radius:10px; font-family:inherit; outline:none;" />
-            <button type="submit" class="btn btn-primary btn-sm">Créer</button>
-          </form>
-          <div id="users-list"></div>
-        </div>
-      </div>
-
-    </section>
-
-  </main>
 </div>
 
-<!-- ═══════════════════════════ MODALS ═══════════════════════════════ -->
-
-<!-- Modal : ajouter un trade -->
-<div class="modal-overlay hidden" id="trade-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>Nouveau trade</h3>
-      <button class="modal-close" id="trade-modal-close">✕</button>
-    </div>
-    <form id="trade-form" enctype="multipart/form-data">
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-        <div class="form-group">
-          <label>Paire</label>
-          <select name="pair" id="trade-pair" required>
-            <option value="">Sélectionner</option>
-            <option>EURUSD</option>
-            <option>GOLD</option>
-            <option>GBPUSD</option>
-            <option>USDJPY</option>
-            <option>NASDAQ</option>
-            <option>US30</option>
-            <option>BTCUSD</option>
-            <option value="OTHER">Autre</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Résultat</label>
-          <select name="result" id="trade-result" required>
-            <option value="">Sélectionner</option>
-            <option value="WIN">WIN ✅</option>
-            <option value="LOSS">LOSS ❌</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Risk/Reward (RR)</label>
-          <input type="text" name="rr" placeholder="+2R / -1R" required />
-        </div>
-        <div class="form-group">
-          <label>Date du trade</label>
-          <input type="date" name="trade_date" required />
-        </div>
-        <div class="form-group" style="grid-column:1/-1;">
-          <label>Screenshot (optionnel)</label>
-          <input type="file" name="screenshot" accept="image/*" style="padding:8px 12px;" />
-        </div>
-        <div class="form-group" style="grid-column:1/-1;">
-          <label>Notes (optionnel)</label>
-          <textarea name="notes" placeholder="Analyse, émotions, contexte de marché…"></textarea>
-        </div>
+<!-- MODAL NOUVEAU TRADE -->
+<div class="overlay hidden" id="trade-modal">
+  <div class="modal modal-lg">
+    <div class="mh"><h3>Nouveau trade</h3><button class="mclose" id="tm-close"><i class="ti ti-x"></i></button></div>
+    <form id="trade-form">
+      <div class="grid3">
+        <div class="fg"><label>Paire *</label>
+          <select name="pair" required><option value="">—</option><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>GOLD</option><option>XAUUSD</option><option>NASDAQ</option><option>US30</option><option>SP500</option><option>BTCUSD</option><option>ETHUSD</option><option>GBPJPY</option><option>EURJPY</option><option>AUDUSD</option><option>USDCAD</option></select></div>
+        <div class="fg"><label>Direction *</label>
+          <select name="direction" required><option value="LONG">LONG</option><option value="SHORT">SHORT</option></select></div>
+        <div class="fg"><label>Résultat *</label>
+          <select name="result" required><option value="WIN">WIN</option><option value="LOSS">LOSS</option><option value="BE">Break Even</option></select></div>
       </div>
-      <div style="display:flex; gap:10px; margin-top:20px; justify-content:flex-end;">
-        <button type="button" class="btn btn-secondary" id="trade-cancel">Annuler</button>
+      <div class="grid3" style="margin-top:12px">
+        <div class="fg"><label>RR *</label><input type="number" name="rr" step="0.1" placeholder="2.5" required/></div>
+        <div class="fg"><label>P&L ($)</label><input type="number" name="pnl" step="0.01" placeholder="150"/></div>
+        <div class="fg"><label>Lot size</label><input type="number" name="lot_size" step="0.01" placeholder="0.10"/></div>
+      </div>
+      <div class="grid3" style="margin-top:12px">
+        <div class="fg"><label>Prix d'entrée</label><input type="number" name="entry_price" step="0.00001"/></div>
+        <div class="fg"><label>Stop Loss</label><input type="number" name="stop_loss" step="0.00001"/></div>
+        <div class="fg"><label>Take Profit</label><input type="number" name="take_profit" step="0.00001"/></div>
+      </div>
+      <div class="grid3" style="margin-top:12px">
+        <div class="fg"><label>Date *</label><input type="date" name="trade_date" required/></div>
+        <div class="fg"><label>Heure entrée</label><input type="time" name="entry_time"/></div>
+        <div class="fg"><label>Heure sortie</label><input type="time" name="exit_time"/></div>
+      </div>
+      <div class="grid3" style="margin-top:12px">
+        <div class="fg"><label>Session</label>
+          <select name="session"><option value="">—</option><option>London</option><option>New York</option><option>Asia</option><option>London/NY</option></select></div>
+        <div class="fg"><label>Setup</label><input type="text" name="setup" placeholder="OTE, FVG, BOS..."/></div>
+        <div class="fg"><label>Timeframe</label>
+          <select name="timeframe"><option value="">—</option><option>M1</option><option>M5</option><option>M15</option><option>M30</option><option>H1</option><option>H4</option><option>D1</option></select></div>
+      </div>
+      <div class="fg" style="margin-top:12px"><label>État émotionnel</label>
+        <select name="emotions"><option value="">—</option><option>Serein</option><option>Stressé</option><option>Anxieux</option><option>Confiant</option><option>Neutre</option><option>Euphorique</option><option>Découragé</option></select></div>
+      <div class="fg" style="margin-top:12px"><label>Notes / Analyse</label>
+        <textarea name="notes" placeholder="Contexte, analyse, ce à améliorer..."></textarea></div>
+      <div class="grid2" style="margin-top:12px">
+        <div class="fg"><label>Screenshot chart 1</label><input type="file" name="screenshot" accept="image/*"/></div>
+        <div class="fg"><label>Screenshot chart 2</label><input type="file" name="screenshot2" accept="image/*"/></div>
+      </div>
+      <div class="fg" style="margin-top:12px"><label>Compte</label>
+        <select name="account_id" id="trade-acc-sel"><option value="">Aucun compte lié</option></select></div>
+      <div class="mfoot">
+        <button type="button" class="btn btn-secondary" id="tm-cancel">Annuler</button>
         <button type="submit" class="btn btn-primary">Enregistrer</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- Modal : changer mot de passe -->
-<div class="modal-overlay hidden" id="pwd-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>Changer le mot de passe</h3>
-      <button class="modal-close" id="pwd-modal-close">✕</button>
-    </div>
-    <form id="pwd-form">
-      <div style="display:flex; flex-direction:column; gap:16px;">
-        <div class="form-group">
-          <label>Mot de passe actuel</label>
-          <input type="password" id="pwd-current" placeholder="••••••••" required />
-        </div>
-        <div class="form-group">
-          <label>Nouveau mot de passe</label>
-          <input type="password" id="pwd-new" placeholder="••••••••" required />
-        </div>
-        <div class="form-group">
-          <label>Confirmer</label>
-          <input type="password" id="pwd-confirm" placeholder="••••••••" required />
-        </div>
+<!-- MODAL DETAIL TRADE -->
+<div class="overlay hidden" id="detail-modal">
+  <div class="modal modal-lg">
+    <div class="mh">
+      <div style="display:flex;align-items:center;gap:10px">
+        <h3 id="d-pair" style="font-size:1.1rem"></h3>
+        <span id="d-badge"></span>
       </div>
-      <div style="display:flex; gap:10px; margin-top:20px; justify-content:flex-end;">
-        <button type="button" class="btn btn-secondary" id="pwd-cancel">Annuler</button>
+      <button class="mclose" id="dm-close"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="detail-grid">
+      <div class="df"><span class="dl">Date</span><span class="dv" id="d-date"></span></div>
+      <div class="df"><span class="dl">Direction</span><span class="dv" id="d-dir"></span></div>
+      <div class="df"><span class="dl">RR</span><span class="dv big" id="d-rr"></span></div>
+      <div class="df"><span class="dl">P&L</span><span class="dv big" id="d-pnl"></span></div>
+      <div class="df"><span class="dl">Lot size</span><span class="dv" id="d-lot"></span></div>
+      <div class="df"><span class="dl">Session</span><span class="dv" id="d-sess"></span></div>
+      <div class="df"><span class="dl">Setup</span><span class="dv" id="d-setup"></span></div>
+      <div class="df"><span class="dl">Timeframe</span><span class="dv" id="d-tf"></span></div>
+      <div class="df"><span class="dl">Entrée</span><span class="dv" id="d-entry"></span></div>
+      <div class="df"><span class="dl">Stop Loss</span><span class="dv" id="d-sl"></span></div>
+      <div class="df"><span class="dl">Take Profit</span><span class="dv" id="d-tp"></span></div>
+      <div class="df"><span class="dl">État mental</span><span class="dv" id="d-emo"></span></div>
+    </div>
+    <div id="d-notes-wrap" style="display:none"><div class="notes-box" id="d-notes"></div></div>
+    <div class="ss-grid" id="d-ss"></div>
+    <div class="mfoot">
+      <button class="btn btn-danger btn-sm" id="d-del"><i class="ti ti-trash"></i> Supprimer</button>
+      <button class="btn btn-secondary btn-sm" id="d-edit"><i class="ti ti-pencil"></i> Modifier</button>
+      <button class="btn btn-secondary" id="dm-close2">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MODIFIER TRADE -->
+<div class="overlay hidden" id="edit-modal">
+  <div class="modal modal-lg">
+    <div class="mh"><h3>Modifier le trade</h3><button class="mclose" id="em-close"><i class="ti ti-x"></i></button></div>
+    <form id="edit-form">
+      <input type="hidden" id="e-id"/>
+      <div class="grid3">
+        <div class="fg"><label>Paire</label><select id="e-pair" name="pair"><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>GOLD</option><option>XAUUSD</option><option>NASDAQ</option><option>US30</option><option>BTCUSD</option><option>ETHUSD</option><option>GBPJPY</option><option>EURJPY</option></select></div>
+        <div class="fg"><label>Direction</label><select id="e-dir" name="direction"><option value="LONG">LONG</option><option value="SHORT">SHORT</option></select></div>
+        <div class="fg"><label>Résultat</label><select id="e-res" name="result"><option value="WIN">WIN</option><option value="LOSS">LOSS</option><option value="BE">Break Even</option></select></div>
+      </div>
+      <div class="grid3" style="margin-top:12px">
+        <div class="fg"><label>RR</label><input type="number" id="e-rr" name="rr" step="0.1"/></div>
+        <div class="fg"><label>P&L ($)</label><input type="number" id="e-pnl" name="pnl" step="0.01"/></div>
+        <div class="fg"><label>Date</label><input type="date" id="e-date" name="trade_date"/></div>
+      </div>
+      <div class="grid3" style="margin-top:12px">
+        <div class="fg"><label>Session</label><select id="e-sess" name="session"><option value="">—</option><option>London</option><option>New York</option><option>Asia</option><option>London/NY</option></select></div>
+        <div class="fg"><label>Setup</label><input type="text" id="e-setup" name="setup"/></div>
+        <div class="fg"><label>État mental</label><select id="e-emo" name="emotions"><option value="">—</option><option>Serein</option><option>Stressé</option><option>Anxieux</option><option>Confiant</option><option>Neutre</option><option>Euphorique</option><option>Découragé</option></select></div>
+      </div>
+      <div class="fg" style="margin-top:12px"><label>Notes</label><textarea id="e-notes" name="notes"></textarea></div>
+      <div class="grid2" style="margin-top:12px">
+        <div class="fg"><label>Screenshot 1</label><input type="file" id="e-ss1" name="screenshot" accept="image/*"/></div>
+        <div class="fg"><label>Screenshot 2</label><input type="file" id="e-ss2" name="screenshot2" accept="image/*"/></div>
+      </div>
+      <div class="mfoot">
+        <button type="button" class="btn btn-secondary" id="em-cancel">Annuler</button>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL COMPTE -->
+<div class="overlay hidden" id="acc-modal">
+  <div class="modal">
+    <div class="mh"><h3>Nouveau compte</h3><button class="mclose" id="acm-close"><i class="ti ti-x"></i></button></div>
+    <form id="acc-form">
+      <div class="fg"><label>Nom du compte *</label><input type="text" name="name" placeholder="Compte Réel — ICMarkets" required/></div>
+      <div class="grid2" style="margin-top:12px">
+        <div class="fg"><label>Type</label><select name="type"><option value="live">Live</option><option value="demo">Demo</option><option value="backtest">Backtest</option></select></div>
+        <div class="fg"><label>Devise</label><select name="currency"><option value="USD">USD $</option><option value="EUR">EUR €</option><option value="GBP">GBP £</option></select></div>
+      </div>
+      <div class="grid2" style="margin-top:12px">
+        <div class="fg"><label>Capital initial</label><input type="number" name="initial_balance" placeholder="10000"/></div>
+        <div class="fg"><label>Broker</label><input type="text" name="broker" placeholder="ICMarkets..."/></div>
+      </div>
+      <div class="mfoot">
+        <button type="button" class="btn btn-secondary" id="acm-cancel">Annuler</button>
+        <button type="submit" class="btn btn-primary">Créer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL MDP -->
+<div class="overlay hidden" id="pwd-modal">
+  <div class="modal">
+    <div class="mh"><h3>Changer le mot de passe</h3><button class="mclose" id="pm-close"><i class="ti ti-x"></i></button></div>
+    <form id="pwd-form">
+      <div class="fg"><label>Mot de passe actuel</label><input type="password" id="pwd-cur" required/></div>
+      <div class="fg" style="margin-top:12px"><label>Nouveau mot de passe</label><input type="password" id="pwd-new" required/></div>
+      <div class="fg" style="margin-top:12px"><label>Confirmer</label><input type="password" id="pwd-cf" required/></div>
+      <div class="mfoot">
+        <button type="button" class="btn btn-secondary" id="pm-cancel">Annuler</button>
         <button type="submit" class="btn btn-primary">Mettre à jour</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- Modal : voir screenshot agrandi -->
-<div class="modal-overlay hidden" id="img-modal" style="cursor:zoom-out;">
-  <img id="img-modal-src" src="" alt="Screenshot" style="max-width:90vw; max-height:90vh; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.4);" />
-</div>
-
-<!-- Modal : détail d'un trade -->
-<div class="trade-detail-overlay hidden" id="trade-detail-modal">
-  <div class="trade-detail-modal">
-
-    <!-- En-tête beige -->
-    <div class="trade-detail-top">
-      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
-        <div>
-          <div class="trade-detail-pair" id="detail-pair"></div>
-          <div class="trade-detail-meta">
-            <span id="detail-result-badge"></span>
-            <span style="font-size:0.85rem; color:var(--text-muted);" id="detail-date"></span>
-          </div>
-        </div>
-        <button class="modal-close" id="trade-detail-close" style="flex-shrink:0; margin-top:2px;">✕</button>
-      </div>
-    </div>
-
-    <!-- Corps -->
-    <div class="trade-detail-body">
-
-      <!-- RR + Date -->
-      <div class="trade-detail-stats-row">
-        <div class="detail-stat-box">
-          <div class="label">Risk / Reward</div>
-          <div class="value" id="detail-rr"></div>
-        </div>
-        <div class="detail-stat-box">
-          <div class="label">Date</div>
-          <div class="value" style="font-size:1.1rem;" id="detail-date2"></div>
-        </div>
-      </div>
-
-      <!-- Screenshot -->
-      <div class="trade-detail-screenshot hidden" id="detail-screenshot-wrap">
-        <img id="detail-screenshot-img" src="" alt="Screenshot" />
-      </div>
-
-      <!-- Notes -->
-      <div class="trade-detail-notes" id="detail-notes-wrap">
-        <div class="label">Notes</div>
-        <div class="text" id="detail-notes"></div>
-      </div>
-
-    </div>
-
-    <!-- Pied -->
-    <div class="trade-detail-footer">
-      <button class="btn btn-danger btn-sm" id="detail-delete-btn">Supprimer ce trade</button>
-      <div style="display:flex; gap:8px;">
-        <button class="btn btn-secondary btn-sm" id="detail-edit-btn">Modifier</button>
-        <button class="btn btn-secondary btn-sm" id="trade-detail-close2">Fermer</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal : modifier un trade -->
-<div class="modal-overlay hidden" id="edit-trade-modal">
+<!-- MODAL EDIT VIDEO -->
+<div class="overlay hidden" id="evid-modal">
   <div class="modal">
-    <div class="modal-header">
-      <h3>Modifier le trade</h3>
-      <button class="modal-close" id="edit-trade-modal-close">✕</button>
-    </div>
-    <form id="edit-trade-form">
-      <input type="hidden" id="edit-trade-id" />
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-        <div class="form-group">
-          <label>Paire</label>
-          <select id="edit-trade-pair" required>
-            <option value="">Sélectionner</option>
-            <option>EURUSD</option>
-            <option>GOLD</option>
-            <option>GBPUSD</option>
-            <option>USDJPY</option>
-            <option>NASDAQ</option>
-            <option>US30</option>
-            <option>BTCUSD</option>
-            <option value="OTHER">Autre</option>
-          </select>
+    <div class="mh"><h3>Modifier la vidéo</h3><button class="mclose" id="evm-close"><i class="ti ti-x"></i></button></div>
+    <form id="evid-form">
+      <input type="hidden" id="ev-id"/>
+      <div class="fg"><label>Titre</label><input type="text" id="ev-title" required/></div>
+      <div class="fg" style="margin-top:10px"><label>Description</label><textarea id="ev-desc" style="min-height:55px"></textarea></div>
+      <div id="ev-cover-prev" style="display:none;margin-top:8px"><img id="ev-cover-img" style="width:100%;max-height:100px;object-fit:cover;border-radius:7px;border:1px solid var(--border)"/></div>
+      <div style="margin-top:12px">
+        <label class="flabel" style="display:block;margin-bottom:6px">Source</label>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px">
+          <label style="display:flex;align-items:center;gap:5px;font-size:.78rem;cursor:pointer"><input type="radio" name="evsrc" id="evsrc-keep" value="keep" checked/> Garder</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.78rem;cursor:pointer"><input type="radio" name="evsrc" id="evsrc-url" value="url"/> URL</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.78rem;cursor:pointer"><input type="radio" name="evsrc" id="evsrc-file" value="file"/> Fichier</label>
         </div>
-        <div class="form-group">
-          <label>Résultat</label>
-          <select id="edit-trade-result" required>
-            <option value="">Sélectionner</option>
-            <option value="WIN">WIN ✅</option>
-            <option value="LOSS">LOSS ❌</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Risk/Reward (RR)</label>
-          <input type="text" id="edit-trade-rr" placeholder="+2R / -1R" required />
-        </div>
-        <div class="form-group">
-          <label>Date du trade</label>
-          <input type="date" id="edit-trade-date" required />
-        </div>
-        <div class="form-group" style="grid-column:1/-1;">
-          <label>Notes (optionnel)</label>
-          <textarea id="edit-trade-notes" placeholder="Analyse, émotions, contexte de marché…"></textarea>
-        </div>
-        <div class="form-group" style="grid-column:1/-1;">
-          <label>Screenshot</label>
-          <div id="edit-trade-screenshot-preview" class="hidden" style="margin-bottom:8px;">
-            <img id="edit-trade-screenshot-img" src="" alt="Screenshot actuel"
-              style="width:100%; max-height:140px; object-fit:contain; border-radius:8px; border:1px solid var(--border); background:#111; display:block;" />
-            <p style="font-size:0.78rem; color:var(--text-muted); margin-top:5px;">Screenshot actuel — sélectionnez un fichier pour le remplacer</p>
-          </div>
-          <input type="file" id="edit-trade-screenshot" accept="image/*" style="padding:8px 12px;" />
-        </div>
+        <div id="ev-url-wrap" class="hidden"><div class="fg"><label>URL</label><input type="url" id="ev-url"/></div></div>
+        <div id="ev-file-wrap" class="hidden"><div class="fg"><label>Fichier</label><input type="file" id="ev-file" accept="video/*"/></div></div>
       </div>
-      <div style="display:flex; gap:10px; margin-top:20px; justify-content:flex-end;">
-        <button type="button" class="btn btn-secondary" id="edit-trade-cancel">Annuler</button>
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      <div class="fg" style="margin-top:10px"><label>Nouvelle miniature</label><input type="file" id="ev-cover" accept="image/*"/></div>
+      <div class="prog-wrap hidden" id="eprog-wrap"><div class="prog-bg"><div class="prog-fill" id="eprog" style="width:0%"></div></div><div class="prog-lbl" id="eprog-lbl">0%</div></div>
+      <div class="mfoot">
+        <button type="button" class="btn btn-secondary" id="evm-cancel">Annuler</button>
+        <button type="submit" class="btn btn-primary" id="ev-btn">Enregistrer</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- Modal : modifier une vidéo -->
-<div class="modal-overlay hidden" id="edit-video-modal">
-  <div class="modal" style="max-width:520px;">
-    <div class="modal-header">
-      <h3>Modifier la vidéo</h3>
-      <button class="modal-close" id="edit-video-modal-close">✕</button>
-    </div>
-    <form id="edit-video-form" style="display:flex; flex-direction:column; gap:16px;">
-      <input type="hidden" id="edit-video-id" />
-      <div class="form-group">
-        <label>Titre</label>
-        <input type="text" id="edit-video-title" required />
-      </div>
-      <div class="form-group">
-        <label>Description</label>
-        <input type="text" id="edit-video-desc" placeholder="Courte description" />
-      </div>
-      <div class="form-group">
-        <label>Image de couverture</label>
-        <div id="edit-cover-preview" style="display:none; margin-bottom:8px;">
-          <img id="edit-cover-img" src="" alt="" style="width:100%; max-height:110px; object-fit:cover; border-radius:8px; border:1px solid var(--border);" />
-        </div>
-        <input type="file" id="edit-video-cover" accept="image/*" style="padding:6px 10px;" />
-      </div>
-      <div class="form-group">
-        <label>Vidéo</label>
-        <div style="display:flex; gap:14px; margin-bottom:8px;">
-          <label style="display:flex; align-items:center; gap:5px; font-size:0.85rem; cursor:pointer; font-weight:400;">
-            <input type="radio" name="edit-source" value="keep" id="edit-source-keep" checked /> Conserver
-          </label>
-          <label style="display:flex; align-items:center; gap:5px; font-size:0.85rem; cursor:pointer; font-weight:400;">
-            <input type="radio" name="edit-source" value="url" id="edit-source-url" /> Nouvelle URL
-          </label>
-          <label style="display:flex; align-items:center; gap:5px; font-size:0.85rem; cursor:pointer; font-weight:400;">
-            <input type="radio" name="edit-source" value="file" id="edit-source-file" /> Nouveau fichier
-          </label>
-        </div>
-        <div id="edit-url-wrap" class="hidden">
-          <input type="url" id="edit-video-url" placeholder="https://youtube.com/..." />
-        </div>
-        <div id="edit-file-wrap" class="hidden">
-          <input type="file" id="edit-video-file" accept="video/*" style="padding:6px 10px;" />
-          <div id="edit-progress-wrap" class="hidden" style="margin-top:8px;">
-            <div style="height:5px; border-radius:3px; background:var(--border); overflow:hidden;">
-              <div id="edit-progress-bar" style="height:100%; width:0%; background:var(--gold); transition:width 0.2s;"></div>
-            </div>
-            <div id="edit-progress-label" style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">0%</div>
-          </div>
-        </div>
-      </div>
-      <div style="display:flex; gap:10px; justify-content:flex-end;">
-        <button type="button" class="btn btn-secondary" id="edit-video-cancel">Annuler</button>
-        <button type="submit" class="btn btn-primary" id="edit-video-btn">Enregistrer</button>
-      </div>
-    </form>
-  </div>
+<!-- IMAGE VIEWER -->
+<div id="img-modal" class="hidden"><img id="img-src" src="" alt=""/></div>
+
+<!-- VIDEO MODAL -->
+<div id="vid-modal" class="hidden">
+  <div id="vid-modal-hd"><span id="vid-modal-title"></span><button id="vid-close" style="background:rgba(255,255,255,.1);border:none;color:#fff;width:30px;height:30px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="ti ti-x"></i></button></div>
+  <video id="vid-player" controls></video>
 </div>
 
-<!-- Modal : lecteur vidéo local -->
-<div class="modal-overlay hidden" id="video-modal" style="cursor:default;">
-  <div style="position:relative; width:min(900px, 92vw);">
-    <button id="video-modal-close" style="position:absolute; top:-36px; right:0; background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer; line-height:1;">✕</button>
-    <video id="video-modal-player" controls style="width:100%; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.6); background:#000; display:block;"></video>
-    <div id="video-modal-title" style="color:#fff; font-weight:600; margin-top:10px; font-size:1rem;"></div>
-  </div>
-</div>
-
-<!-- Toast container -->
-<div id="toast-container"></div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<div id="toasts"></div>
 <script src="/js/app.js"></script>
 </body>
 </html>
