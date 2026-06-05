@@ -398,6 +398,13 @@ $('edit-form').addEventListener('submit',async e=>{
   e.preventDefault();
   const id=$('e-id').value, form=new FormData($('edit-form'));
   try {
+    const result = form.get('result');
+    let rr = parseFloat(form.get('rr')) || 0;
+    let pnl = parseFloat(form.get('pnl')) || 0;
+    if (result === 'WIN')  { rr = Math.abs(rr); pnl = Math.abs(pnl); }
+    if (result === 'LOSS') { rr = -Math.abs(rr); pnl = -Math.abs(pnl); }
+    if (result === 'BE')   { rr = 0; pnl = 0; }
+    form.set('rr', rr); form.set('pnl', pnl);
     await api('PATCH',`/trades/${id}`,form,true);
     toast('Trade mis à jour','success'); $('edit-modal').classList.add('hidden');
     loadTrades(); loadDashboard();
