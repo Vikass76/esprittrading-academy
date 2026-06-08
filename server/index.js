@@ -3,6 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const fs = require('fs');
+const https = require('https');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -34,8 +35,22 @@ app.use('/api/admin', require('./routes/admin'));
 app.use('/api/videos', require('./routes/videos'));
 app.use('/api/trades', require('./routes/trades'));
 
+app.get('/api/eco-calendar', (req, res) => {
+  const { from, to } = req.query;
+  const key = process.env.FINNHUB_API_KEY;
+  const url = 'https://finnhub.io/api/v1/calendar/economic?from=' + from + '&to=' + to + '&token=' + key;
+  https.get(url, r => {
+    let data = '';
+    r.on('data', c => data += c);
+    r.on('end', () => {
+      try { res.json(JSON.parse(data).economicCalendar || []); }
+      catch(e) { res.json([]); }
+    });
+  }).on('error', () => res.json([]));
+});
+
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../public/index.html')));
 
 require('./db');
 
-app.listen(PORT, () => console.log(`Serveur démarré sur http://localhost:${PORT}`));
+app.listen(PORT, () => console.log('Serveur démarré sur http://localhost:' + PORT));

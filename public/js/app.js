@@ -83,6 +83,7 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => btn.addEventList
   if (t==='analytics') loadAnalytics();
   if (t==='formation') loadFormation();
   if (t==='admin') loadAdmin();
+  if (t==='eco-cal') loadEcoCalendar();
 }));
 
 function switchTab(t) {
@@ -839,3 +840,60 @@ document.getElementById('register-form')?.addEventListener('submit', async e => 
     err.textContent = ex.message; err.classList.remove('hidden');
   } finally { btn.textContent = 'Créer mon compte'; btn.disabled = false; }
 });
+
+// ═══ CALENDRIER ÉCONOMIQUE ═══
+async function loadEcoCalendar() {
+  const container = document.getElementById('eco-cal-content');
+  if (!container) return;
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)">Chargement...</div>';
+  try {
+    const today = new Date();
+    const from = today.toISOString().split('T')[0];
+    const to = new Date(today.getTime() + 7*24*60*60*1000).toISOString().split('T')[0];
+    const res = await fetch('/api/eco-calendar?from=' + from + '&to=' + to);
+    const data = await res.json();
+    if (!data.length) { container.innerHTML = '<div class="empty"><p>Aucun événement.</p></div>'; return; }
+    const MONTHS = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+    const DAYS = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+    const FLAGS = {US:'🇺🇸',EU:'🇪🇺',GB:'🇬🇧',JP:'🇯🇵',CA:'🇨🇦',AU:'🇦🇺',NZ:'🇳🇿',CH:'🇨🇭',CN:'🇨🇳',DE:'🇩🇪',FR:'🇫🇷',IT:'🇮🇹',ES:'🇪🇸',KR:'🇰🇷',IN:'🇮🇳',BR:'🇧🇷',MX:'🇲🇽',RU:'🇷🇺',ZA:'🇿🇦',SG:'🇸🇬',HK:'🇭🇰',SE:'🇸🇪',NO:'🇳🇴',DK:'🇩🇰',PL:'🇵🇱',CZ:'🇨🇿',HU:'🇭🇺',TR:'🇹🇷',ID:'🇮🇩',TH:'🇹🇭',MY:'🇲🇾',PH:'🇵🇭',VN:'🇻🇳',SA:'🇸🇦',AE:'🇦🇪',EG:'🇪🇬',NG:'🇳🇬',AR:'🇦🇷',CL:'🇨🇱',CO:'🇨🇴',PT:'🇵🇹',GR:'🇬🇷',AT:'🇦🇹',BE:'🇧🇪',NL:'🇳🇱',FI:'🇫🇮',IE:'🇮🇪',IL:'🇮🇱',BD:'🇧🇩',LT:'🇱🇹',LV:'🇱🇻',EE:'🇪🇪',RO:'🇷🇴',HR:'🇭🇷',BG:'🇧🇬',SK:'🇸🇰',SI:'🇸🇮'};
+    const grouped = {};
+    data.forEach(e => {
+      const d = (e.time||'').substring(0,10);
+      if (d.length < 10) return;
+      if (!grouped[d]) grouped[d] = [];
+      grouped[d].push(e);
+    });
+    const sortedDates = Object.keys(grouped).sort();
+    container.innerHTML = sortedDates.map(date => {
+      const p = date.split('-');
+      const d = new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2]));
+      const isToday = date === from;
+      const label = DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+      return '<div style="margin-bottom:24px">'
+        + '<div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;border-radius:8px;margin-bottom:8px;background:' + (isToday?'var(--gold-light)':'var(--bg-subtle)') + ';color:' + (isToday?'var(--gold-dark)':'var(--text-muted)') + '">' + label + (isToday?' — Aujourd\'hui':'') + '</div>'
+        + '<table style="width:100%;border-collapse:collapse"><thead><tr style="font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--text-light)">'
+        + '<th style="text-align:left;padding:6px 10px">Heure</th><th style="text-align:left;padding:6px 10px">Dev.</th><th style="padding:6px 10px">Impact</th><th style="text-align:left;padding:6px 10px">Événement</th><th style="text-align:right;padding:6px 10px">Actuel</th><th style="text-align:right;padding:6px 10px">Prévu</th><th style="text-align:right;padding:6px 10px">Préc.</th>'
+        + '</tr></thead><tbody>'
+        + grouped[date].map((e,i) => {
+          const impact = (e.impact||'').toLowerCase();
+          const ic = impact==='high'?'var(--red)':impact==='medium'?'#f97316':'#9ca3af';
+          const stars = impact==='high'?'<span style="color:var(--red)">●●●</span>':impact==='medium'?'<span style="color:#f97316">●●</span><span style="color:#e5e0d8">●</span>':'<span style="color:var(--green)">●</span><span style="color:#e5e0d8">●●</span>';
+          const country = (e.country||'').toUpperCase();
+          const flag = FLAGS[country] || '';
+          const actual = e.actual !== null && e.actual !== undefined ? String(e.actual) : '—';
+          const forecast = e.estimate !== null && e.estimate !== undefined ? String(e.estimate) : '—';
+          const prev = e.prev !== null && e.prev !== undefined ? String(e.prev) : '—';
+          const ac = actual !== '—' && forecast !== '—' ? (parseFloat(actual) >= parseFloat(forecast) ? 'var(--green)' : 'var(--red)') : 'var(--text)';
+          return '<tr style="background:' + (i%2===0?'var(--bg-card)':'var(--bg-subtle)') + ';border-bottom:1px solid var(--border-2)">'
+            + '<td style="padding:10px;font-size:.78rem;font-weight:600;color:var(--text-muted)">' + (e.time||'').substring(11,16) + '</td>'
+            + '<td style="padding:10px"><span style="font-size:.72rem;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--bg-subtle);border:1px solid var(--border)">' + flag + ' ' + country + '</span></td>'
+            + '<td style="padding:10px;text-align:center"><span style="font-size:.75rem;font-weight:700">' + stars + '</span></td>'
+            + '<td style="padding:10px;font-size:.83rem">' + (e.event||'—') + '</td>'
+            + '<td style="padding:10px;text-align:right;font-size:.82rem;font-weight:700;color:' + ac + '">' + actual + '</td>'
+            + '<td style="padding:10px;text-align:right;font-size:.82rem;color:var(--text-muted)">' + forecast + '</td>'
+            + '<td style="padding:10px;text-align:right;font-size:.82rem;color:var(--text-muted)">' + prev + '</td>'
+            + '</tr>';
+        }).join('') + '</tbody></table></div>';
+    }).join('');
+  } catch(ex) { container.innerHTML = '<div class="empty"><p>Erreur de chargement.</p></div>'; console.error(ex); }
+}

@@ -80,6 +80,7 @@
       <button class="nav-item" data-tab="calendar"><span class="ni"><i class="ti ti-calendar-month"></i></span>Calendrier</button>
       <button class="nav-item" data-tab="analytics"><span class="ni"><i class="ti ti-chart-dots-3"></i></span>Analytics</button>
       <div class="sb-section" style="margin-top:8px">Ressources</div>
+      <button class="nav-item" data-tab="eco-cal"><span class="ni"><i class="ti ti-news"></i></span>Calendrier éco</button>
       <button class="nav-item" data-tab="outils"><span class="ni"><i class="ti ti-tool"></i></span>Outils</button>
       <button class="nav-item" data-tab="formation"><span class="ni"><i class="ti ti-video"></i></span>Formation</button>
       <div class="sb-section admin-only hidden" style="margin-top:8px">Admin</div>
@@ -181,6 +182,15 @@
           <div class="ccard ch-200"><div class="ccard-title">P&L mensuel</div><div class="ccard-body"><canvas id="c-monthly"></canvas></div></div>
         </div>
         <div class="card"><div class="ccard-title" style="margin-bottom:14px">Performance par paire</div><table class="perf-table" id="pair-tbl"></table></div>
+      </section>
+
+      <!-- ECO CALENDAR -->
+      <section id="tab-eco-cal" class="tab-section hidden">
+        <div class="ph">
+          <div><h2>Calendrier économique</h2><p>Annonces et événements de la semaine</p></div>
+          <button class="btn btn-secondary btn-sm" onclick="loadEcoCalendar()"><i class="ti ti-refresh"></i> Actualiser</button>
+        </div>
+        <div id="eco-cal-content"></div>
       </section>
 
       <!-- OUTILS -->
