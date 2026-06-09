@@ -171,8 +171,7 @@ async function loadDashboard() {
       renderKPIs({total:0,wins:0,losses:0,be:0,winRate:0,totalRR:0,totalPnl:0,avgRR:0,avgWinRR:0,avgLossRR:0,bestRR:0,worstRR:0,maxStreak:0,currentStreak:{type:null,count:0}}, 'dash-kpis', 8);
       cEq=kill(cEq); cPair=kill(cPair); cSess=kill(cSess);
       renderEmptyChart('c-equity','line',['','','','','']);
-      renderEmptyChart('c-pair','bar',['EURUSD','GBPUSD','GOLD','NASDAQ','BTCUSD']);
-      renderEmptyChart('c-session','doughnut',[]);
+      renderWeekCal([]);
       return;
     }
     const p = '?account_id=' + selAcc;
@@ -187,7 +186,7 @@ async function loadDashboard() {
         let bal = acc.initial_balance;
         // Générer tous les jours entre premier trade et aujourd'hui
         const firstDate = new Date(sorted[0].trade_date + 'T12:00:00');
-        const lastDate = new Date();
+        const lastDate = new Date(Math.max(new Date(), new Date(sorted[sorted.length-1].trade_date + 'T12:00:00')));
         const allDays = [];
         const todayStr = new Date().toISOString().split('T')[0];
         for (let d = new Date(firstDate); d <= lastDate; d.setDate(d.getDate() + 1)) {
@@ -214,15 +213,15 @@ async function loadDashboard() {
           return null;
         })];
         const fmt = v => '$' + Number(v).toLocaleString('fr-FR');
-        cEq = mkChart('c-equity','line',{ labels, datasets:[{ data, borderColor: GOLD, backgroundColor: 'rgba(244,199,15,0.05)', pointBackgroundColor: data.map((v,i) => (i===0||(i>0&&v!==data[i-1]))?(v>=acc.initial_balance?G:R):'transparent'), pointBorderColor: 'transparent', pointRadius: data.map((v,i) => (i===0||(i>0&&v!==data[i-1]))?3.5:0), borderWidth: 2.5, tension: 0.3, fill: true, spanGaps: false }]},{ plugins:{ legend:{display:false}, tooltip:{callbacks:{label: c => fmt(c.parsed.y)}}}, scales:{ x:{...axOpts,ticks:{...axOpts.ticks,maxTicksLimit:8,maxRotation:0}}, y:{...axOpts,ticks:{...axOpts.ticks,callback: fmt}}}});
+        renderWeekCal(allT);
+        cEq = mkChart('c-equity','line',{ labels, datasets:[{ data, borderColor: GOLD, backgroundColor: 'rgba(244,199,15,0.05)', pointBackgroundColor: data.map((v,i) => (i===0||(i>0&&v!==data[i-1]))?(v>=acc.initial_balance?G:R):'transparent'), pointBorderColor: 'transparent', pointRadius: data.map((v,i) => (i===0||(i>0&&v!==data[i-1]))?3.5:0), borderWidth: 2.5, tension: 0.3, fill: true, spanGaps: true }]},{ plugins:{ legend:{display:false}, tooltip:{callbacks:{label: c => fmt(c.parsed.y)}}}, scales:{ x:{...axOpts,ticks:{...axOpts.ticks,maxTicksLimit:8,maxRotation:0}}, y:{...axOpts,ticks:{...axOpts.ticks,callback: fmt}}}});
       } else {
         renderEmptyChart('c-equity','line',['','','','','']);
       }
     } else {
       renderEquity(stats.equityCurve);
+      renderWeekCal([]);
     }
-    renderPairChart(stats.byPair);
-    renderSessChart(stats.bySession);
   } catch(ex) { console.error(ex); }
 }
 
@@ -930,4 +929,61 @@ async function loadEcoCalendar() {
         }).join('') + '</tbody></table></div>';
     }).join('');
   } catch(ex) { container.innerHTML = '<div class="empty"><p>Erreur de chargement.</p></div>'; console.error(ex); }
+}
+
+// ═══ CALENDRIER SEMAINE DASHBOARD ═══
+function renderWeekCal(trades) {
+  const el = document.getElementById('dash-week-cal');
+  if (!el) return;
+  const DAYS = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const MONTHS = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  
+  // Trouver le lundi de la semaine courante
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+  
+  // Générer les 7 jours
+  const week = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    week.push(d);
+  }
+  
+  // Regrouper trades par date
+  const byDate = {};
+  (trades||[]).forEach(t => {
+    if (!byDate[t.trade_date]) byDate[t.trade_date] = { pnl: 0, count: 0 };
+    byDate[t.trade_date].pnl += parseFloat(t.pnl) || 0;
+    byDate[t.trade_date].count++;
+  });
+  
+  const todayStr = today.toISOString().split('T')[0];
+  
+  el.innerHTML = '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm)">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'
+    + '<div style="font-size:.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-muted)">Semaine du ' + monday.getDate() + ' ' + MONTHS[monday.getMonth()] + '</div>'
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px">'
+    + week.map(d => {
+      const ds = d.toISOString().split('T')[0];
+      const data = byDate[ds];
+      const isToday = ds === todayStr;
+      const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+      const pnl = data ? data.pnl : 0;
+      const count = data ? data.count : 0;
+      const pnlColor = pnl > 0 ? 'var(--green)' : pnl < 0 ? 'var(--red)' : 'var(--text-muted)';
+      const pnlStr = pnl > 0 ? '+$' + pnl.toFixed(0) : pnl < 0 ? '-$' + Math.abs(pnl).toFixed(0) : '$0';
+      const bg = isToday ? 'var(--gold-light)' : isWeekend ? 'var(--bg-subtle)' : 'var(--bg-card)';
+      const border = isToday ? 'var(--gold)' : 'var(--border)';
+      return '<div style="background:' + bg + ';border:1px solid ' + border + ';border-radius:10px;padding:12px 10px;text-align:center">'
+        + '<div style="font-size:.7rem;font-weight:600;color:var(--text-muted);margin-bottom:4px">' + DAYS[d.getDay()] + '</div>'
+        + '<div style="font-size:1.1rem;font-weight:700;font-family:DM Sans,sans-serif;color:' + (isToday?'var(--gold-dark)':'var(--text)') + ';margin-bottom:8px">' + d.getDate() + '</div>'
+        + '<div style="font-size:.8rem;font-weight:700;color:' + pnlColor + ';margin-bottom:3px">' + pnlStr + '</div>'
+        + '<div style="font-size:.68rem;color:var(--text-muted)">' + count + ' trade' + (count>1?'s':'') + '</div>'
+        + '</div>';
+    }).join('')
+    + '</div></div>';
 }
