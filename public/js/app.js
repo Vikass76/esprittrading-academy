@@ -494,11 +494,22 @@ async function loadAnalytics() {
     }
     const p = '?account_id=' + selAcc;
     const s = await api('GET','/trades/stats'+p);
-    renderKPIs(s,'an-kpis',4);
+    const gW = trades.filter(t=>parseFloat(t.pnl)>0).reduce((a,t)=>a+parseFloat(t.pnl),0);
+    const gL = Math.abs(trades.filter(t=>parseFloat(t.pnl)<0).reduce((a,t)=>a+parseFloat(t.pnl),0));
+    const pf = gL>0?(gW/gL).toFixed(2):gW>0?'inf':'—';
+    const pfC = parseFloat(pf)>=1.5?'var(--green)':parseFloat(pf)>=1?'var(--gold-dark)':'var(--red)';
+    const anEl = $('an-kpis'); anEl.innerHTML='';
+    const allKpis=[{label:'P&L Net',val:s.total&&s.totalPnl?(s.totalPnl>=0?'+':'')+''+Math.abs(s.totalPnl).toFixed(0):'—',sub:'Résultat net',cls:s.total&&s.totalPnl?(s.totalPnl>=0?'g':'r'):'',icon:'ti-currency-dollar'},{label:'Win Rate',val:s.total?s.winRate+'%':'—',sub:s.total?s.wins+' gagnant'+(s.wins>1?'s':''):'—',cls:s.total?(s.winRate>=50?'g':'r'):'',icon:'ti-percentage'},{label:'Total Trades',val:s.total||'—',sub:s.total?s.wins+'W · '+s.losses+'L · '+s.be+'BE':'Aucun trade',cls:'',icon:'ti-chart-bar'},{label:'RR cumulé',val:s.total?(s.totalRR>=0?'+':'')+s.totalRR+'R':'—',sub:s.total?'Moy: '+(s.avgRR>=0?'+':'')+s.avgRR+'R':'—',cls:s.total?(s.totalRR>=0?'o':'r'):'',icon:'ti-trending-up'}];
+    [allKpis[2],allKpis[1],allKpis[3]].forEach(k=>{ const d=document.createElement('div'); d.className='kpi '+(k.accent||''); d.innerHTML='<div class="kpi-label"><i class="ti '+k.icon+'"></i>'+k.label+'</div><div class="kpi-val '+k.cls+'">'+k.val+'</div><div class="kpi-sub">'+k.sub+'</div>'; anEl.appendChild(d); });
+    const pfDiv = document.createElement('div');
+    pfDiv.className = 'kpi';
+    pfDiv.innerHTML = '<div class="kpi-label"><i class="ti ti-math-function"></i>Profit Factor</div><div class="kpi-val" style="color:'+pfC+'">'+pf+'</div><div class="kpi-sub">'+(gL>0?'G:'+gW.toFixed(0)+' P:'+gL.toFixed(0):'—')+'</div>';
+    $('an-kpis').appendChild(pfDiv);
     renderDayChart(s.byDay);
     trades = await api('GET', '/trades' + p);
     renderRRDist(); renderSetupChart(); renderMonthly();
     renderPairTable(s.byPair);
+    renderWinnersLosers(trades);
   } catch(ex){console.error(ex);}
 }
 
@@ -986,4 +997,40 @@ function renderWeekCal(trades) {
         + '</div>';
     }).join('')
     + '</div></div>';
+}
+
+// ═══ WINNERS & LOSERS ═══
+function renderWinnersLosers(trades) {
+  const el = document.getElementById('winners-losers');
+  if (!el) return;
+  const wins = trades.filter(t => t.result === 'WIN');
+  const losses = trades.filter(t => t.result === 'LOSS');
+  const bestRR = wins.length ? Math.max(...wins.map(t => parseFloat(t.rr)||0)) : 0;
+  const avgWinRR = wins.length ? (wins.reduce((a,t) => a+(parseFloat(t.rr)||0),0)/wins.length).toFixed(2) : 0;
+  const worstRR = losses.length ? Math.min(...losses.map(t => parseFloat(t.rr)||0)) : 0;
+  const avgLossRR = losses.length ? (losses.reduce((a,t) => a+(parseFloat(t.rr)||0),0)/losses.length).toFixed(2) : 0;
+  const maxWinStreak = (() => { let max=0,cur=0; trades.forEach(t=>{if(t.result==='WIN'){cur++;max=Math.max(max,cur);}else cur=0;}); return max; })();
+  const maxLossStreak = (() => { let max=0,cur=0; trades.forEach(t=>{if(t.result==='LOSS'){cur++;max=Math.max(max,cur);}else cur=0;}); return max; })();
+  const avgWinStreak = wins.length && maxWinStreak ? (wins.length/Math.max(1,maxWinStreak)).toFixed(1) : 0;
+  const avgLossStreak = losses.length && maxLossStreak ? (losses.length/Math.max(1,maxLossStreak)).toFixed(1) : 0;
+
+  const row = (label, val) => '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="font-size:.83rem;color:rgba(255,255,255,0.65)">'+label+'</span><span style="font-size:.9rem;font-weight:700;color:#fff">'+val+'</span></div>';
+
+  el.innerHTML =
+    '<div style="background:#0f1923;border:1.5px solid var(--green);border-radius:14px;padding:24px">' +
+      '<div style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:16px">Gagnants</div>' +
+      row('Total opérations gagnantes', wins.length) +
+      row('Meilleur RR', '+'+bestRR+'R') +
+      row('RR moyen', '+'+avgWinRR+'R') +
+      row('Gains consécutifs max.', maxWinStreak) +
+      row('Gains consécutifs moyens', avgWinStreak) +
+    '</div>' +
+    '<div style="background:#0f1923;border:1.5px solid var(--red);border-radius:14px;padding:24px">' +
+      '<div style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:16px">Perdants</div>' +
+      row('Total opérations perdantes', losses.length) +
+      row('Pire RR', worstRR+'R') +
+      row('RR moyen', avgLossRR+'R') +
+      row('Pertes consécutives max.', maxLossStreak) +
+      row('Pertes consécutives moyennes', avgLossStreak) +
+    '</div>';
 }

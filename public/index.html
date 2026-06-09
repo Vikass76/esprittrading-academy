@@ -170,14 +170,8 @@
       <section id="tab-analytics" class="tab-section hidden">
         <div class="ph"><div><h2>Analytics</h2><p>Analyse approfondie de vos performances</p></div></div>
         <div class="kpi-grid" id="an-kpis"></div>
-        <div class="chart-row chart-row-2" style="margin-bottom:16px">
-          <div class="ccard ch-200"><div class="ccard-title">Performance par jour de la semaine</div><div class="ccard-body"><canvas id="c-day"></canvas></div></div>
-          <div class="ccard ch-200"><div class="ccard-title">Distribution des RR</div><div class="ccard-body"><canvas id="c-rrdist"></canvas></div></div>
-        </div>
-        <div class="chart-row chart-row-2" style="margin-bottom:20px">
-          <div class="ccard ch-200"><div class="ccard-title">Win Rate par setup</div><div class="ccard-body"><canvas id="c-setup"></canvas></div></div>
-          <div class="ccard ch-200"><div class="ccard-title">P&L mensuel</div><div class="ccard-body"><canvas id="c-monthly"></canvas></div></div>
-        </div>
+        <div style="display:none"><canvas id="c-day"></canvas><canvas id="c-rrdist"></canvas><canvas id="c-setup"></canvas><canvas id="c-monthly"></canvas></div>
+        <div id="winners-losers" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px"></div>
         <div class="card"><div class="ccard-title" style="margin-bottom:14px">Performance par paire</div><table class="perf-table" id="pair-tbl"></table></div>
       </section>
 
