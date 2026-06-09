@@ -851,11 +851,19 @@ async function loadEcoCalendar() {
     const from = today.toISOString().split('T')[0];
     const to = new Date(today.getTime() + 7*24*60*60*1000).toISOString().split('T')[0];
     const res = await fetch('/api/eco-calendar?from=' + from + '&to=' + to);
-    const data = await res.json();
+    const raw = await res.json();
+    // Garder tous les impacts mais filtrer les pays pertinents pour traders
+    const TRADER_COUNTRIES = ['US','EU','GB','JP','CA','AU','NZ','CH','CN','DE','FR','IT','ES','SG','HK','KR','IN','BR','MX','NO','SE','DK','PL','HU','CZ','TR','ZA','SA','AE'];
+    const data = raw.filter(e => {
+      const c = (e.country||'').toUpperCase();
+      const imp = (e.impact||'').toLowerCase();
+      // Garder si pays trader OU impact high
+      return TRADER_COUNTRIES.includes(c) || imp === 'high';
+    });
     if (!data.length) { container.innerHTML = '<div class="empty"><p>Aucun événement.</p></div>'; return; }
     const MONTHS = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
     const DAYS = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
-    const FLAGS = {US:'🇺🇸',EU:'🇪🇺',GB:'🇬🇧',JP:'🇯🇵',CA:'🇨🇦',AU:'🇦🇺',NZ:'🇳🇿',CH:'🇨🇭',CN:'🇨🇳',DE:'🇩🇪',FR:'🇫🇷',IT:'🇮🇹',ES:'🇪🇸',KR:'🇰🇷',IN:'🇮🇳',BR:'🇧🇷',MX:'🇲🇽',RU:'🇷🇺',ZA:'🇿🇦',SG:'🇸🇬',HK:'🇭🇰',SE:'🇸🇪',NO:'🇳🇴',DK:'🇩🇰',PL:'🇵🇱',CZ:'🇨🇿',HU:'🇭🇺',TR:'🇹🇷',ID:'🇮🇩',TH:'🇹🇭',MY:'🇲🇾',PH:'🇵🇭',VN:'🇻🇳',SA:'🇸🇦',AE:'🇦🇪',EG:'🇪🇬',NG:'🇳🇬',AR:'🇦🇷',CL:'🇨🇱',CO:'🇨🇴',PT:'🇵🇹',GR:'🇬🇷',AT:'🇦🇹',BE:'🇧🇪',NL:'🇳🇱',FI:'🇫🇮',IE:'🇮🇪',IL:'🇮🇱',BD:'🇧🇩',LT:'🇱🇹',LV:'🇱🇻',EE:'🇪🇪',RO:'🇷🇴',HR:'🇭🇷',BG:'🇧🇬',SK:'🇸🇰',SI:'🇸🇮'};
+    const FLAGS = {US:'🇺🇸',EU:'🇪🇺',GB:'🇬🇧',JP:'🇯🇵',CA:'🇨🇦',AU:'🇦🇺',NZ:'🇳🇿',CH:'🇨🇭',CN:'🇨🇳',DE:'🇩🇪',FR:'🇫🇷',IT:'🇮🇹',ES:'🇪🇸',KR:'🇰🇷',IN:'🇮🇳',BR:'🇧🇷',MX:'🇲🇽',RU:'🇷🇺',ZA:'🇿🇦',SG:'🇸🇬',HK:'🇭🇰',SE:'🇸🇪',NO:'🇳🇴',DK:'🇩🇰',PL:'🇵🇱',CZ:'🇨🇿',HU:'🇭🇺',TR:'🇹🇷',ID:'🇮🇩',TH:'🇹🇭',MY:'🇲🇾',PH:'🇵🇭',VN:'🇻🇳',SA:'🇸🇦',AE:'🇦🇪',EG:'🇪🇬',NG:'🇳🇬',AR:'🇦🇷',CL:'🇨🇱',CO:'🇨🇴',PT:'🇵🇹',GR:'🇬🇷',AT:'🇦🇹',BE:'🇧🇪',NL:'🇳🇱',FI:'🇫🇮',IE:'🇮🇪',IL:'🇮🇱',BD:'🇧🇩',LT:'🇱🇹',LV:'🇱🇻',EE:'🇪🇪',RO:'🇷🇴',HR:'🇭🇷',BG:'🇧🇬',SK:'🇸🇰',SI:'🇸🇮',IS:'🇮🇸',AO:'🇦🇴',MN:'🇲🇳',SC:'🇸🇨',LK:'🇱🇰',PK:'🇵🇰',UA:'🇺🇦',RS:'🇷🇸',BA:'🇧🇦',MK:'🇲🇰',AL:'🇦🇱',GE:'🇬🇪',AM:'🇦🇲',AZ:'🇦🇿',KZ:'🇰🇿',UZ:'🇺🇿',BY:'🇧🇾',MD:'🇲🇩',KE:'🇰🇪',GH:'🇬🇭',TZ:'🇹🇿',ET:'🇪🇹',CI:'🇨🇮',SN:'🇸🇳',MA:'🇲🇦',TN:'🇹🇳',DZ:'🇩🇿',LY:'🇱🇾',SD:'🇸🇩',IQ:'🇮🇶',IR:'🇮🇷',KW:'🇰🇼',QA:'🇶🇦',BH:'🇧🇭',OM:'🇴🇲',JO:'🇯🇴',LB:'🇱🇧',SY:'🇸🇾',YE:'🇾🇪',UY:'🇺🇾',PY:'🇵🇾',BO:'🇧🇴',PE:'🇵🇪',EC:'🇪🇨',VE:'🇻🇪',CR:'🇨🇷',PA:'🇵🇦',GT:'🇬🇹',HN:'🇭🇳',SV:'🇸🇻',NI:'🇳🇮',DO:'🇩🇴',CU:'🇨🇺',TT:'🇹🇹',JM:'🇯🇲',BB:'🇧🇧',BS:'🇧🇸',HT:'🇭🇹',LU:'🇱🇺',MT:'🇲🇹',CY:'🇨🇾',LI:'🇱🇮',AD:'🇦🇩',MC:'🇲🇨',SM:'🇸🇲',VA:'🇻🇦',MZ:'🇲🇿',UG:'🇺🇬',TW:'🇹🇼',CG:'🇨🇬',RW:'🇷🇼',XK:'🇽🇰',NA:'🇳🇦',ME:'🇲🇪',BW:'🇧🇼',PS:'🇵🇸'};
     const grouped = {};
     data.forEach(e => {
       const d = (e.time||'').substring(0,10);
