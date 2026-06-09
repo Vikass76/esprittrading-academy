@@ -185,10 +185,36 @@ async function loadDashboard() {
       cEq = kill(cEq);
       if (sorted.length) {
         let bal = acc.initial_balance;
-        const labels = sorted.map(t => fmtDate(t.trade_date));
-        const data = sorted.map(t => { bal = parseFloat((bal + (parseFloat(t.pnl)||0)).toFixed(2)); return bal; });
+        // Générer tous les jours entre premier trade et aujourd'hui
+        const firstDate = new Date(sorted[0].trade_date + 'T12:00:00');
+        const lastDate = new Date();
+        const allDays = [];
+        const todayStr = new Date().toISOString().split('T')[0];
+        for (let d = new Date(firstDate); d <= lastDate; d.setDate(d.getDate() + 1)) {
+          const ds = new Date(d).toISOString().split('T')[0];
+          allDays.push(ds);
+        }
+        // Retirer le dernier jour si c'est aujourd'hui sans trade
+        if (allDays[allDays.length-1] === todayStr && !sorted.find(t => t.trade_date === todayStr)) allDays.pop();
+        // Calculer le solde par trade
+        const balByDate = {};
+        let runBal = acc.initial_balance;
+        sorted.forEach(t => {
+          runBal = parseFloat((runBal + (parseFloat(t.pnl)||0)).toFixed(2));
+          balByDate[t.trade_date] = runBal;
+        });
+        // Remplir tous les jours avec le dernier solde connu
+        let lastBal = acc.initial_balance;
+        const labels = ['Départ', ...allDays.map(d => {
+          const dd = new Date(d + 'T12:00:00');
+          return dd.getDate() + ' ' + ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'][dd.getMonth()];
+        })];
+        const data = [acc.initial_balance, ...allDays.map(d => {
+          if (balByDate[d]) { lastBal = balByDate[d]; return lastBal; }
+          return null;
+        })];
         const fmt = v => '$' + Number(v).toLocaleString('fr-FR');
-        cEq = mkChart('c-equity','line',{ labels, datasets:[{ data, borderColor: GOLD, backgroundColor: 'rgba(244,199,15,0.05)', pointBackgroundColor: data.map(v => v >= acc.initial_balance ? G : R), pointBorderColor: 'transparent', pointRadius: data.length <= 50 ? 3.5 : 1.5, borderWidth: 2.5, tension: 0.3, fill: true }]},{ plugins:{ legend:{display:false}, tooltip:{callbacks:{label: c => fmt(c.parsed.y)}}}, scales:{ x:{...axOpts,ticks:{...axOpts.ticks,maxTicksLimit:8,maxRotation:0}}, y:{...axOpts,ticks:{...axOpts.ticks,callback: fmt}}}});
+        cEq = mkChart('c-equity','line',{ labels, datasets:[{ data, borderColor: GOLD, backgroundColor: 'rgba(244,199,15,0.05)', pointBackgroundColor: data.map((v,i) => (i===0||(i>0&&v!==data[i-1]))?(v>=acc.initial_balance?G:R):'transparent'), pointBorderColor: 'transparent', pointRadius: data.map((v,i) => (i===0||(i>0&&v!==data[i-1]))?3.5:0), borderWidth: 2.5, tension: 0.3, fill: true, spanGaps: false }]},{ plugins:{ legend:{display:false}, tooltip:{callbacks:{label: c => fmt(c.parsed.y)}}}, scales:{ x:{...axOpts,ticks:{...axOpts.ticks,maxTicksLimit:8,maxRotation:0}}, y:{...axOpts,ticks:{...axOpts.ticks,callback: fmt}}}});
       } else {
         renderEmptyChart('c-equity','line',['','','','','']);
       }
@@ -204,10 +230,10 @@ function renderKPIs(s, elId, count=8) {
   const el = $(elId); if (!el) return;
   const streak = s.currentStreak;
   const all = [
-    { label:'Total trades', val: s.total||'—', sub: s.total?`${s.wins}W · ${s.losses}L · ${s.be}BE`:'Aucun trade', cls:'', icon:'ti-chart-bar' },
-    { label:'Win Rate', val: s.total?s.winRate+'%':'—', sub: s.total?`${s.wins} gagnant${s.wins>1?'s':''}`:'—', cls: s.total?(s.winRate>=50?'g':'r'):'', icon:'ti-percentage', accent: s.total?(s.winRate>=50?'accent-g':'accent-r'):'' },
-    { label:'RR cumulé', val: s.total?(s.totalRR>=0?'+':'')+s.totalRR+'R':'—', sub: s.total?`Moy: ${s.avgRR>=0?'+':''}${s.avgRR}R`:'—', cls: s.total?(s.totalRR>=0?'o':'r'):'', icon:'ti-trending-up', accent: s.total?(s.totalRR>=0?'accent-o':'accent-r'):'' },
     { label:'P&L Net', val: s.total&&s.totalPnl?(s.totalPnl>=0?'+$':'-$')+Math.abs(s.totalPnl).toFixed(0):'—', sub:'Résultat net', cls: s.total&&s.totalPnl?(s.totalPnl>=0?'g':'r'):'', icon:'ti-currency-dollar', accent: s.total&&s.totalPnl?(s.totalPnl>=0?'accent-g':'accent-r'):'' },
+    { label:'Win Rate', val: s.total?s.winRate+'%':'—', sub: s.total?`${s.wins} gagnant${s.wins>1?'s':''}`:'—', cls: s.total?(s.winRate>=50?'g':'r'):'', icon:'ti-percentage', accent: s.total?(s.winRate>=50?'accent-g':'accent-r'):'' },
+    { label:'Total trades', val: s.total||'—', sub: s.total?`${s.wins}W · ${s.losses}L · ${s.be}BE`:'Aucun trade', cls:'', icon:'ti-chart-bar' },
+    { label:'RR cumulé', val: s.total?(s.totalRR>=0?'+':'')+s.totalRR+'R':'—', sub: s.total?`Moy: ${s.avgRR>=0?'+':''}${s.avgRR}R`:'—', cls: s.total?(s.totalRR>=0?'o':'r'):'', icon:'ti-trending-up', accent: s.total?(s.totalRR>=0?'accent-o':'accent-r'):'' },
     { label:'Avg RR / Trade', val: s.total?(s.avgRR>=0?'+':'')+s.avgRR+'R':'—', sub:'Moyenne par trade', cls:'o', icon:'ti-math-avg' },
     { label:'Best Trade', val: s.total?'+'+s.bestRR+'R':'—', sub:'Meilleur RR', cls:'o', icon:'ti-star' },
     { label:'Série en cours', val: streak?.count>0?streak.count:'—', sub: streak?.type||'—', cls: streak?.type==='WIN'?'g':streak?.type==='LOSS'?'r':'', icon:'ti-flame' },
