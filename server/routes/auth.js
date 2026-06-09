@@ -43,6 +43,7 @@ router.post('/login', async (req, res) => {
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) return res.status(401).json({ error: 'Identifiant ou mot de passe incorrect' });
   req.session.userId = user.id;
+  req.session.userRole = user.role;
   res.json({ id: user.id, username: user.username, role: user.role, email: user.email, firstname: user.firstname, lastname: user.lastname });
 });
 
