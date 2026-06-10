@@ -475,9 +475,14 @@ async function renderCal() {
     let cls='cal-cell';
     if(ds===today) cls+=' today';
     else if(dt.length) cls+=rr>=0?' win-day':' loss-day';
+    const pnl=dt.reduce((s,t)=>s+(parseFloat(t.pnl)||0),0);
     html+=`<div class="${cls}">
       <div class="cal-dn">${d}</div>
-      ${dt.length?`<div class="cal-rr ${rr>=0?'p':'n'}">${rr>=0?'+':''}${rr.toFixed(1)}R</div><div class="cal-cnt">${dt.length}t · ${wins}W${losses?' '+losses+'L':''}</div>`:''}
+      ${dt.length?`
+        <div class="cal-cnt">${dt.length} trade${dt.length>1?'s':''}</div>
+        <div class="cal-rr ${rr>=0?'p':'n'}">${rr>=0?'+':''}${rr.toFixed(1)}R</div>
+        <div style="font-size:.75rem;font-weight:600;color:${pnl>=0?'var(--green)':'var(--red)'};${pnl>=0?'':''}margin-top:2px">${pnl>=0?'+':''}${Math.abs(pnl).toLocaleString('fr-FR',{maximumFractionDigits:0})}$</div>
+      `:''}
     </div>`;
   }
   $('cal-grid').innerHTML=html;
