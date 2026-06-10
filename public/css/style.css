@@ -143,16 +143,16 @@ h1,h2,h3,h4{font-family:'Nunito Sans',sans-serif;font-weight:700;line-height:1.3
 
 /* ══ BADGES ═════════════════════════════════ */
 .badge{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:99px;font-size:.72rem;font-weight:600}
-.b-win{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
-.b-loss{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
-.b-be{background:var(--blue-bg);color:var(--blue);border:1px solid #BFDBFE}
-.rr{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:.76rem;font-weight:700;font-family:'DM Sans',sans-serif}
-.rr-p{background:var(--green-bg);color:var(--green)}
-.rr-n{background:var(--red-bg);color:var(--red)}
-.rr-z{background:var(--blue-bg);color:var(--blue)}
-.dir{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:5px;font-size:.72rem;font-weight:700;letter-spacing:.02em}
-.dir-long{background:#F0FDF4;color:#15803D}
-.dir-short{background:#FEF2F2;color:#B91C1C}
+.b-win{background:rgba(16,185,129,0.1);color:var(--green);border:1.5px solid rgba(16,185,129,0.4)}
+.b-loss{background:rgba(239,68,68,0.1);color:var(--red);border:1.5px solid rgba(239,68,68,0.4)}
+.b-be{background:rgba(59,130,246,0.1);color:var(--blue);border:1.5px solid rgba(59,130,246,0.4)}
+.rr{display:inline-flex;align-items:center;padding:2px 10px;border-radius:99px;font-size:.76rem;font-weight:700;font-family:'Nunito Sans',sans-serif}
+.rr-p{background:transparent;color:var(--green);border:1px solid rgba(16,185,129,0.35)}
+.rr-n{background:transparent;color:var(--red);border:1px solid rgba(239,68,68,0.35)}
+.rr-z{background:transparent;color:var(--blue);border:1px solid rgba(59,130,246,0.35)}
+.dir{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:99px;font-size:.72rem;font-weight:700;letter-spacing:.02em}
+.dir-long{background:transparent;color:var(--green);border:1.5px solid rgba(16,185,129,0.5)}
+.dir-short{background:transparent;color:var(--red);border:1.5px solid rgba(239,68,68,0.5)}
 
 /* ══ TOASTS ══════════════════════════════════ */
 #toasts{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px}
@@ -204,7 +204,7 @@ h1,h2,h3,h4{font-family:'Nunito Sans',sans-serif;font-weight:700;line-height:1.3
 
 /* ══ FILTERS ══════════════════════════════════ */
 .filters{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.filter-select,.filter-input{padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-card);font-size:.78rem;color:var(--text);outline:none;cursor:pointer;transition:var(--t)}
+.filter-select,.filter-input{padding:7px 14px;border:1px solid rgba(255,255,255,0.1);border-radius:99px;background:#16161f;font-size:.78rem;color:var(--text);outline:none;cursor:pointer;transition:var(--t)}
 .filter-select:focus,.filter-input:focus{border-color:var(--gold)}
 .filters-count{font-size:.75rem;color:var(--text-muted);margin-left:4px}
 
@@ -216,8 +216,9 @@ h1,h2,h3,h4{font-family:'Nunito Sans',sans-serif;font-weight:700;line-height:1.3
 .tbl tbody tr:last-child{border-bottom:none}
 .tbl tbody tr:hover{background:var(--bg-subtle)}
 .tbl td{padding:11px 14px;font-size:.82rem;vertical-align:middle}
-.pair-tag{display:inline-block;padding:2px 8px;background:var(--bg-subtle);border:1px solid var(--border);border-radius:5px;font-size:.74rem;font-weight:700;letter-spacing:.03em;font-family:'DM Sans',sans-serif}
-.ss-thumb{width:40px;height:26px;object-fit:cover;border-radius:4px;border:1px solid var(--border)}
+.pair-tag{display:inline-block;padding:3px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;font-size:.74rem;font-weight:700;letter-spacing:.03em;font-family:'Nunito Sans',sans-serif}
+.ss-thumb{width:44px;height:30px;object-fit:cover;border-radius:6px;border:1px solid rgba(255,255,255,0.1);opacity:.85;transition:var(--t)}
+.ss-thumb:hover{opacity:1;border-color:var(--gold)}
 .pnl-p{color:var(--green);font-weight:600}
 .pnl-n{color:var(--red);font-weight:600}
 

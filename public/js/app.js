@@ -177,7 +177,7 @@ async function loadDashboard() {
     const p = '?account_id=' + selAcc;
     stats = await api('GET', '/trades/stats' + p);
     renderKPIs(stats, 'dash-kpis', 8);
-    const acc = accounts.find(a => a.id === selAcc);
+    const acc = accounts.find(a => String(a.id) === String(selAcc));
     if (acc) {
       const allT = await api('GET', '/trades?account_id=' + selAcc);
       const sorted = [...allT].sort((a,b) => a.trade_date.localeCompare(b.trade_date));
@@ -216,6 +216,7 @@ async function loadDashboard() {
         renderWeekCal(allT);
         cEq = mkChart('c-equity','line',{ labels, datasets:[{ data, borderColor: GOLD, backgroundColor: 'rgba(244,199,15,0.05)', pointBackgroundColor: data.map((v,i) => (i===0||(i>0&&v!==data[i-1]))?(v>=acc.initial_balance?G:R):'transparent'), pointBorderColor: 'transparent', pointRadius: data.map((v,i) => (i===0||(i>0&&v!==data[i-1]))?3.5:0), borderWidth: 2.5, tension: 0.3, fill: true, spanGaps: true }]},{ plugins:{ legend:{display:false}, tooltip:{callbacks:{label: c => fmt(c.parsed.y)}}}, scales:{ x:{...axOpts,ticks:{...axOpts.ticks,maxTicksLimit:8,maxRotation:0}}, y:{...axOpts,ticks:{...axOpts.ticks,callback: fmt}}}});
       } else {
+        renderWeekCal([]);
         renderEmptyChart('c-equity','line',['','','','','']);
       }
     } else {
