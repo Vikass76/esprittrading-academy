@@ -394,3 +394,7 @@ h1,h2,h3,h4{font-family:'DM Sans',sans-serif;font-weight:600;line-height:1.3}
 .an-donut-wrap canvas{max-width:160px;max-height:160px;}
 .an-donut-multi{height:180px;display:flex;align-items:center;justify-content:center;} canvas[id$="-wr"]{width:160px;height:160px;max-width:160px;max-height:160px;display:block;margin:auto;}
 @media(max-width:640px){.an-donut-grid{grid-template-columns:1fr;}}
+
+.an-freq-title{font-size:1rem;font-weight:700;color:#fff;margin-bottom:12px;}
+.an-freq-avg{color:#6b7280;font-weight:400;font-size:.95rem;margin-left:4px;}
+.an-freq-avg span{color:#fff;font-weight:700;}

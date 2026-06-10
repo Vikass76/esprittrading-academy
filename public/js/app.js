@@ -534,6 +534,8 @@ async function loadAnalytics() {
     renderDonutSection('setup',bySetup,AN_PALETTE,setupKeys);
 
     renderPairTable(s.byPair);
+    renderPerfJour(trades);
+    renderFrequency(trades);
   }catch(ex){console.error(ex);}
 }
 
@@ -557,7 +559,7 @@ function renderDonutSection(id,dataObj,palette,keys){
     _anCharts[id]=new Chart(cvs.getContext('2d'),{
       type:'doughnut',
       data:{labels:keys,datasets:[{data:cd,backgroundColor:cc,borderColor:'#0f1117',borderWidth:3,hoverOffset:5}]},
-      options:{cutout:'65%',plugins:{legend:{display:false},tooltip:{enabled:total>0,callbacks:{label:ctx=>' '+keys[ctx.dataIndex]+': '+totals[ctx.dataIndex]+' ('+(total?Math.round(totals[ctx.dataIndex]/total*100):0)+'%)'},backgroundColor:'#1f2937',bodyColor:'#fff',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,padding:10,cornerRadius:8}},animation:{duration:600}},
+      options:{cutout:'65%',plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:600}},
       plugins:[{id:'ctr',afterDraw(chart){
         const{ctx,chartArea:{top,bottom,left,right}}=chart;
         const cx=(left+right)/2,cy=(top+bottom)/2,ac=chart._active;
@@ -571,6 +573,20 @@ function renderDonutSection(id,dataObj,palette,keys){
           ctx.font='bold 20px Inter,sans-serif';ctx.fillStyle=total>0?'#fff':'#374151';ctx.textAlign='center';ctx.textBaseline='middle';
           ctx.fillText(total||'0',cx,cy-8);
           ctx.font='10px Inter,sans-serif';ctx.fillStyle='#6b7280';ctx.fillText('trades',cx,cy+10);
+        }
+        // % sur segments
+        if(total>0){
+          const meta=chart.getDatasetMeta(0);
+          meta.data.forEach(function(arc,i){
+            const pct=Math.round(totals[i]/total*100);if(pct===0)return;
+            const angle=(arc.startAngle+arc.endAngle)/2;
+            const r=(arc.outerRadius+arc.innerRadius)/2;
+            const x=cx+Math.cos(angle)*r,y=cy+Math.sin(angle)*r;
+            ctx.save();ctx.font='bold 11px Inter,sans-serif';
+            ctx.shadowColor='rgba(0,0,0,0.8)';ctx.shadowBlur=6;
+            ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+            ctx.fillText(pct+'%',x,y);ctx.restore();
+          });
         }
         ctx.restore();
       }}]
@@ -621,6 +637,183 @@ function renderDonutSection(id,dataObj,palette,keys){
     });
     cvs2.addEventListener('mouseleave',()=>{hov=null;draw(null);});
   }
+}
+
+let _perfJourChart=null;
+function renderPerfJour(trades){
+  if(_perfJourChart){try{_perfJourChart.destroy();}catch(e){}_perfJourChart=null;}
+  const days=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const byDay=days.map(d=>({label:d,pnl:0,wins:0,total:0}));
+  trades.forEach(t=>{
+    const d=new Date(t.trade_date+'T12:00:00').getDay();
+    byDay[d].pnl+=parseFloat(t.pnl)||0;
+    byDay[d].total++;
+    if(t.result==='WIN')byDay[d].wins++;
+  });
+  const cvs=document.getElementById('c-perf-jour');
+  if(!cvs)return;
+  const data=byDay.map(d=>d.total>0?parseFloat(d.pnl.toFixed(2)):null);
+  const winRates=byDay.map(d=>d.total?Math.round(d.wins/d.total*100):null);
+  _perfJourChart=new Chart(cvs.getContext('2d'),{
+    type:'bar',
+    data:{labels:days,datasets:[{
+      data,
+      backgroundColor:function(ctx){
+        const v=data[ctx.dataIndex];
+        if(v===null) return 'transparent';
+        const chart=ctx.chart;
+        const {ctx:c,chartArea}=chart;
+        if(!chartArea) return v>=0?'rgba(16,185,129,0.85)':'rgba(239,68,68,0.85)';
+        const zeroX=chart.scales.x.getPixelForValue(0);
+        if(v>=0){
+          const g=c.createLinearGradient(zeroX,0,chartArea.right,0);
+          g.addColorStop(0,'rgba(16,185,129,0.9)');
+          g.addColorStop(1,'rgba(5,150,105,0.2)');
+          return g;
+        } else {
+          const g=c.createLinearGradient(chartArea.left,0,zeroX,0);
+          g.addColorStop(0,'rgba(239,68,68,0.15)');
+          g.addColorStop(1,'rgba(239,68,68,0.9)');
+          return g;
+        }
+      },
+      borderRadius:3,borderSkipped:false,barThickness:14
+    }]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      layout:{padding:{right:75,top:30}},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            title:function(ctx){return days[ctx[0].dataIndex];},
+            label:function(ctx){
+              const v=ctx.parsed.x;
+              const sign=v>=0?'Profits':'Pertes';
+              return ' '+sign+' quotidiens: '+v.toFixed(2)+' $';
+            }
+          },
+          backgroundColor:'#111827',titleColor:'#e5e7eb',bodyColor:'#9ca3af',
+          borderColor:'rgba(255,255,255,0.1)',borderWidth:1,padding:12,cornerRadius:8
+        }
+      },
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.07)',borderDash:[4,4]},ticks:{color:'#6b7280',font:{size:11},callback:function(v){return Math.abs(v)>=1000?(v/1000).toFixed(1)+'k':v;}},border:{display:false}},
+        y:{grid:{display:false},ticks:{color:'#9ca3af',font:{size:12},padding:8},border:{display:false}}
+      }
+    },
+    plugins:[{id:'zeroLine',afterDraw:function(chart){
+      const{ctx,chartArea:{top,bottom,left,right},scales:{x,y}}=chart;
+      // Lignes horizontales pointillées entre chaque jour
+      const labels=chart.data.labels;
+      for(let i=0;i<=labels.length;i++){
+        const yPos=y.getPixelForValue(i-0.5);
+        ctx.save();ctx.beginPath();ctx.setLineDash([4,4]);
+        ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=1;
+        ctx.moveTo(left,yPos);ctx.lineTo(right,yPos);ctx.stroke();
+        ctx.restore();
+      }
+      const zeroX=x.getPixelForValue(0);
+      ctx.save();ctx.beginPath();ctx.setLineDash([4,4]);
+      ctx.strokeStyle='rgba(239,68,68,0.6)';ctx.lineWidth=1.5;
+      ctx.moveTo(zeroX,top);ctx.lineTo(zeroX,bottom);ctx.stroke();
+      ctx.restore();
+      ctx.save();ctx.font='bold 11px Inter,sans-serif';ctx.fillStyle='#6b7280';
+      ctx.textAlign='right';ctx.fillText('Win Rate',right+72,top-10);ctx.restore();
+      days.forEach(function(_,i){
+        const pct=winRates[i];if(pct===null)return;
+        const yPos=y.getPixelForValue(i);
+        const bg=pct>=50?'#059669':'#ef4444';
+        const text=pct+'%';
+        ctx.save();ctx.font='bold 11px Inter,sans-serif';
+        const tw=ctx.measureText(text).width;
+        const bw=Math.max(tw+16,42),bh=20,bx=right+8,by=yPos-bh/2;
+        ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(bx,by,bw,bh,5);ctx.fill();
+        ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText(text,bx+bw/2,yPos);ctx.restore();
+      });
+    }}]
+  });
+}
+
+
+let _freqCharts={day:null,week:null,month:null};
+function renderFrequency(trades){
+  Object.values(_freqCharts).forEach(c=>{if(c)try{c.destroy();}catch(e){}});
+  _freqCharts={day:null,week:null,month:null};
+
+  function makeGrad(ctx,h){
+    const g=ctx.createLinearGradient(0,0,0,h);
+    g.addColorStop(0,'rgba(96,165,250,0.95)');
+    g.addColorStop(1,'rgba(29,78,216,0.15)');
+    return g;
+  }
+
+  function mkChart(id,labels,data,avg,avgEl,barPct){
+    const cvs=document.getElementById(id);if(!cvs)return null;
+    const ctx=cvs.getContext('2d');
+    if(avgEl){
+      const el=document.getElementById(avgEl);
+      if(el)el.innerHTML='Avg <span>'+avg+'</span>';
+    }
+    return new Chart(ctx,{
+      type:'bar',
+      data:{labels,datasets:[{
+        data,
+        backgroundColor:function(c){return makeGrad(ctx,c.chart.chartArea?.height||200);},
+        borderRadius:4,borderSkipped:false,barPercentage:0.4,maxBarThickness:40
+      }]},
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{
+          backgroundColor:'#111827',titleColor:'#e5e7eb',bodyColor:'#9ca3af',
+          borderColor:'rgba(255,255,255,0.1)',borderWidth:1,padding:10,cornerRadius:8
+        }},
+        scales:{
+          x:{grid:{display:false},ticks:{color:'#6b7280',font:{size:11}},border:{display:false}},
+          y:{grid:{color:'rgba(255,255,255,0.07)',borderDash:[4,4]},ticks:{color:'#6b7280',font:{size:11}},border:{display:false}}
+        }
+      }
+    });
+  }
+
+  // Par jour
+  const byDay={};
+  trades.forEach(t=>{
+    const d=t.trade_date;if(!d)return;
+    byDay[d]=(byDay[d]||0)+1;
+  });
+  const dayLabels=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  const byDayOfWeek=[0,0,0,0,0,0,0],byDayCount=[0,0,0,0,0,0,0];
+  Object.entries(byDay).forEach(([d,n])=>{
+    const dow=new Date(d+'T12:00:00').getDay();
+    byDayOfWeek[dow]+=n; byDayCount[dow]++;
+  });
+  const dayData=dayLabels.map((_,i)=>byDayCount[(i+1)%7]>0?parseFloat((byDayOfWeek[(i+1)%7]/byDayCount[(i+1)%7]).toFixed(2)):0);
+  const avgDay=dayData.filter(v=>v>0).length?parseFloat((dayData.reduce((a,b)=>a+b,0)/dayData.filter(v=>v>0).length).toFixed(2)):0;
+  _freqCharts.day=mkChart('c-freq-day',dayLabels,dayData,avgDay,'freq-day-avg',0.5);
+
+  // Par semaine
+  const byWeek={};
+  trades.forEach(t=>{
+    const d=new Date(t.trade_date+'T12:00:00');
+    const y=d.getFullYear(),w=Math.ceil((((d-new Date(y,0,1))/86400000)+new Date(y,0,1).getDay()+1)/7);
+    const k=y+'-W'+w; byWeek[k]=(byWeek[k]||0)+1;
+  });
+  const wks=Object.keys(byWeek).sort().slice(-8);
+  const avgWeek=wks.length?parseFloat((wks.reduce((a,k)=>a+byWeek[k],0)/wks.length).toFixed(1)):0;
+  _freqCharts.week=mkChart('c-freq-week',wks.map(w=>'S'+w.split('-W')[1]),wks.map(k=>byWeek[k]),avgWeek,'freq-week-avg',0.5);
+
+  // Par mois
+  const byMonth={};
+  trades.forEach(t=>{
+    const m=t.trade_date?.substring(0,7);if(!m)return;
+    byMonth[m]=(byMonth[m]||0)+1;
+  });
+  const months=Object.keys(byMonth).sort().slice(-6);
+  const MO=['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  const avgMonth=months.length?parseFloat((months.reduce((a,m)=>a+byMonth[m],0)/months.length).toFixed(1)):0;
+  _freqCharts.month=mkChart('c-freq-month',months.map(m=>MO[parseInt(m.split('-')[1])-1]),months.map(m=>byMonth[m]),avgMonth,'freq-month-avg',0.5);
 }
 
 function renderPairTable(byPair){
