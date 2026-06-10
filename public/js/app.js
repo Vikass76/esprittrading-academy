@@ -510,6 +510,7 @@ async function loadAnalytics() {
     renderRRDist(); renderSetupChart(); renderMonthly();
     renderPairTable(s.byPair);
     renderWinnersLosers(trades);
+    renderPerfBlocks(trades);
   } catch(ex){console.error(ex);}
 }
 
@@ -1033,4 +1034,87 @@ function renderWinnersLosers(trades) {
       row('Pertes consécutives max.', maxLossStreak) +
       row('Pertes consécutives moyennes', avgLossStreak) +
     '</div>';
+}
+
+function renderPerfBlocks(trades) {
+  const el = document.getElementById('perf-blocks');
+  if (!el) return;
+  if (!trades.length) { el.innerHTML = ''; return; }
+
+  function makeBlock(title, trades2, groupFn, fixedKeys, colors) {
+    const groups = {};
+    trades2.forEach(function(t) {
+      const k = groupFn(t);
+      if (!groups[k]) groups[k] = { total:0, wins:0 };
+      groups[k].total++;
+      if (t.result === 'WIN') groups[k].wins++;
+    });
+    const keys = fixedKeys || Object.keys(groups).filter(function(k){ return groups[k].total > 0; }).sort();
+    const cm = {};
+    keys.forEach(function(k,i){ cm[k] = colors[i % colors.length]; });
+    const totals = keys.map(function(k){ return (groups[k]||{total:0}).total; });
+    const wrs = keys.map(function(k){
+      const g = groups[k];
+      if (!g || !g.total) return 0;
+      return parseFloat((g.wins/g.total*100).toFixed(1));
+    });
+    return { title:title, keys:keys, cm:cm, totals:totals, wrs:wrs };
+  }
+
+  const blocks = [
+    makeBlock('Performances par type d operation', trades, function(t){ return t.direction === 'LONG' ? 'Long' : 'Short'; }, ['Long','Short'], ['#22c55e','#3b82f6']),
+    makeBlock('Performances par session', trades, function(t){ return t.session || 'Autre'; }, null, ['#f59e0b','#8b5cf6','#06b6d4','#ec4899','#10b981']),
+    makeBlock('Performances par setup', trades, function(t){ return (t.setup||'').trim() || 'Autre'; }, null, ['#f59e0b','#3b82f6','#22c55e','#ec4899','#8b5cf6'])
+  ];
+
+  let html2 = '';
+  blocks.forEach(function(b, bi) {
+    const legend = b.keys.map(function(k){
+      return '<span style="display:flex;align-items:center;gap:5px;font-size:.75rem;color:var(--text-muted)"><span style="width:8px;height:8px;border-radius:50%;background:'+b.cm[k]+';display:inline-block"></span>'+k+'</span>';
+    }).join('');
+    html2 += '<div style="margin-bottom:20px">';
+    html2 += '<div style="font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">'+b.title+'</div>';
+    html2 += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">';
+    html2 += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px">';
+    html2 += '<div style="font-size:.83rem;font-weight:600;color:var(--text);margin-bottom:8px">Total des opérations</div>';
+    html2 += '<div style="display:flex;justify-content:center;gap:12px;margin-bottom:12px">'+legend+'</div>';
+    html2 += '<div style="height:180px;position:relative"><canvas id="pc-total-'+bi+'"></canvas></div>';
+    html2 += '</div>';
+    html2 += '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px">';
+    html2 += '<div style="font-size:.83rem;font-weight:600;color:var(--text);margin-bottom:8px">Taux de gain</div>';
+    html2 += '<div style="display:flex;justify-content:center;gap:12px;margin-bottom:12px">'+legend+'</div>';
+    html2 += '<div style="height:180px;position:relative"><canvas id="pc-wr-'+bi+'"></canvas></div>';
+    html2 += '</div>';
+    html2 += '</div></div>';
+  });
+  el.innerHTML = html2;
+
+  blocks.forEach(function(b, bi) {
+    const cT = document.getElementById('pc-total-'+bi);
+    const exT = Chart.getChart(cT); if (exT) exT.destroy();
+    new Chart(cT, {
+      type: 'doughnut',
+      data: { labels: b.keys, datasets: [{ data: b.totals, backgroundColor: b.keys.map(function(k){ return b.cm[k]; }), borderWidth: 3, borderColor: 'var(--bg-card)' }] },
+      options: { responsive:true, maintainAspectRatio:false, cutout:'65%', plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:function(c){ return c.label+': '+c.parsed; } } } } }
+    });
+
+    const cW = document.getElementById('pc-wr-'+bi);
+    const exW = Chart.getChart(cW); if (exW) exW.destroy();
+    const wrDatasets = b.keys.map(function(k, i) {
+      const ring = b.wrs[i];
+      return {
+        label: k,
+        data: [ring, 100 - ring],
+        backgroundColor: [b.cm[k], 'rgba(0,0,0,0.08)'],
+        borderColor: 'transparent',
+        borderWidth: 0,
+        weight: 1
+      };
+    });
+    new Chart(cW, {
+      type: 'doughnut',
+      data: { datasets: wrDatasets },
+      options: { responsive:true, maintainAspectRatio:false, cutout:'35%', plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:function(c){ if(c.dataIndex===0) return c.dataset.label+': '+c.dataset.data[0]+'%'; return ''; } } } } }
+    });
+  });
 }
