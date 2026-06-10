@@ -313,7 +313,7 @@ function renderTrades(list) {
     return `<tr data-id="${t.id}">
       <td style="white-space:nowrap;color:var(--text-muted);font-size:.78rem">${fmtDate(t.trade_date)}</td>
       <td><span class="pair-tag">${t.pair}</span></td>
-      <td><span class="dir dir-${(t.direction||'LONG').toLowerCase()}">${t.direction||'LONG'}</span></td>
+      <td><span class="dir dir-${(t.direction||'LONG').toLowerCase()}">${(t.direction||'LONG')==='LONG'?'BUY':'SELL'}</span></td>
       <td>${rbadge(t.result)}</td>
       <td><span class="rr rr-${rr>0?'p':rr<0?'n':'z'}">${rr>=0?'+':''}${rr}R</span></td>
       <td class="${pnl>=0?'pnl-p':'pnl-n'}">${pnl?(pnl>=0?'+$':'-$')+Math.abs(pnl).toFixed(2):'—'}</td>
@@ -383,7 +383,7 @@ function openDetail(t) {
   $('d-pair').textContent = t.pair;
   $('d-badge').innerHTML = rbadge(t.result);
   $('d-date').textContent = fmtDate(t.trade_date);
-  $('d-dir').innerHTML = `<span class="dir dir-${(t.direction||'LONG').toLowerCase()}">${t.direction||'LONG'}</span>`;
+  $('d-dir').innerHTML = `<span class="dir dir-${(t.direction||'LONG').toLowerCase()}">${(t.direction||'LONG')==='LONG'?'BUY':'SELL'}</span>`;
   const rr=parseFloat(t.rr)||0, pnl=parseFloat(t.pnl)||0;
   const rrEl=$('d-rr'); rrEl.textContent=`${rr>=0?'+':''}${rr}R`; rrEl.className=`dv big ${rr>0?'g':rr<0?'r':''}`;
   const pnlEl=$('d-pnl'); pnlEl.textContent=pnl?`${pnl>=0?'+$':'-$'}${Math.abs(pnl).toFixed(2)}`:'—'; pnlEl.className=`dv big ${pnl>0?'g':pnl<0?'r':''}`;
@@ -493,7 +493,7 @@ $('cal-next').addEventListener('click',()=>{cM++;if(cM>11){cM=0;cY++;}renderCal(
 /* ── ANALYTICS ── */
 /* ── PALETTE ANALYTICS ── */
 const AN_PALETTE = ['#4ade80','#60a5fa','#f59e0b','#f87171','#a78bfa','#34d399','#fb923c','#38bdf8'];
-const AN_DIR_KEYS  = ['LONG','SHORT'];
+const AN_DIR_KEYS  = ['BUY','SELL'];
 const AN_SESS_KEYS = ['London','New York','Asia'];
 const AN_SETUP_KEYS= ['OTE','FVG','BOS','MSS','Autre'];
 
@@ -525,7 +525,7 @@ async function loadAnalytics() {
     renderWinnersLosers(trades);
 
     const byDir=mkEmpty(AN_DIR_KEYS);
-    trades.forEach(t=>{const d=(t.direction||'LONG').toUpperCase();if(!byDir[d])byDir[d]={total:0,wins:0};byDir[d].total++;if(t.result==='WIN')byDir[d].wins++;});
+    trades.forEach(t=>{const raw=(t.direction||'LONG').toUpperCase();const d=raw==='LONG'?'BUY':'SELL';if(!byDir[d])byDir[d]={total:0,wins:0};byDir[d].total++;if(t.result==='WIN')byDir[d].wins++;});
     renderDonutSection('dir',byDir,AN_PALETTE,AN_DIR_KEYS);
 
     const bySess=mkEmpty(AN_SESS_KEYS);

@@ -134,7 +134,7 @@
         <div class="filters">
           <select class="filter-select" id="f-pair"><option value="">Toutes les paires</option><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>GOLD</option><option>XAUUSD</option><option>NASDAQ</option><option>US30</option><option>SP500</option><option>BTCUSD</option><option>ETHUSD</option><option>GBPJPY</option><option>EURJPY</option></select>
           <select class="filter-select" id="f-result"><option value="">Tous résultats</option><option value="WIN">WIN</option><option value="LOSS">LOSS</option><option value="BE">Break Even</option></select>
-          <select class="filter-select" id="f-dir"><option value="">Long & Short</option><option value="LONG">LONG</option><option value="SHORT">SHORT</option></select>
+          <select class="filter-select" id="f-dir"><option value="">BUY & SELL</option><option value="LONG">BUY</option><option value="SHORT">SELL</option></select>
           <select class="filter-select" id="f-sess"><option value="">Toutes sessions</option><option>London</option><option>New York</option><option>Asia</option></select>
           <input type="date" class="filter-input" id="f-from"/>
           <input type="date" class="filter-input" id="f-to"/>
@@ -357,7 +357,7 @@
           <input type="text" id="pair-search-input" placeholder="Ex: EURUSD, BTCUSD..." autocomplete="off" style="width:100%"/>
           <input type="hidden" id="pair-search-hidden" name="pair"/></div>
         <div class="fg"><label>Direction *</label>
-          <select name="direction" required><option value="LONG">LONG</option><option value="SHORT">SHORT</option></select></div>
+          <select name="direction" required><option value="LONG">BUY</option><option value="SHORT">SELL</option></select></div>
         <div class="fg"><label>Résultat *</label>
           <select name="result" required><option value="WIN">WIN</option><option value="LOSS">LOSS</option><option value="BE">Break Even</option></select></div>
       </div>
@@ -437,7 +437,7 @@
       <input type="hidden" id="e-id"/>
       <div class="grid3">
         <div class="fg"><label>Paire</label><select id="e-pair" name="pair"><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>GOLD</option><option>XAUUSD</option><option>NASDAQ</option><option>US30</option><option>BTCUSD</option><option>ETHUSD</option><option>GBPJPY</option><option>EURJPY</option></select></div>
-        <div class="fg"><label>Direction</label><select id="e-dir" name="direction"><option value="LONG">LONG</option><option value="SHORT">SHORT</option></select></div>
+        <div class="fg"><label>Direction</label><select id="e-dir" name="direction"><option value="LONG">BUY</option><option value="SHORT">SELL</option></select></div>
         <div class="fg"><label>Résultat</label><select id="e-res" name="result"><option value="WIN">WIN</option><option value="LOSS">LOSS</option><option value="BE">Break Even</option></select></div>
       </div>
       <div class="grid3" style="margin-top:12px">
