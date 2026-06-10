@@ -149,7 +149,7 @@ async function delAcc(id, e) {
 }
 function updateAccSel() {
   const s = $('trade-acc-sel');
-  s.innerHTML = '<option value="">Aucun compte lié</option>' + accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
+  s.innerHTML = '<option value="">Choisir son compte</option>' + accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
 }
 $('acm-close').addEventListener('click', () => $('acc-modal').classList.add('hidden'));
 $('acm-cancel').addEventListener('click', () => $('acc-modal').classList.add('hidden'));
@@ -344,6 +344,11 @@ $('f-reset').addEventListener('click', () => {
 
 /* ── NOUVEAU TRADE ── */
 function openAddTrade() {
+  if(!selAcc) {
+    toast('Veuillez d\'abord créer un compte pour ajouter un trade.','info');
+    $('acc-modal').classList.remove('hidden');
+    return;
+  }
   $('trade-form').reset();
   setTimeout(()=>{ initPairSearch(); const pi=document.getElementById('pair-search-input');if(pi)pi.value=''; const ph=document.getElementById('pair-search-hidden');if(ph)ph.value=''; },50);
   $('trade-form').querySelector('[name="trade_date"]').value = new Date().toISOString().split('T')[0];
@@ -481,101 +486,150 @@ $('cal-prev').addEventListener('click',()=>{cM--;if(cM<0){cM=11;cY--;}renderCal(
 $('cal-next').addEventListener('click',()=>{cM++;if(cM>11){cM=0;cY++;}renderCal();});
 
 /* ── ANALYTICS ── */
+/* ── PALETTE ANALYTICS ── */
+const AN_PALETTE = ['#4ade80','#60a5fa','#f59e0b','#f87171','#a78bfa','#34d399','#fb923c','#38bdf8'];
+const AN_DIR_KEYS  = ['LONG','SHORT'];
+const AN_SESS_KEYS = ['London','New York','Asia'];
+const AN_SETUP_KEYS= ['OTE','FVG','BOS','MSS','Autre'];
+
 async function loadAnalytics() {
   try {
-    if (!selAcc) {
-      $('an-kpis').innerHTML=''; trades=[];
-      cDay=kill(cDay); cRRD=kill(cRRD); cSetup=kill(cSetup); cMo=kill(cMo);
-      renderEmptyChart('c-day','bar',['Lundi','Mardi','Mercredi','Jeudi','Vendredi']);
-      renderEmptyChart('c-rrdist','bar',['-2R','-1R','0R','+1R','+2R','+3R']);
-      renderEmptyChart('c-setup','bar',['OTE','FVG','BOS','MSS']);
-      renderEmptyChart('c-monthly','bar',['Jan','Fév','Mar','Avr','Mai','Juin']);
-      renderPairTable([]); return;
+    const anEl=$('an-kpis'); anEl.innerHTML='';
+    const mkEmpty=keys=>Object.fromEntries(keys.map(k=>[k,{total:0,wins:0}]));
+    if(!selAcc){
+      renderPairTable([]);
+      renderDonutSection('dir',  mkEmpty(AN_DIR_KEYS),  AN_PALETTE,AN_DIR_KEYS);
+      renderDonutSection('sess', mkEmpty(AN_SESS_KEYS), AN_PALETTE,AN_SESS_KEYS);
+      renderDonutSection('setup',mkEmpty(AN_SETUP_KEYS),AN_PALETTE,AN_SETUP_KEYS);
+      return;
     }
-    const p = '?account_id=' + selAcc;
-    const s = await api('GET','/trades/stats'+p);
-    const gW = trades.filter(t=>parseFloat(t.pnl)>0).reduce((a,t)=>a+parseFloat(t.pnl),0);
-    const gL = Math.abs(trades.filter(t=>parseFloat(t.pnl)<0).reduce((a,t)=>a+parseFloat(t.pnl),0));
-    const pf = gL>0?(gW/gL).toFixed(2):gW>0?'inf':'—';
-    const pfC = parseFloat(pf)>=1.5?'var(--green)':parseFloat(pf)>=1?'var(--gold-dark)':'var(--red)';
-    const anEl = $('an-kpis'); anEl.innerHTML='';
-    const allKpis=[{label:'P&L Net',val:s.total&&s.totalPnl?(s.totalPnl>=0?'+':'')+''+Math.abs(s.totalPnl).toFixed(0):'—',sub:'Résultat net',cls:s.total&&s.totalPnl?(s.totalPnl>=0?'g':'r'):'',icon:'ti-currency-dollar'},{label:'Win Rate',val:s.total?s.winRate+'%':'—',sub:s.total?s.wins+' gagnant'+(s.wins>1?'s':''):'—',cls:s.total?(s.winRate>=50?'g':'r'):'',icon:'ti-percentage'},{label:'Total Trades',val:s.total||'—',sub:s.total?s.wins+'W · '+s.losses+'L · '+s.be+'BE':'Aucun trade',cls:'',icon:'ti-chart-bar'},{label:'RR cumulé',val:s.total?(s.totalRR>=0?'+':'')+s.totalRR+'R':'—',sub:s.total?'Moy: '+(s.avgRR>=0?'+':'')+s.avgRR+'R':'—',cls:s.total?(s.totalRR>=0?'o':'r'):'',icon:'ti-trending-up'}];
-    [allKpis[2],allKpis[1],allKpis[3]].forEach(k=>{ const d=document.createElement('div'); d.className='kpi '+(k.accent||''); d.innerHTML='<div class="kpi-label"><i class="ti '+k.icon+'"></i>'+k.label+'</div><div class="kpi-val '+k.cls+'">'+k.val+'</div><div class="kpi-sub">'+k.sub+'</div>'; anEl.appendChild(d); });
-    const pfDiv = document.createElement('div');
-    pfDiv.className = 'kpi';
-    pfDiv.innerHTML = '<div class="kpi-label"><i class="ti ti-math-function"></i>Profit Factor</div><div class="kpi-val" style="color:'+pfC+'">'+pf+'</div><div class="kpi-sub">'+(gL>0?'G:'+gW.toFixed(0)+' P:'+gL.toFixed(0):'—')+'</div>';
-    $('an-kpis').appendChild(pfDiv);
-    renderDayChart(s.byDay);
-    trades = await api('GET', '/trades' + p);
-    renderRRDist(); renderSetupChart(); renderMonthly();
-    renderPairTable(s.byPair);
+    const p='?account_id='+selAcc;
+    const s=await api('GET','/trades/stats'+p);
+    trades=await api('GET','/trades'+p);
+    const gW=trades.filter(t=>parseFloat(t.pnl)>0).reduce((a,t)=>a+parseFloat(t.pnl),0);
+    const gL=Math.abs(trades.filter(t=>parseFloat(t.pnl)<0).reduce((a,t)=>a+parseFloat(t.pnl),0));
+    const pf=gL>0?(gW/gL).toFixed(2):gW>0?'inf':'—';
+    const pfC=parseFloat(pf)>=1.5?'var(--green)':parseFloat(pf)>=1?'var(--gold-dark)':'var(--red)';
+    [{label:'Total Trades',val:s.total||'—',sub:s.total?s.wins+'W · '+s.losses+'L · '+s.be+'BE':'Aucun trade',cls:'',icon:'ti-chart-bar'},
+     {label:'Win Rate',val:s.total?s.winRate+'%':'—',sub:s.total?s.wins+' gagnant'+(s.wins>1?'s':''):'—',cls:s.total?(s.winRate>=50?'g':'r'):'',icon:'ti-percentage'},
+     {label:'RR cumulé',val:s.total?(s.totalRR>=0?'+':'')+s.totalRR+'R':'—',sub:s.total?'Moy: '+(s.avgRR>=0?'+':'')+s.avgRR+'R':'—',cls:s.total?(s.totalRR>=0?'o':'r'):'',icon:'ti-trending-up'}
+    ].forEach(k=>{const d=document.createElement('div');d.className='kpi';d.innerHTML='<div class="kpi-label"><i class="ti '+k.icon+'"></i>'+k.label+'</div><div class="kpi-val '+k.cls+'">'+k.val+'</div><div class="kpi-sub">'+k.sub+'</div>';anEl.appendChild(d);});
+    const pfDiv=document.createElement('div');pfDiv.className='kpi';
+    pfDiv.innerHTML='<div class="kpi-label"><i class="ti ti-math-function"></i>Profit Factor</div><div class="kpi-val" style="color:'+pfC+'">'+pf+'</div><div class="kpi-sub">'+(gL>0?'G:'+gW.toFixed(0)+' P:'+gL.toFixed(0):'—')+'</div>';
+    anEl.appendChild(pfDiv);
     renderWinnersLosers(trades);
-    renderPerfBlocks(trades);
-  } catch(ex){console.error(ex);}
+
+    const byDir=mkEmpty(AN_DIR_KEYS);
+    trades.forEach(t=>{const d=(t.direction||'LONG').toUpperCase();if(!byDir[d])byDir[d]={total:0,wins:0};byDir[d].total++;if(t.result==='WIN')byDir[d].wins++;});
+    renderDonutSection('dir',byDir,AN_PALETTE,AN_DIR_KEYS);
+
+    const bySess=mkEmpty(AN_SESS_KEYS);
+    trades.forEach(t=>{const s=t.session||'Non définie';if(!bySess[s])bySess[s]={total:0,wins:0};bySess[s].total++;if(t.result==='WIN')bySess[s].wins++;});
+    const sessKeys=[...AN_SESS_KEYS,...Object.keys(bySess).filter(k=>!AN_SESS_KEYS.includes(k)&&k!=='Non définie')];
+    renderDonutSection('sess',bySess,AN_PALETTE,sessKeys);
+
+    const bySetup=mkEmpty(AN_SETUP_KEYS);
+    trades.forEach(t=>{const s=t.setup||'Autre';if(!bySetup[s])bySetup[s]={total:0,wins:0};bySetup[s].total++;if(t.result==='WIN')bySetup[s].wins++;});
+    const setupKeys=[...AN_SETUP_KEYS,...Object.keys(bySetup).filter(k=>!AN_SETUP_KEYS.includes(k))];
+    renderDonutSection('setup',bySetup,AN_PALETTE,setupKeys);
+
+    renderPairTable(s.byPair);
+  }catch(ex){console.error(ex);}
 }
 
-function renderDayChart(byDay) {
-  cDay=kill(cDay);
-  const keys=['Mon','Tue','Wed','Thu','Fri'], lbs={Mon:'Lundi',Tue:'Mardi',Wed:'Mercredi',Thu:'Jeudi',Fri:'Vendredi'};
-  cDay=mkChart('c-day','bar',{
-    labels:keys.map(k=>lbs[k]),
-    datasets:[
-      {label:'WIN',data:keys.map(k=>byDay[k]?.wins||0),backgroundColor:'rgba(22,163,74,0.75)',borderRadius:5,borderSkipped:false},
-      {label:'LOSS',data:keys.map(k=>(byDay[k]?.total||0)-(byDay[k]?.wins||0)),backgroundColor:'rgba(220,38,38,0.7)',borderRadius:5,borderSkipped:false}
-    ]
-  },{
-    plugins:{legend:{display:true,labels:{font:{size:10},color:'#9ca3af',boxWidth:10,padding:10}}},
-    scales:{x:{...axOpts,stacked:true},y:{...axOpts,stacked:true,ticks:{...axOpts.ticks,stepSize:1}}}
-  });
+let _anCharts={};
+function renderDonutSection(id,dataObj,palette,keys){
+  if(_anCharts[id]){try{_anCharts[id].destroy();}catch(e){}  _anCharts[id]=null;}
+  const old=document.getElementById('c-'+id+'-wr');if(old)old.remove();
+  const colors=keys.map((_,i)=>palette[i%palette.length]);
+  const totals=keys.map(k=>(dataObj[k]||{total:0}).total);
+  const total=totals.reduce((a,b)=>a+b,0);
+  const legTotal=document.getElementById('leg-'+id+'-total');
+  const legWR=document.getElementById('leg-'+id+'-wr');
+  const wrapWR=document.getElementById('wrap-'+id+'-wr');
+  const mkLeg=()=>keys.map((k,i)=>'<div class="an-legend-item"><span class="an-legend-dot" style="background:'+colors[i]+'"></span><span>'+k+'</span></div>').join('');
+  if(legTotal)legTotal.innerHTML=mkLeg();
+  if(legWR)legWR.innerHTML=mkLeg();
+  const cvs=document.getElementById('c-'+id+'-total');
+  if(cvs){
+    const cd=total>0?totals:keys.map(()=>1);
+    const cc=total>0?colors:keys.map(()=>'rgba(255,255,255,0.06)');
+    _anCharts[id]=new Chart(cvs.getContext('2d'),{
+      type:'doughnut',
+      data:{labels:keys,datasets:[{data:cd,backgroundColor:cc,borderColor:'#0f1117',borderWidth:3,hoverOffset:5}]},
+      options:{cutout:'65%',plugins:{legend:{display:false},tooltip:{enabled:total>0,callbacks:{label:ctx=>' '+keys[ctx.dataIndex]+': '+totals[ctx.dataIndex]+' ('+(total?Math.round(totals[ctx.dataIndex]/total*100):0)+'%)'},backgroundColor:'#1f2937',bodyColor:'#fff',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,padding:10,cornerRadius:8}},animation:{duration:600}},
+      plugins:[{id:'ctr',afterDraw(chart){
+        const{ctx,chartArea:{top,bottom,left,right}}=chart;
+        const cx=(left+right)/2,cy=(top+bottom)/2,ac=chart._active;
+        ctx.save();
+        if(ac&&ac.length&&total>0){
+          const i=ac[0].index,pct=Math.round(totals[i]/total*100);
+          ctx.font='bold 18px Inter,sans-serif';ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+          ctx.fillText(pct+'%',cx,cy-8);
+          ctx.font='10px Inter,sans-serif';ctx.fillStyle='#9ca3af';ctx.fillText(keys[i],cx,cy+10);
+        }else{
+          ctx.font='bold 20px Inter,sans-serif';ctx.fillStyle=total>0?'#fff':'#374151';ctx.textAlign='center';ctx.textBaseline='middle';
+          ctx.fillText(total||'0',cx,cy-8);
+          ctx.font='10px Inter,sans-serif';ctx.fillStyle='#6b7280';ctx.fillText('trades',cx,cy+10);
+        }
+        ctx.restore();
+      }}]
+    });
+  }
+  if(wrapWR){
+    wrapWR.innerHTML='';
+    const cvs2=document.createElement('canvas');
+    cvs2.id='c-'+id+'-wr';
+    const dpr=window.devicePixelRatio||1;
+    const S=160;
+    cvs2.width=S*dpr; cvs2.height=S*dpr;
+    cvs2.style.width=S+'px'; cvs2.style.height=S+'px'; cvs2.style.display='block'; cvs2.style.margin='auto';
+    wrapWR.appendChild(cvs2);
+    const ctx2=cvs2.getContext('2d'); ctx2.scale(dpr,dpr); const cx=S/2,cy=S/2,n=keys.length;
+    const thick=12,gap=4,maxR=cx-10;
+    const wr=keys.map(k=>dataObj[k]&&dataObj[k].total?dataObj[k].wins/dataObj[k].total:0);
+    let hov=null;
+    function draw(h){
+      ctx2.clearRect(0,0,S,S);
+      for(let i=0;i<n;i++){
+        const r=maxR-i*(thick+gap);if(r<thick/2)break;
+        ctx2.beginPath();ctx2.arc(cx,cy,r,0,Math.PI*2);
+        ctx2.strokeStyle='rgba(200,200,200,0.12)';ctx2.lineWidth=thick;ctx2.stroke();
+        const ang=wr[i]*Math.PI*2;
+        if(ang>0.01){
+          ctx2.beginPath();ctx2.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+ang);
+          ctx2.strokeStyle=colors[i];ctx2.lineWidth=thick+(h===i?3:0);ctx2.lineCap='round';ctx2.stroke();
+        }
+      }
+      ctx2.save();
+      if(h!==null&&h<n){
+        ctx2.font='bold 12px Inter,sans-serif';ctx2.fillStyle=colors[h];ctx2.textAlign='center';ctx2.textBaseline='middle';
+        ctx2.fillText(keys[h],cx,cy-8);
+        ctx2.font='11px Inter,sans-serif';ctx2.fillStyle='#9ca3af';
+        ctx2.fillText(Math.round(wr[h]*100)+'%',cx,cy+8);
+      }
+      ctx2.restore();
+    }
+    draw(null);
+    cvs2.addEventListener('mousemove',e=>{
+      const rc=cvs2.getBoundingClientRect(),sx=S/rc.width,sy=S/rc.height;
+      const mx=(e.clientX-rc.left)*sx,my=(e.clientY-rc.top)*sy;
+      const dist=Math.sqrt((mx-cx)**2+(my-cy)**2);
+      let f=null;
+      for(let i=0;i<n;i++){const r=maxR-i*(thick+gap);if(r<thick/2)break;if(Math.abs(dist-r)<=thick/2+3){f=i;break;}}
+      if(f!==hov){hov=f;draw(hov);}
+    });
+    cvs2.addEventListener('mouseleave',()=>{hov=null;draw(null);});
+  }
 }
 
-function renderRRDist() {
-  cRRD=kill(cRRD);
-  const buckets={};
-  trades.forEach(t=>{ const b=Math.floor(parseFloat(t.rr)||0); const k=b>=0?`+${b}R`:`${b}R`; buckets[k]=(buckets[k]||0)+1; });
-  const sorted=Object.entries(buckets).sort((a,b)=>parseFloat(a[0])-parseFloat(b[0]));
-  cRRD=mkChart('c-rrdist','bar',{
-    labels:sorted.map(e=>e[0]),
-    datasets:[{data:sorted.map(e=>e[1]),backgroundColor:sorted.map(e=>parseFloat(e[0])>=0?'rgba(22,163,74,0.75)':'rgba(220,38,38,0.7)'),borderRadius:5,borderSkipped:false}]
-  },{scales:{x:axOpts,y:{...axOpts,ticks:{...axOpts.ticks,stepSize:1}}}});
-}
-
-function renderSetupChart() {
-  cSetup=kill(cSetup);
-  const byS={};
-  trades.forEach(t=>{ const s=t.setup||'Autre'; if(!byS[s])byS[s]={w:0,t:0}; byS[s].t++; if(t.result==='WIN')byS[s].w++; });
-  const ent=Object.entries(byS).filter(e=>e[1].t>=1).sort((a,b)=>b[1].t-a[1].t).slice(0,8);
-  cSetup=mkChart('c-setup','bar',{
-    labels:ent.map(e=>e[0]),
-    datasets:[{label:'Win Rate %',data:ent.map(e=>Math.round(e[1].w/e[1].t*100)),backgroundColor:'rgba(244,199,15,0.8)',borderRadius:5,borderSkipped:false}]
-  },{scales:{x:axOpts,y:{...axOpts,max:100,ticks:{...axOpts.ticks,callback:v=>v+'%'}}}});
-}
-
-function renderMonthly() {
-  cMo=kill(cMo);
-  const bM={};
-  trades.forEach(t=>{ const m=t.trade_date?.substring(0,7); if(!m) return; bM[m]=(bM[m]||0)+(parseFloat(t.pnl)||0); });
-  const months=Object.keys(bM).sort().slice(-12);
-  cMo=mkChart('c-monthly','bar',{
-    labels:months.map(m=>{const[y,mo]=m.split('-');return `${MFR[parseInt(mo)-1].slice(0,3)} ${y.slice(2)}`;}),
-    datasets:[{data:months.map(m=>parseFloat(bM[m].toFixed(2))),backgroundColor:months.map(m=>bM[m]>=0?'rgba(22,163,74,0.75)':'rgba(220,38,38,0.7)'),borderRadius:5,borderSkipped:false}]
-  },{scales:{x:axOpts,y:{...axOpts,ticks:{...axOpts.ticks,callback:v=>`$${v}`}}}});
-}
-
-function renderPairTable(byPair) {
+function renderPairTable(byPair){
   const tbl=$('pair-tbl');
   if(!byPair?.length){tbl.innerHTML='<tr><td colspan="5" style="padding:16px;text-align:center;color:var(--text-muted)">Aucune donnée</td></tr>';return;}
-  tbl.innerHTML=`<thead><tr><th>Paire</th><th>Trades</th><th>Win Rate</th><th>RR Total</th><th>P&L</th></tr></thead>
-  <tbody>${byPair.map(p=>{
+  tbl.innerHTML='<thead><tr><th>Paire</th><th>Trades</th><th>Win Rate</th><th>RR Total</th><th>P&L</th></tr></thead><tbody>'+byPair.map(p=>{
     const wr=p.total?Math.round(p.wins/p.total*100):0;
-    return `<tr>
-      <td><span class="pair-tag">${p.pair}</span></td>
-      <td>${p.total}</td>
-      <td><div class="wr-row"><div class="wr-track"><div class="wr-fill" style="width:${wr}%"></div></div><span style="font-size:.75rem;font-weight:600;min-width:32px">${wr}%</span></div></td>
-      <td class="${p.rr>=0?'pnl-p':'pnl-n'}">${p.rr>=0?'+':''}${p.rr.toFixed(2)}R</td>
-      <td class="${p.pnl>=0?'pnl-p':'pnl-n'}">${p.pnl>=0?'+$':'-$'}${Math.abs(p.pnl).toFixed(2)}</td>
-    </tr>`;
-  }).join('')}</tbody>`;
+    return '<tr><td><span class="pair-tag">'+p.pair+'</span></td><td>'+p.total+'</td><td><div class="wr-row"><div class="wr-track"><div class="wr-fill" style="width:'+wr+'%"></div></div><span style="font-size:.75rem;font-weight:600;min-width:32px">'+wr+'%</span></div></td><td class="'+(p.rr>=0?'pnl-p':'pnl-n')+'">'+(p.rr>=0?'+':'')+p.rr.toFixed(2)+'R</td><td class="'+(p.pnl>=0?'pnl-p':'pnl-n')+'">'+(p.pnl>=0?'+$':'-$')+Math.abs(p.pnl).toFixed(2)+'</td></tr>';
+  }).join('')+'</tbody>';
 }
 
 /* ── FORMATION ── */
