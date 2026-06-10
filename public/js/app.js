@@ -407,7 +407,7 @@ $('detail-modal').addEventListener('click',e=>{if(e.target===$('detail-modal'))c
 $('d-del').addEventListener('click',async()=>{
   if(!detailId||!confirm('Supprimer ce trade ?')) return;
   await api('DELETE',`/trades/${detailId}`);
-  toast('Trade supprimé','success'); closeDetail(); loadTrades(); loadDashboard();
+  toast('Trade supprimé','success'); closeDetail(); loadTrades(); loadDashboard(); loadAccounts();
 });
 $('d-edit').addEventListener('click',()=>{
   const t=trades.find(x=>x.id===detailId); if(!t) return;
@@ -438,7 +438,7 @@ $('edit-form').addEventListener('submit',async e=>{
     form.set('rr', rr); form.set('pnl', pnl);
     await api('PATCH',`/trades/${id}`,form,true);
     toast('Trade mis à jour','success'); $('edit-modal').classList.add('hidden');
-    loadTrades(); loadDashboard();
+    loadTrades(); loadDashboard(); loadAccounts();
   } catch(ex){toast(ex.message,'error');}
 });
 

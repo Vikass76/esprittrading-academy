@@ -116,6 +116,15 @@ router.get('/stats', requireAuth, (req, res) => {
   });
 });
 
+
+function recalcBalance(db, account_id, user_id) {
+  if (!account_id) return;
+  const tot = db.prepare('SELECT COALESCE(SUM(pnl),0) as total FROM trades WHERE account_id = ?').get(String(account_id));
+  const acc = db.prepare('SELECT initial_balance FROM accounts WHERE id = ?').get(account_id);
+  if (acc) db.prepare('UPDATE accounts SET current_balance = ? WHERE id = ? AND user_id = ?')
+    .run(acc.initial_balance + tot.total, account_id, user_id);
+}
+
 router.get('/', requireAuth, (req, res) => {
   const { pair, result, from, to, session, setup, direction, account_id } = req.query;
   let query = 'SELECT t.*, a.name as account_name FROM trades t LEFT JOIN accounts a ON t.account_id = a.id WHERE t.user_id = ?';
@@ -151,10 +160,7 @@ router.post('/', requireAuth, upload.fields([{name:'screenshot',maxCount:1},{nam
     session||null, setup||null, timeframe||null, emotions||null,
     screenshot, screenshot2, notes||'', trade_date, entry_time||null, exit_time||null
   );
-  if (account_id && pnl) {
-    db.prepare('UPDATE accounts SET current_balance = current_balance + ? WHERE id = ? AND user_id = ?')
-      .run(parseFloat(pnl), account_id, req.session.userId);
-  }
+  recalcBalance(db, account_id, req.session.userId);
   res.json({ id: row.lastInsertRowid });
 });
 
@@ -188,6 +194,8 @@ router.patch('/:id', requireAuth, upload.fields([{name:'screenshot',maxCount:1},
     updates.entry_time||null, updates.exit_time||null, updates.account_id||null,
     req.params.id
   );
+  recalcBalance(db, trade.account_id, req.session.userId);
+  if (updates.account_id && updates.account_id !== trade.account_id) recalcBalance(db, updates.account_id, req.session.userId);
   res.json({ id: Number(req.params.id), ...updates, screenshot, screenshot2 });
 });
 
@@ -197,6 +205,12 @@ router.delete('/:id', requireAuth, (req, res) => {
   if (trade.screenshot?.startsWith('/uploads/')) fs.unlink(path.join(__dirname,'../../', trade.screenshot), ()=>{});
   if (trade.screenshot2?.startsWith('/uploads/')) fs.unlink(path.join(__dirname,'../../', trade.screenshot2), ()=>{});
   db.prepare('DELETE FROM trades WHERE id = ?').run(req.params.id);
+  if (trade.account_id) {
+    const tot = db.prepare('SELECT COALESCE(SUM(pnl),0) as total FROM trades WHERE account_id = ?').get(String(trade.account_id));
+    const acc = db.prepare('SELECT initial_balance FROM accounts WHERE id = ?').get(trade.account_id);
+    if (acc) db.prepare('UPDATE accounts SET current_balance = ? WHERE id = ? AND user_id = ?')
+      .run(acc.initial_balance + tot.total, trade.account_id, req.session.userId);
+  }
   res.json({ success: true });
 });
 
