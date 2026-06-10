@@ -52,7 +52,7 @@ h1,h2,h3,h4{font-family:'Nunito Sans',sans-serif;font-weight:700;line-height:1.3
 .login-brand img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2.5px solid var(--gold);box-shadow:0 0 0 5px var(--gold-light);margin-bottom:14px}
 .login-brand h1{font-size:1.5rem;letter-spacing:-.02em}
 .login-brand .tag{font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dark);margin-top:3px}
-.login-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;box-shadow:var(--shadow-md)}
+.login-card{background:#1e1e2a;border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;box-shadow:var(--shadow-md)}
 .login-error{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);border-radius:var(--radius-sm);padding:9px 13px;font-size:.82rem;margin-top:10px}
 .login-footer{text-align:center;font-size:.73rem;color:var(--text-light);margin-top:20px}
 
@@ -126,7 +126,7 @@ h1,h2,h3,h4{font-family:'Nunito Sans',sans-serif;font-weight:700;line-height:1.3
   background:var(--bg-subtle);font-family:'Inter',sans-serif;font-size:.85rem;
   color:var(--text);outline:none;transition:var(--t);
 }
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-light);background:#fff}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-light);background:var(--bg-subtle)}
 .fg textarea{resize:vertical;min-height:80px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
@@ -159,7 +159,7 @@ h1,h2,h3,h4{font-family:'Nunito Sans',sans-serif;font-weight:700;line-height:1.3
 .toast{padding:13px 20px;border-radius:12px;font-size:.83rem;font-weight:600;box-shadow:0 8px 32px rgba(0,0,0,0.18);animation:tin .2s ease;max-width:320px;display:flex;align-items:center;gap:10px}
 .t-ok{background:#0f1117;color:#4ade80;border:1px solid rgba(74,222,128,0.3)}
 .t-err{background:#0f1117;color:#f87171;border:1px solid rgba(248,113,113,0.3)}
-.t-info{background:#fff;color:#dc2626;border:2px solid #dc2626}
+.t-info{background:#1e1e2a;color:#dc2626;border:2px solid #dc2626}
 @keyframes tin{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
 
 /* ══ STATS GRID ══════════════════════════════ */
@@ -211,7 +211,7 @@ h1,h2,h3,h4{font-family:'Nunito Sans',sans-serif;font-weight:700;line-height:1.3
 /* ══ TRADES TABLE ══════════════════════════════ */
 .tbl-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
 .tbl{width:100%;border-collapse:collapse}
-.tbl thead th{padding:10px 14px;text-align:left;font-size:.67rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);background:var(--bg-subtle);border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl thead th{padding:10px 14px;text-align:left;font-size:.67rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);background:#16161f;border-bottom:1px solid var(--border);white-space:nowrap}
 .tbl tbody tr{border-bottom:1px solid var(--border-2);cursor:pointer;transition:var(--t)}
 .tbl tbody tr:last-child{border-bottom:none}
 .tbl tbody tr:hover{background:var(--bg-subtle)}
@@ -242,8 +242,8 @@ h1,h2,h3,h4{font-family:'Nunito Sans',sans-serif;font-weight:700;line-height:1.3
 .cal-cell:hover{border-color:var(--gold)}
 .cal-cell.empty{background:transparent;border-color:transparent}
 .cal-cell.today{border-color:var(--gold);background:var(--gold-light)}
-.cal-cell.win-day{background:linear-gradient(160deg,#fff 60%,#f0fdf4);border-color:var(--green-border)}
-.cal-cell.loss-day{background:linear-gradient(160deg,#fff 60%,#fef2f2);border-color:var(--red-border)}
+.cal-cell.win-day{background:linear-gradient(160deg,#1a2a1a 0%,#162316 100%);border-color:var(--green-border)}
+.cal-cell.loss-day{background:linear-gradient(160deg,#2a1a1a 0%,#231616 100%);border-color:var(--red-border)}
 .cal-dn{font-weight:600;color:var(--text-muted);margin-bottom:3px}
 .cal-rr{font-weight:700;font-size:.76rem}
 .cal-rr.p{color:var(--green)}
@@ -400,3 +400,16 @@ h1,h2,h3,h4{font-family:'Nunito Sans',sans-serif;font-weight:700;line-height:1.3
 .an-freq-title{font-size:1rem;font-weight:700;color:#fff;margin-bottom:12px;}
 .an-freq-avg{color:#6b7280;font-weight:400;font-size:.95rem;margin-left:4px;}
 .an-freq-avg span{color:#fff;font-weight:700;}
+
+/* ── DARK INPUTS GLOBAL ── */
+input, select, textarea {
+  color-scheme: dark;
+}
+input::placeholder, textarea::placeholder {
+  color: var(--text-light) !important;
+  opacity: 1;
+}
+select option {
+  background: #1e1e2a;
+  color: var(--text);
+}

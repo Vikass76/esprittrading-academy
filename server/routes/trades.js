@@ -157,7 +157,7 @@ router.post('/', requireAuth, upload.fields([{name:'screenshot',maxCount:1},{nam
     req.session.userId, account_id||null, pair, direction||'LONG', result,
     parseFloat(rr)||0, parseFloat(pnl)||0, parseFloat(lot_size)||0,
     entry_price||null, exit_price||null, stop_loss||null, take_profit||null,
-    session||null, setup||null, timeframe||null, emotions||null,
+    session?.trim()||null, setup?.trim()||null, timeframe?.trim()||null, emotions||null,
     screenshot, screenshot2, notes||'', trade_date, entry_time||null, exit_time||null
   );
   recalcBalance(db, account_id, req.session.userId);
@@ -189,7 +189,7 @@ router.patch('/:id', requireAuth, upload.fields([{name:'screenshot',maxCount:1},
     updates.pair, updates.direction, updates.result,
     parseFloat(updates.rr)||0, parseFloat(updates.pnl)||0, parseFloat(updates.lot_size)||0,
     updates.entry_price||null, updates.exit_price||null, updates.stop_loss||null, updates.take_profit||null,
-    updates.session||null, updates.setup||null, updates.timeframe||null, updates.emotions||null,
+    updates.session?.trim()||null, updates.setup?.trim()||null, updates.timeframe?.trim()||null, updates.emotions||null,
     screenshot, screenshot2, updates.notes||'', updates.trade_date,
     updates.entry_time||null, updates.exit_time||null, updates.account_id||null,
     req.params.id

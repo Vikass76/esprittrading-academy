@@ -30,7 +30,7 @@ let detailId = null;
 /* ── CHARTS ── */
 let cEq=null,cPair=null,cSess=null,cDay=null,cRRD=null,cSetup=null,cMo=null;
 const G='#16a34a', R='#dc2626', GOLD='rgb(244,199,15)';
-const axOpts = { grid:{color:'rgba(0,0,0,0.04)'}, ticks:{color:'#9ca3af',font:{size:10}} };
+const axOpts = { grid:{color:'rgba(255,255,255,0.07)',borderDash:[4,4]}, ticks:{color:'#9ca3af',font:{size:10}}, border:{display:false} };
 function kill(c) { if(c) c.destroy(); return null; }
 function mkChart(id, type, data, opts={}) {
   const canvas = $(id); if (!canvas) return null;
@@ -1060,7 +1060,7 @@ function renderEmptyChart(id, type, xLabels) {
   const ex = Chart.getChart(canvas); if (ex) ex.destroy();
   new Chart(canvas, { type: type||'bar', data: { labels: xLabels||[], datasets:[{data:[],borderColor:'rgba(0,0,0,0.05)',backgroundColor:'rgba(0,0,0,0.02)'}]},
     options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
-      scales:{ x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#9ca3af',font:{size:10}}}, y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#9ca3af',font:{size:10}},beginAtZero:true}}}});
+      scales:{ x:{grid:{color:'rgba(255,255,255,0.07)',borderDash:[4,4]},ticks:{color:'#9ca3af',font:{size:10}},border:{display:false}}, y:{grid:{color:'rgba(255,255,255,0.07)',borderDash:[4,4]},ticks:{color:'#9ca3af',font:{size:10}},border:{display:false},beginAtZero:true}}}});
 }
 
 // ═══ PAIR SEARCH ═══
@@ -1072,7 +1072,7 @@ function initPairSearch() {
   if (!input || !hidden) return;
   const wrap = input.parentElement; wrap.style.position='relative';
   let drop = document.getElementById('pair-dropdown');
-  if (!drop) { drop=document.createElement('div'); drop.id='pair-dropdown'; drop.style.cssText='position:absolute;top:calc(100% + 2px);left:0;right:0;background:#fff;border:1.5px solid var(--gold);border-radius:8px;max-height:200px;overflow-y:auto;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:none'; wrap.appendChild(drop); }
+  if (!drop) { drop=document.createElement('div'); drop.id='pair-dropdown'; drop.style.cssText='position:absolute;top:calc(100% + 2px);left:0;right:0;background:#1e1e2a;border:1.5px solid var(--gold);border-radius:8px;max-height:200px;overflow-y:auto;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);display:none'; wrap.appendChild(drop); }
   function show(q) {
     const f=q?ALL_PAIRS.filter(p=>p.toLowerCase().includes(q.toLowerCase())).slice(0,15):ALL_PAIRS.slice(0,15);
     if (!f.length){drop.style.display='none';return;}
