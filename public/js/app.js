@@ -503,10 +503,18 @@ async function loadAnalytics() {
     const anEl=$('an-kpis'); anEl.innerHTML='';
     const mkEmpty=keys=>Object.fromEntries(keys.map(k=>[k,{total:0,wins:0}]));
     if(!selAcc){
+      const anEl2=$('an-kpis'); anEl2.innerHTML='';
+      [{label:'Total Trades',val:'—',sub:'Aucun trade',cls:'',icon:'ti-chart-bar'},
+       {label:'Win Rate',val:'—',sub:'—',cls:'',icon:'ti-percentage'},
+       {label:'RR cumulé',val:'—',sub:'—',cls:'',icon:'ti-trending-up'},
+       {label:'Profit Factor',val:'—',sub:'—',cls:'',icon:'ti-math-function'}
+      ].forEach(k=>{const d=document.createElement('div');d.className='kpi';d.innerHTML='<div class="kpi-label"><i class="ti '+k.icon+'"></i>'+k.label+'</div><div class="kpi-val">'+k.val+'</div><div class="kpi-sub">'+k.sub+'</div>';anEl2.appendChild(d);});
       renderPairTable([]);
       renderDonutSection('dir',  mkEmpty(AN_DIR_KEYS),  AN_PALETTE,AN_DIR_KEYS);
       renderDonutSection('sess', mkEmpty(AN_SESS_KEYS), AN_PALETTE,AN_SESS_KEYS);
       renderDonutSection('setup',mkEmpty(AN_SETUP_KEYS),AN_PALETTE,AN_SETUP_KEYS);
+      renderPerfJour([]);
+      renderFrequency([]);
       return;
     }
     const p='?account_id='+selAcc;
@@ -1143,20 +1151,20 @@ async function loadEcoCalendar() {
     const res = await fetch('/api/eco-calendar?from=' + from + '&to=' + to);
     const raw = await res.json();
     // Garder tous les impacts mais filtrer les pays pertinents pour traders
-    const TRADER_COUNTRIES = ['US','EU','GB','JP','CA','AU','NZ','CH','CN','DE','FR','IT','ES','SG','HK','KR','IN','BR','MX','NO','SE','DK','PL','HU','CZ','TR','ZA','SA','AE'];
+    const TRADER_COUNTRIES = ['USD','EUR','GBP','JPY','CAD','AUD','NZD','CHF','CNY','ALL','US','EU','GB','JP','CA','AU','NZ','CH','CN','DE','FR'];
     const data = raw.filter(e => {
       const c = (e.country||'').toUpperCase();
       const imp = (e.impact||'').toLowerCase();
       // Garder si pays trader OU impact high
-      return TRADER_COUNTRIES.includes(c) || imp === 'high';
+      const d=(e.time||"").substring(0,10); const td=new Date().toISOString().split("T")[0]; return d>=td && TRADER_COUNTRIES.includes(c);
     });
     if (!data.length) { container.innerHTML = '<div class="empty"><p>Aucun événement.</p></div>'; return; }
     const MONTHS = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
     const DAYS = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
-    const FLAGS = {US:'🇺🇸',EU:'🇪🇺',GB:'🇬🇧',JP:'🇯🇵',CA:'🇨🇦',AU:'🇦🇺',NZ:'🇳🇿',CH:'🇨🇭',CN:'🇨🇳',DE:'🇩🇪',FR:'🇫🇷',IT:'🇮🇹',ES:'🇪🇸',KR:'🇰🇷',IN:'🇮🇳',BR:'🇧🇷',MX:'🇲🇽',RU:'🇷🇺',ZA:'🇿🇦',SG:'🇸🇬',HK:'🇭🇰',SE:'🇸🇪',NO:'🇳🇴',DK:'🇩🇰',PL:'🇵🇱',CZ:'🇨🇿',HU:'🇭🇺',TR:'🇹🇷',ID:'🇮🇩',TH:'🇹🇭',MY:'🇲🇾',PH:'🇵🇭',VN:'🇻🇳',SA:'🇸🇦',AE:'🇦🇪',EG:'🇪🇬',NG:'🇳🇬',AR:'🇦🇷',CL:'🇨🇱',CO:'🇨🇴',PT:'🇵🇹',GR:'🇬🇷',AT:'🇦🇹',BE:'🇧🇪',NL:'🇳🇱',FI:'🇫🇮',IE:'🇮🇪',IL:'🇮🇱',BD:'🇧🇩',LT:'🇱🇹',LV:'🇱🇻',EE:'🇪🇪',RO:'🇷🇴',HR:'🇭🇷',BG:'🇧🇬',SK:'🇸🇰',SI:'🇸🇮',IS:'🇮🇸',AO:'🇦🇴',MN:'🇲🇳',SC:'🇸🇨',LK:'🇱🇰',PK:'🇵🇰',UA:'🇺🇦',RS:'🇷🇸',BA:'🇧🇦',MK:'🇲🇰',AL:'🇦🇱',GE:'🇬🇪',AM:'🇦🇲',AZ:'🇦🇿',KZ:'🇰🇿',UZ:'🇺🇿',BY:'🇧🇾',MD:'🇲🇩',KE:'🇰🇪',GH:'🇬🇭',TZ:'🇹🇿',ET:'🇪🇹',CI:'🇨🇮',SN:'🇸🇳',MA:'🇲🇦',TN:'🇹🇳',DZ:'🇩🇿',LY:'🇱🇾',SD:'🇸🇩',IQ:'🇮🇶',IR:'🇮🇷',KW:'🇰🇼',QA:'🇶🇦',BH:'🇧🇭',OM:'🇴🇲',JO:'🇯🇴',LB:'🇱🇧',SY:'🇸🇾',YE:'🇾🇪',UY:'🇺🇾',PY:'🇵🇾',BO:'🇧🇴',PE:'🇵🇪',EC:'🇪🇨',VE:'🇻🇪',CR:'🇨🇷',PA:'🇵🇦',GT:'🇬🇹',HN:'🇭🇳',SV:'🇸🇻',NI:'🇳🇮',DO:'🇩🇴',CU:'🇨🇺',TT:'🇹🇹',JM:'🇯🇲',BB:'🇧🇧',BS:'🇧🇸',HT:'🇭🇹',LU:'🇱🇺',MT:'🇲🇹',CY:'🇨🇾',LI:'🇱🇮',AD:'🇦🇩',MC:'🇲🇨',SM:'🇸🇲',VA:'🇻🇦',MZ:'🇲🇿',UG:'🇺🇬',TW:'🇹🇼',CG:'🇨🇬',RW:'🇷🇼',XK:'🇽🇰',NA:'🇳🇦',ME:'🇲🇪',BW:'🇧🇼',PS:'🇵🇸'};
+    const FLAGS = {USD:'🇺🇸',EUR:'🇪🇺',GBP:'🇬🇧',JPY:'🇯🇵',CAD:'🇨🇦',AUD:'🇦🇺',NZD:'🇳🇿',CHF:'🇨🇭',CNY:'🇨🇳',US:'🇺🇸',EU:'🇪🇺',GB:'🇬🇧',JP:'🇯🇵',CA:'🇨🇦',AU:'🇦🇺',NZ:'🇳🇿',CH:'🇨🇭',CN:'🇨🇳',DE:'🇩🇪',FR:'🇫🇷',IT:'🇮🇹',ES:'🇪🇸',KR:'🇰🇷',IN:'🇮🇳',BR:'🇧🇷',MX:'🇲🇽',RU:'🇷🇺',ZA:'🇿🇦',SG:'🇸🇬',HK:'🇭🇰',SE:'🇸🇪',NO:'🇳🇴',DK:'🇩🇰',PL:'🇵🇱',CZ:'🇨🇿',HU:'🇭🇺',TR:'🇹🇷',ID:'🇮🇩',TH:'🇹🇭',MY:'🇲🇾',PH:'🇵🇭',VN:'🇻🇳',SA:'🇸🇦',AE:'🇦🇪',EG:'🇪🇬',NG:'🇳🇬',AR:'🇦🇷',CL:'🇨🇱',CO:'🇨🇴',PT:'🇵🇹',GR:'🇬🇷',AT:'🇦🇹',BE:'🇧🇪',NL:'🇳🇱',FI:'🇫🇮',IE:'🇮🇪',IL:'🇮🇱',BD:'🇧🇩',LT:'🇱🇹',LV:'🇱🇻',EE:'🇪🇪',RO:'🇷🇴',HR:'🇭🇷',BG:'🇧🇬',SK:'🇸🇰',SI:'🇸🇮',IS:'🇮🇸',AO:'🇦🇴',MN:'🇲🇳',SC:'🇸🇨',LK:'🇱🇰',PK:'🇵🇰',UA:'🇺🇦',RS:'🇷🇸',BA:'🇧🇦',MK:'🇲🇰',AL:'🇦🇱',GE:'🇬🇪',AM:'🇦🇲',AZ:'🇦🇿',KZ:'🇰🇿',UZ:'🇺🇿',BY:'🇧🇾',MD:'🇲🇩',KE:'🇰🇪',GH:'🇬🇭',TZ:'🇹🇿',ET:'🇪🇹',CI:'🇨🇮',SN:'🇸🇳',MA:'🇲🇦',TN:'🇹🇳',DZ:'🇩🇿',LY:'🇱🇾',SD:'🇸🇩',IQ:'🇮🇶',IR:'🇮🇷',KW:'🇰🇼',QA:'🇶🇦',BH:'🇧🇭',OM:'🇴🇲',JO:'🇯🇴',LB:'🇱🇧',SY:'🇸🇾',YE:'🇾🇪',UY:'🇺🇾',PY:'🇵🇾',BO:'🇧🇴',PE:'🇵🇪',EC:'🇪🇨',VE:'🇻🇪',CR:'🇨🇷',PA:'🇵🇦',GT:'🇬🇹',HN:'🇭🇳',SV:'🇸🇻',NI:'🇳🇮',DO:'🇩🇴',CU:'🇨🇺',TT:'🇹🇹',JM:'🇯🇲',BB:'🇧🇧',BS:'🇧🇸',HT:'🇭🇹',LU:'🇱🇺',MT:'🇲🇹',CY:'🇨🇾',LI:'🇱🇮',AD:'🇦🇩',MC:'🇲🇨',SM:'🇸🇲',VA:'🇻🇦',MZ:'🇲🇿',UG:'🇺🇬',TW:'🇹🇼',CG:'🇨🇬',RW:'🇷🇼',XK:'🇽🇰',NA:'🇳🇦',ME:'🇲🇪',BW:'🇧🇼',PS:'🇵🇸'};
     const grouped = {};
     data.forEach(e => {
-      const d = (e.time||'').substring(0,10);
+      const d = (e.time||e.date||'').substring(0,10);
       if (d.length < 10) return;
       if (!grouped[d]) grouped[d] = [];
       grouped[d].push(e);
@@ -1183,7 +1191,7 @@ async function loadEcoCalendar() {
           const prev = e.prev !== null && e.prev !== undefined ? String(e.prev) : '—';
           const ac = actual !== '—' && forecast !== '—' ? (parseFloat(actual) >= parseFloat(forecast) ? 'var(--green)' : 'var(--red)') : 'var(--text)';
           return '<tr style="background:' + (i%2===0?'var(--bg-card)':'var(--bg-subtle)') + ';border-bottom:1px solid var(--border-2)">'
-            + '<td style="padding:10px;font-size:.78rem;font-weight:600;color:var(--text-muted)">' + (e.time||'').substring(11,16) + '</td>'
+            + '<td style="padding:10px;font-size:.78rem;font-weight:600;color:var(--text-muted)">' + (e.time ? new Date(e.time).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Paris'}) : '—') + '</td>'
             + '<td style="padding:10px"><span style="font-size:.72rem;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--bg-subtle);border:1px solid var(--border)">' + flag + ' ' + country + '</span></td>'
             + '<td style="padding:10px;text-align:center"><span style="font-size:.75rem;font-weight:700">' + stars + '</span></td>'
             + '<td style="padding:10px;font-size:.83rem">' + (e.event||'—') + '</td>'

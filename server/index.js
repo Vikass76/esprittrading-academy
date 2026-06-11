@@ -37,14 +37,24 @@ app.use('/api/trades', require('./routes/trades'));
 
 app.get('/api/eco-calendar', (req, res) => {
   const { from, to } = req.query;
-  const key = process.env.FINNHUB_API_KEY;
-  const url = 'https://finnhub.io/api/v1/calendar/economic?from=' + from + '&to=' + to + '&token=' + key;
+  const url = 'https://nfs.faireconomy.media/ff_calendar_thisweek.json';
   https.get(url, r => {
     let data = '';
     r.on('data', c => data += c);
     r.on('end', () => {
-      try { res.json(JSON.parse(data).economicCalendar || []); }
-      catch(e) { res.json([]); }
+      try {
+        const events = JSON.parse(data);
+        const mapped = events.map(e => ({
+          event: e.title,
+          country: e.country,
+          time: e.date,
+          impact: e.impact ? e.impact.toLowerCase() : 'low',
+          actual: e.actual || null,
+          estimate: e.forecast || null,
+          prev: e.previous || null
+        }));
+        res.json(mapped);
+      } catch(e) { res.json([]); }
     });
   }).on('error', () => res.json([]));
 });
