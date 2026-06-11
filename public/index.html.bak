@@ -12,178 +12,116 @@
 
 <!-- LOGIN -->
 <div id="login-page">
-  <nav class="lp-nav">
-    <div class="lp-nav-logo">
-      <img src="/logo.jpg" alt="Esprit Trading"/>
-      <div><div class="lp-nav-name">Esprit Trading</div><div class="lp-nav-sub">OTE 705</div></div>
-    </div>
-    <div class="lp-nav-badge">Plateforme 100% gratuite</div>
-  </nav>
-  <div class="lp-split">
-    <div class="lp-left">
-      <div class="lp-hero-glow"></div>
-      <div class="lp-badge"><span class="lp-dot"></span>Rejoins la communauté OTE 705</div>
-      <h1 class="lp-title">Pilote ta progression,<br>trade <em>avec intention.</em></h1>
-      <p class="lp-desc">Journal de trades, analytics en temps réel et suivi de performance — tout ce qu'il te faut pour passer au niveau supérieur.</p>
-      <div class="lp-feat">
-        <div class="lp-feat-text">
-          <div class="lp-feat-tag" style="color:#10b981"><div class="ft-ic" style="background:rgba(16,185,129,0.12)"><i class="ti ti-trending-up"></i></div>Courbe de capital</div>
-          <h3>Suis ta progression<br><em>trade après trade.</em></h3>
-          <p>Ta courbe de capital se met à jour automatiquement à chaque trade. Visualise ta croissance et détecte tes drawdowns.</p>
-          <div class="ft-bullets">
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#10b981"></span>Courbe journalière en temps réel</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#10b981"></span>Suivi du drawdown maximum autorisé</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#10b981"></span>Gestion multi-comptes (réel, prop firm, démo)</div>
-          </div>
-        </div>
-        <div class="ft-card">
-          <div class="ft-card-head">Suivi de capital <span class="ft-card-val g">↑ +12.4%</span></div>
-          <svg viewBox="0 0 360 85" width="100%" height="85" preserveAspectRatio="none">
-            <defs><linearGradient id="ftg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10b981" stop-opacity="0.2"/><stop offset="100%" stop-color="#10b981" stop-opacity="0"/></linearGradient></defs>
-            <path d="M0,78 L30,72 L60,75 L90,63 L120,60 L150,48 L180,43 L210,31 L240,34 L270,20 L300,16 L330,8 L360,4 L360,85 L0,85Z" fill="url(#ftg1)"/>
-            <path d="M0,78 L30,72 L60,75 L90,63 L120,60 L150,48 L180,43 L210,31 L240,34 L270,20 L300,16 L330,8 L360,4" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="360" cy="4" r="4" fill="#10b981"/>
-          </svg>
-          <div class="ft-mini-stats">
-            <div class="ft-ms"><div class="ft-ms-l">Capital</div><div class="ft-ms-v w">12 480$</div></div>
-            <div class="ft-ms"><div class="ft-ms-l">Ce mois</div><div class="ft-ms-v g">+1 480$</div></div>
-            <div class="ft-ms"><div class="ft-ms-l">Drawdown</div><div class="ft-ms-v r">-3.2%</div></div>
-          </div>
+  <div class="login-split">
+
+    <!-- GAUCHE : présentation -->
+    <div class="login-left">
+      <div class="ll-logo">
+        <img src="/logo.jpg" alt="Esprit Trading"/>
+        <div>
+          <div class="ll-name">Esprit Trading</div>
+          <div class="ll-sub">Accompagnement OTE 705</div>
         </div>
       </div>
-      <div class="lp-feat">
-        <div class="lp-feat-text">
-          <div class="lp-feat-tag" style="color:#F4C70F"><div class="ft-ic" style="background:rgba(244,199,15,0.12)"><i class="ti ti-list-details"></i></div>Journal de trades</div>
-          <h3>Enregistre chaque trade,<br><em>apprends de chacun.</em></h3>
-          <p>Note chaque trade avec sa direction, son RR et son résultat. Un historique complet pour comprendre ce qui fonctionne.</p>
-          <div class="ft-bullets">
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Direction, instrument, date, RR, résultat</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Notes personnelles et captures d'écran</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Filtres par compte, date et instrument</div>
+      <div class="ll-body">
+        <div class="ll-badge"><span class="ll-dot"></span> Plateforme 100% gratuite</div>
+        <h1 class="ll-title">Analyse ta performance,<br>trades <span>plus intelligemment</span></h1>
+        <p class="ll-desc">Suivi de performance en temps réel, analytics avancés et journal de trades — tout ce dont tu as besoin pour progresser.</p>
+        <div class="ll-stats">
+          <div class="ll-stat">
+            <div class="ll-stat-val green">+34%</div>
+            <div class="ll-stat-label">Win rate moyen</div>
+          </div>
+          <div class="ll-stat">
+            <div class="ll-stat-val gold">2.4R</div>
+            <div class="ll-stat-label">RR moyen</div>
+          </div>
+          <div class="ll-stat">
+            <div class="ll-stat-val">1 200+</div>
+            <div class="ll-stat-label">Trades analysés</div>
           </div>
         </div>
-        <div class="ft-card">
-          <div class="ft-card-head">Journal de trades <span class="ft-card-val o">24 trades</span></div>
-          <div class="ft-trades">
-            <div class="ft-trade"><span class="ft-dir long">LONG</span><span class="ft-pair">NQ · Futures</span><span class="ft-date">11 juin</span><span class="ft-rr">2.5R</span><span class="ft-res g">+$312</span></div>
-            <div class="ft-trade"><span class="ft-dir short">SHORT</span><span class="ft-pair">ES · Futures</span><span class="ft-date">10 juin</span><span class="ft-rr">1.8R</span><span class="ft-res g">+$224</span></div>
-            <div class="ft-trade"><span class="ft-dir long">LONG</span><span class="ft-pair">GC · Gold</span><span class="ft-date">9 juin</span><span class="ft-rr">-1R</span><span class="ft-res r">-$125</span></div>
-            <div class="ft-trade"><span class="ft-dir short">SHORT</span><span class="ft-pair">NQ · Futures</span><span class="ft-date">9 juin</span><span class="ft-rr">3.1R</span><span class="ft-res g">+$387</span></div>
-            <div class="ft-trade"><span class="ft-dir long">LONG</span><span class="ft-pair">CL · Oil</span><span class="ft-date">7 juin</span><span class="ft-rr">2.2R</span><span class="ft-res g">+$275</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="lp-feat">
-        <div class="lp-feat-text">
-          <div class="lp-feat-tag" style="color:#F4C70F"><div class="ft-ic" style="background:rgba(244,199,15,0.12)"><i class="ti ti-calendar-stats"></i></div>Calendrier de performance</div>
-          <h3>Repère tes patterns,<br><em>trade aux bons moments.</em></h3>
-          <p>Chaque journée colorée selon ton résultat. Identifie tes meilleurs jours et les périodes à éviter.</p>
-          <div class="ft-bullets">
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Vue mensuelle colorée par résultat</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Détection des patterns hebdomadaires</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Résumé wins / losses / break-even</div>
-          </div>
-        </div>
-        <div class="ft-card">
-          <div class="ft-card-head">Calendrier <span class="ft-card-val o">Juin 2025</span></div>
-          <div class="ft-cal-hd"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
-          <div class="ft-cal">
-            <div class="ft-cd e"></div><div class="ft-cd e"></div><div class="ft-cd e"></div><div class="ft-cd e"></div><div class="ft-cd e"></div><div class="ft-cd o">1</div><div class="ft-cd o">2</div>
-            <div class="ft-cd w">3</div><div class="ft-cd l">4</div><div class="ft-cd w">5</div><div class="ft-cd w">6</div><div class="ft-cd o">7</div><div class="ft-cd o">8</div><div class="ft-cd o">9</div>
-            <div class="ft-cd w">10</div><div class="ft-cd w">11</div><div class="ft-cd b">12</div><div class="ft-cd l">13</div><div class="ft-cd w">14</div><div class="ft-cd o">15</div><div class="ft-cd o">16</div>
-            <div class="ft-cd w">17</div><div class="ft-cd w">18</div><div class="ft-cd l">19</div><div class="ft-cd w">20</div><div class="ft-cd w">21</div><div class="ft-cd o">22</div><div class="ft-cd o">23</div>
-            <div class="ft-cd w">24</div><div class="ft-cd b">25</div><div class="ft-cd w">26</div><div class="ft-cd w">27</div><div class="ft-cd o">28</div><div class="ft-cd o">29</div><div class="ft-cd o">30</div>
-          </div>
-          <div class="ft-cal-stats">
-            <div class="ft-cs"><div class="ft-cs-v g">16</div><div class="ft-cs-l">Gagnants</div></div>
-            <div class="ft-cs"><div class="ft-cs-v r">4</div><div class="ft-cs-l">Perdants</div></div>
-            <div class="ft-cs"><div class="ft-cs-v b">2</div><div class="ft-cs-l">Break-even</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="lp-feat">
-        <div class="lp-feat-text">
-          <div class="lp-feat-tag" style="color:#3b82f6"><div class="ft-ic" style="background:rgba(59,130,246,0.12)"><i class="ti ti-chart-bar"></i></div>Analytics détaillés</div>
-          <h3>Comprends où tu<br><em>gagnes vraiment.</em></h3>
-          <p>Win rate, RR moyen, profit factor par session — toutes tes stats au même endroit.</p>
-          <div class="ft-bullets">
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#3b82f6"></span>Analyse par session (London, NY, Asie)</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#3b82f6"></span>Statistiques par instrument et direction</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#3b82f6"></span>Évolution du RR et du profit factor</div>
-          </div>
-        </div>
-        <div class="ft-card">
-          <div class="ft-card-head">Analytics <span class="ft-card-val o">Ce mois</span></div>
-          <div class="ft-kpi-grid">
-            <div class="ft-kk"><div class="ft-kk-l">Win rate</div><div class="ft-kk-v g">67%</div><div class="ft-kk-s">16W · 8L</div></div>
-            <div class="ft-kk"><div class="ft-kk-l">RR moyen</div><div class="ft-kk-v o">2.4R</div><div class="ft-kk-s">Objectif : 2R</div></div>
-            <div class="ft-kk"><div class="ft-kk-l">Profit factor</div><div class="ft-kk-v w">2.1</div><div class="ft-kk-s">Ratio G/P</div></div>
-            <div class="ft-kk"><div class="ft-kk-l">Meilleure série</div><div class="ft-kk-v o">7 wins</div><div class="ft-kk-s">Consécutifs</div></div>
-          </div>
-          <div class="ft-bars-title">Win rate par session</div>
-          <div class="ft-bars">
-            <div class="ft-bar-row"><span class="ft-bar-lbl">London</span><div class="ft-bar-track"><div class="ft-bar-fill g" style="width:75%"></div></div><span class="ft-bar-pct g">75%</span></div>
-            <div class="ft-bar-row"><span class="ft-bar-lbl">New York</span><div class="ft-bar-track"><div class="ft-bar-fill o" style="width:58%"></div></div><span class="ft-bar-pct o">58%</span></div>
-            <div class="ft-bar-row"><span class="ft-bar-lbl">Asie</span><div class="ft-bar-track"><div class="ft-bar-fill r" style="width:33%"></div></div><span class="ft-bar-pct r">33%</span></div>
-          </div>
-        </div>
-      </div>
-      <p class="login-footer" style="padding-bottom:48px">Esprit Trading &copy; 2025 · Gratuit pour tous</p>
-    </div>
-    <div class="lp-right">
-      <div class="lp-form-wrap">
-        <div class="lp-tabs">
-          <button class="lp-tab active" id="lp-tab-login" onclick="lpTab('login')">Se connecter</button>
-          <button class="lp-tab" id="lp-tab-register" onclick="lpTab('register')">Créer un compte</button>
-        </div>
-        <div id="login-view">
-          <form id="login-form">
-            <div class="fg"><label>Identifiant ou email</label><input type="text" id="username" autocomplete="username" autofocus required/></div>
-            <div class="fg" style="margin-top:12px"><label>Mot de passe</label><input type="password" id="password" autocomplete="current-password" required/></div>
-            <div id="login-error" class="login-error hidden"></div>
-            <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top:18px" id="login-btn">Se connecter</button>
-          </form>
-          <div style="display:flex;align-items:center;gap:10px;margin:18px 0">
-            <div style="flex:1;height:1px;background:var(--border)"></div>
-            <span style="font-size:.75rem;color:var(--text-muted)">ou</span>
-            <div style="flex:1;height:1px;background:var(--border)"></div>
-          </div>
-          <a href="/api/auth/google" class="btn btn-secondary btn-full" style="gap:10px">
-            <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.8 6C12.4 13.2 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.7 10.7l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.3-7.7 2.3-6.2 0-11.5-4.2-13.4-9.8l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>
-            Continuer avec Google
-          </a>
-          <p style="text-align:center;font-size:.78rem;color:var(--text-muted);margin-top:14px">
-            Pas encore de compte ? <button class="btn btn-ghost btn-sm" id="show-register" style="color:var(--gold-dark);font-weight:700;padding:0" onclick="lpTab('register')">Créer un compte gratuit</button>
-          </p>
-        </div>
-        <div id="register-view" class="hidden">
-          <form id="register-form">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-              <div class="fg"><label>Prénom</label><input type="text" id="reg-firstname" required/></div>
-              <div class="fg"><label>Nom</label><input type="text" id="reg-lastname" required/></div>
+        <div class="ll-features">
+          <div class="ll-feat">
+            <div class="ll-feat-icon"><i class="ti ti-chart-line"></i></div>
+            <div>
+              <div class="ll-feat-title">Analytics en temps réel</div>
+              <div class="ll-feat-desc">Courbes de croissance, drawdown et distribution R:R instantanément.</div>
             </div>
-            <div class="fg" style="margin-top:12px"><label>Email</label><input type="email" id="reg-email" required/></div>
-            <div class="fg" style="margin-top:12px"><label>Mot de passe</label><input type="password" id="reg-password" required/></div>
-            <div id="register-error" class="login-error hidden"></div>
-            <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top:18px" id="register-btn">Créer mon compte</button>
-          </form>
-          <p style="text-align:center;font-size:.78rem;color:var(--text-muted);margin-top:14px">
-            Déjà un compte ? <button class="btn btn-ghost btn-sm" id="show-login" style="color:var(--gold-dark);font-weight:700;padding:0" onclick="lpTab('login')">Se connecter</button>
-          </p>
+          </div>
+          <div class="ll-feat">
+            <div class="ll-feat-icon"><i class="ti ti-calendar-stats"></i></div>
+            <div>
+              <div class="ll-feat-title">Calendrier de performance</div>
+              <div class="ll-feat-desc">Identifie tes meilleurs jours et patterns sur le calendrier mensuel.</div>
+            </div>
+          </div>
+          <div class="ll-feat">
+            <div class="ll-feat-icon"><i class="ti ti-list-details"></i></div>
+            <div>
+              <div class="ll-feat-title">Journal de trades détaillé</div>
+              <div class="ll-feat-desc">Enregistre chaque trade avec direction, RR, résultat et notes.</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- DROITE : formulaire -->
+    <div class="login-right">
+      <div class="login-wrap">
+        <div class="login-brand">
+          <img src="/logo.jpg" alt="Esprit Trading"/>
+          <h2>Esprit Trading</h2>
+          <div class="tag">Accompagnement OTE 705</div>
+        </div>
+        <div class="login-card">
+          <!-- LOGIN -->
+          <div id="login-view">
+            <form id="login-form">
+              <div class="fg"><label>Identifiant ou email</label><input type="text" id="username" autocomplete="username" autofocus required/></div>
+              <div class="fg" style="margin-top:12px"><label>Mot de passe</label><input type="password" id="password" autocomplete="current-password" required/></div>
+              <div id="login-error" class="login-error hidden"></div>
+              <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top:18px" id="login-btn">Se connecter</button>
+            </form>
+            <div style="display:flex;align-items:center;gap:10px;margin:18px 0">
+              <div style="flex:1;height:1px;background:var(--border)"></div>
+              <span style="font-size:.75rem;color:var(--text-muted)">ou</span>
+              <div style="flex:1;height:1px;background:var(--border)"></div>
+            </div>
+            <a href="/api/auth/google" class="btn btn-secondary btn-full" style="gap:10px">
+              <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.8 6C12.4 13.2 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.7 10.7l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.3-7.7 2.3-6.2 0-11.5-4.2-13.4-9.8l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>
+              Continuer avec Google
+            </a>
+            <p style="text-align:center;font-size:.8rem;color:var(--text-muted);margin-top:16px">
+              Pas encore de compte ? <button class="btn btn-ghost btn-sm" id="show-register" style="color:var(--gold-dark);font-weight:600;padding:0">Créer un compte gratuit</button>
+            </p>
+          </div>
+
+          <!-- REGISTER -->
+          <div id="register-view" class="hidden">
+            <h3 style="font-size:1rem;margin-bottom:18px;text-align:center">Créer un compte gratuit</h3>
+            <form id="register-form">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div class="fg"><label>Prénom</label><input type="text" id="reg-firstname" required/></div>
+                <div class="fg"><label>Nom</label><input type="text" id="reg-lastname" required/></div>
+              </div>
+              <div class="fg" style="margin-top:12px"><label>Email</label><input type="email" id="reg-email" required/></div>
+              <div class="fg" style="margin-top:12px"><label>Mot de passe</label><input type="password" id="reg-password" required/></div>
+              <div id="register-error" class="login-error hidden"></div>
+              <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top:18px" id="register-btn">Créer mon compte</button>
+            </form>
+            <p style="text-align:center;font-size:.8rem;color:var(--text-muted);margin-top:16px">
+              Déjà un compte ? <button class="btn btn-ghost btn-sm" id="show-login" style="color:var(--gold-dark);font-weight:600;padding:0">Se connecter</button>
+            </p>
+          </div>
+        </div>
+        <p class="login-footer">Esprit Trading &copy; 2025 · Gratuit pour tous</p>
+      </div>
+    </div>
+
   </div>
 </div>
-<script>
-function lpTab(t){
-  var isLogin=t==='login';
-  document.getElementById('login-view').classList.toggle('hidden',!isLogin);
-  document.getElementById('register-view').classList.toggle('hidden',isLogin);
-  document.getElementById('lp-tab-login').classList.toggle('active',isLogin);
-  document.getElementById('lp-tab-register').classList.toggle('active',!isLogin);
-}
-</script>
 
 <!-- APP -->
 <div id="app" class="hidden">
