@@ -541,3 +541,91 @@ select option {
 .lp-feat:nth-child(odd) .lp-feat-text{order:1}
 .lp-feat:nth-child(even) .ft-card{order:1}
 .lp-feat:nth-child(even) .lp-feat-text{order:2}
+
+#login-page .lp-feat:nth-child(odd) .ft-card{order:2}
+#login-page .lp-feat:nth-child(odd) .lp-feat-text{order:1}
+#login-page .lp-feat:nth-child(even) .ft-card{order:1}
+#login-page .lp-feat:nth-child(even) .lp-feat-text{order:2}
+#login-page .lp-an-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+#login-page .lp-an-block{background:#16161f;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px}
+#login-page .lp-an-title{font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#9ca3af;margin-bottom:10px}
+#login-page .lp-an-donut{display:flex;align-items:center;gap:12px}
+#login-page .lp-an-legend{display:flex;flex-direction:column;gap:6px}
+#login-page .lp-an-leg-item{display:flex;align-items:center;gap:7px;font-size:.68rem;color:#e5e7eb;font-weight:600}
+#login-page .lp-an-leg-item span{display:inline-block;width:9px;height:9px;border-radius:50%;flex-shrink:0}
+#login-page .lp-vbars{display:flex;align-items:flex-end;gap:8px;height:65px;background:#16161f;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px}
+#login-page .lp-vbar-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;flex:1;gap:5px;height:100%}
+#login-page .lp-vbar-fill{width:100%;border-radius:4px 4px 0 0;background:linear-gradient(180deg,rgba(59,130,246,0.9) 0%,rgba(59,130,246,0.15) 100%);min-height:2px}
+#login-page .lp-vbar-r{background:linear-gradient(180deg,rgba(239,68,68,0.8) 0%,rgba(239,68,68,0.15) 100%) !important}
+#login-page .lp-vbar-col span{font-size:.62rem;color:#9ca3af;font-weight:700}
+#login-page .lp-eco-list{display:flex;flex-direction:column;gap:5px}
+#login-page .lp-eco-row{display:flex;align-items:center;gap:7px;padding:7px 8px;background:#0d0d14;border-radius:7px;border:1px solid rgba(255,255,255,0.06)}
+#login-page .lp-eco-time{font-size:.65rem;font-weight:700;color:#9ca3af;width:32px;flex-shrink:0}
+#login-page .lp-eco-flag{font-size:.8rem;width:20px;flex-shrink:0}
+#login-page .lp-eco-dots{display:flex;gap:3px;align-items:center;width:30px;flex-shrink:0}
+#login-page .lp-eco-dots span{display:inline-block;width:7px;height:7px;border-radius:50%;flex-shrink:0}
+#login-page .lp-eco-name{font-size:.7rem;font-weight:600;color:#e5e7eb;flex:1}
+#login-page .lp-eco-val{font-size:.68rem;font-weight:800;color:#fff;flex-shrink:0}
+#login-page .lp-outil-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+#login-page .lp-outil-card{display:flex;align-items:center;gap:9px;background:#0d0d14;border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:9px 10px}
+#login-page .lp-outil-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+#login-page .lp-outil-title{font-size:.72rem;font-weight:700;color:#e5e7eb}
+#login-page .lp-outil-desc{font-size:.6rem;color:#9ca3af;margin-top:1px}
+#login-page .lp-outil-example{background:#0d0d14;border-radius:8px;padding:10px;border:1px solid rgba(255,255,255,0.06)}
+#login-page .lp-outil-ex-label{font-size:.55rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#9ca3af;margin-bottom:8px}
+#login-page .lp-outil-ex-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+#login-page .lp-outil-ex-field{background:#13131e;border-radius:6px;padding:7px 8px;border:1px solid rgba(255,255,255,0.08)}
+#login-page .lp-outil-ex-lbl{font-size:.52rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9ca3af;margin-bottom:3px}
+#login-page .lp-outil-ex-val{font-size:.78rem;font-weight:800;color:#fff}
+#login-page .lp-feat-text h3{font-size:1.45rem}
+#login-page .lp-feat-text p{font-size:.86rem;color:#c9d1d9}
+#login-page .ft-bullet{font-size:.82rem;color:#c9d1d9}
+#login-page .lp-vbars{height:80px;padding:14px 18px;gap:10px}
+#login-page .lp-vbar-fill{border-radius:5px 5px 0 0;background:linear-gradient(180deg,rgba(59,130,246,1) 0%,rgba(59,130,246,0.1) 100%) !important}
+#login-page .lp-vbar-r{background:linear-gradient(180deg,rgba(239,68,68,0.9) 0%,rgba(239,68,68,0.1) 100%) !important}
+#login-page .lp-vbar-col span{font-size:.65rem;color:#adb5bd}
+#login-page .lp-an-block{padding:14px}
+#login-page .lp-an-donut svg{width:90px;height:90px}
+#login-page .lp-an-leg-item{font-size:.72rem}
+#login-page .lp-an-leg-item span{width:10px;height:10px}
+#login-page .lp-vbars{height:100px}
+#login-page .lp-an-donut svg{width:110px;height:110px}
+#login-page .lp-feat-text h3{font-size:1.5rem}
+#login-page .lp-feat-text p{font-size:.88rem;color:#c9d1d9}
+#login-page .ft-bullet{font-size:.84rem;color:#c9d1d9}
+#login-page .lp-feat-tag{font-size:.68rem}
+#login-page .lp-title{font-size:2.6rem}
+#login-page .lp-desc{font-size:.92rem;color:#c9d1d9}
+#login-page .lp-badge{font-size:.7rem}
+#login-page .ft-card-head{font-size:.65rem}
+#login-page .ft-ms-l{font-size:.6rem;color:#9ca3af}
+#login-page .ft-ms-v{font-size:1.05rem}
+#login-page .ft-pair{font-size:.78rem}
+#login-page .ft-date{font-size:.68rem;color:#9ca3af}
+#login-page .ft-rr{font-size:.72rem;color:#9ca3af}
+#login-page .ft-res{font-size:.78rem}
+#login-page .ft-dir{font-size:.62rem}
+#login-page .ft-cal-hd span{font-size:.6rem;color:#9ca3af}
+#login-page .ft-cd{font-size:.62rem}
+#login-page .ft-cs-l{font-size:.6rem;color:#9ca3af}
+#login-page .lp-an-title{font-size:.6rem;color:#9ca3af}
+#login-page .lp-an-leg-item{font-size:.72rem;color:#e5e7eb}
+#login-page .lp-eco-time{font-size:.68rem;color:#9ca3af}
+#login-page .lp-eco-name{font-size:.72rem}
+#login-page .lp-eco-val{font-size:.7rem}
+#login-page .lp-outil-title{font-size:.75rem}
+#login-page .lp-outil-desc{font-size:.62rem;color:#9ca3af}
+#login-page .lp-outil-ex-lbl{font-size:.56rem;color:#9ca3af}
+#login-page .lp-outil-ex-val{font-size:.8rem}
+#login-page .ft-kk-l{font-size:.6rem;color:#9ca3af}
+#login-page .ft-kk-v{font-size:1.15rem}
+#login-page .ft-kk-s{font-size:.62rem;color:#9ca3af}
+#login-page .ft-bars-title{font-size:.62rem;color:#9ca3af}
+#login-page .ft-bar-lbl{font-size:.65rem;color:#9ca3af}
+#login-page .ft-cs-l{font-size:.6rem;color:#9ca3af}
+#login-page .lp-nav-name{font-size:.92rem}
+#login-page .lp-nav-sub{font-size:.62rem}
+#login-page .lp-nav-badge{font-size:.68rem}
+#login-page .ft-card-val{font-size:.82rem}
+#login-page .lp-eco-time{color:#adb5bd}
+#login-page .lp-vbar-col span{font-size:.68rem;color:#adb5bd}

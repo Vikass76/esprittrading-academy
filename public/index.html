@@ -113,18 +113,102 @@
           </div>
         </div>
         <div class="ft-card">
-          <div class="ft-card-head">Analytics <span class="ft-card-val o">Ce mois</span></div>
-          <div class="ft-kpi-grid">
-            <div class="ft-kk"><div class="ft-kk-l">Win rate</div><div class="ft-kk-v g">67%</div><div class="ft-kk-s">16W · 8L</div></div>
-            <div class="ft-kk"><div class="ft-kk-l">RR moyen</div><div class="ft-kk-v o">2.4R</div><div class="ft-kk-s">Objectif : 2R</div></div>
-            <div class="ft-kk"><div class="ft-kk-l">Profit factor</div><div class="ft-kk-v w">2.1</div><div class="ft-kk-s">Ratio G/P</div></div>
-            <div class="ft-kk"><div class="ft-kk-l">Meilleure série</div><div class="ft-kk-v o">7 wins</div><div class="ft-kk-s">Consécutifs</div></div>
+          <div class="ft-card-head">Analytics avancés <span class="ft-card-val o">Ce mois</span></div>
+          <div class="lp-an-grid">
+            <div class="lp-an-block">
+              <div class="lp-an-title">Trades par session</div>
+              <div class="lp-an-donut">
+                <svg viewBox="0 0 80 80" width="80" height="80">
+                  <circle cx="40" cy="40" r="28" fill="none" stroke="#1a1a27" stroke-width="11"/>
+                  <circle cx="40" cy="40" r="28" fill="none" stroke="#10b981" stroke-width="11" stroke-dasharray="88 88" stroke-dashoffset="22" transform="rotate(-90 40 40)"/>
+                  <circle cx="40" cy="40" r="28" fill="none" stroke="#3b82f6" stroke-width="11" stroke-dasharray="44 132" stroke-dashoffset="-66" transform="rotate(-90 40 40)"/>
+                  <circle cx="40" cy="40" r="28" fill="none" stroke="#F4C70F" stroke-width="11" stroke-dasharray="44 132" stroke-dashoffset="-110" transform="rotate(-90 40 40)"/>
+                  <text x="40" y="44" text-anchor="middle" font-size="11" font-weight="800" fill="white">24</text>
+                </svg>
+                <div class="lp-an-legend">
+                  <div class="lp-an-leg-item"><span style="background:#10b981"></span>London 50%</div>
+                  <div class="lp-an-leg-item"><span style="background:#3b82f6"></span>NY 25%</div>
+                  <div class="lp-an-leg-item"><span style="background:#F4C70F"></span>Asia 25%</div>
+                </div>
+              </div>
+            </div>
+            <div class="lp-an-block">
+              <div class="lp-an-title">Win rate global</div>
+              <div class="lp-an-donut">
+                <svg viewBox="0 0 80 80" width="80" height="80">
+                  <circle cx="40" cy="40" r="28" fill="none" stroke="#1a1a27" stroke-width="11"/>
+                  <circle cx="40" cy="40" r="28" fill="none" stroke="#10b981" stroke-width="11" stroke-dasharray="118 58" stroke-dashoffset="0" transform="rotate(-90 40 40)"/>
+                  <circle cx="40" cy="40" r="28" fill="none" stroke="#ef4444" stroke-width="11" stroke-dasharray="58 118" stroke-dashoffset="-118" transform="rotate(-90 40 40)"/>
+                  <text x="40" y="38" text-anchor="middle" font-size="10" font-weight="800" fill="#10b981">67%</text>
+                  <text x="40" y="50" text-anchor="middle" font-size="7" fill="#6b7280">win rate</text>
+                </svg>
+                <div class="lp-an-legend">
+                  <div class="lp-an-leg-item"><span style="background:#10b981"></span>Wins 67%</div>
+                  <div class="lp-an-leg-item"><span style="background:#ef4444"></span>Losses 33%</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="ft-bars-title">Win rate par session</div>
-          <div class="ft-bars">
-            <div class="ft-bar-row"><span class="ft-bar-lbl">London</span><div class="ft-bar-track"><div class="ft-bar-fill g" style="width:75%"></div></div><span class="ft-bar-pct g">75%</span></div>
-            <div class="ft-bar-row"><span class="ft-bar-lbl">New York</span><div class="ft-bar-track"><div class="ft-bar-fill o" style="width:58%"></div></div><span class="ft-bar-pct o">58%</span></div>
-            <div class="ft-bar-row"><span class="ft-bar-lbl">Asie</span><div class="ft-bar-track"><div class="ft-bar-fill r" style="width:33%"></div></div><span class="ft-bar-pct r">33%</span></div>
+          <div class="lp-an-title" style="margin:12px 0 8px">Performance par jour</div>
+          <div class="lp-vbars">
+            <div class="lp-vbar-col"><div class="lp-vbar-fill" style="height:80%"></div><span>Lun</span></div>
+            <div class="lp-vbar-col"><div class="lp-vbar-fill" style="height:55%"></div><span>Mar</span></div>
+            <div class="lp-vbar-col"><div class="lp-vbar-fill" style="height:100%"></div><span>Mer</span></div>
+            <div class="lp-vbar-col"><div class="lp-vbar-fill lp-vbar-r" style="height:25%"></div><span>Jeu</span></div>
+            <div class="lp-vbar-col"><div class="lp-vbar-fill" style="height:40%"></div><span>Ven</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="lp-feat">
+        <div class="lp-feat-text">
+          <div class="lp-feat-tag" style="color:#3b82f6"><div class="ft-ic" style="background:rgba(59,130,246,0.12)"><i class="ti ti-calendar-event"></i></div>Calendrier économique</div>
+          <h3>Anticipe les news,<br><em>trade sans surprise.</em></h3>
+          <p>Consulte les annonces économiques avant de trader. Impact, devise, heure — tout est là pour ne jamais te faire surprendre.</p>
+          <div class="ft-bullets">
+            <div class="ft-bullet"><span class="ft-bdot" style="background:#3b82f6"></span>Filtrage par impact (faible, moyen, fort)</div>
+            <div class="ft-bullet"><span class="ft-bdot" style="background:#3b82f6"></span>Mise à jour automatique chaque semaine</div>
+            <div class="ft-bullet"><span class="ft-bdot" style="background:#3b82f6"></span>Données réelles en temps réel</div>
+          </div>
+        </div>
+        <div class="ft-card">
+          <div class="ft-card-head">Calendrier économique <span class="ft-card-val o">Aujourd'hui</span></div>
+          <div class="lp-eco-list">
+            <div class="lp-eco-row"><span class="lp-eco-time">14:15</span><span class="lp-eco-flag">🇪🇺</span><div class="lp-eco-dots"><span style="background:#ef4444"></span><span style="background:#ef4444"></span><span style="background:#ef4444"></span></div><span class="lp-eco-name">Main Refinancing Rate</span><span class="lp-eco-val">2.40%</span></div>
+            <div class="lp-eco-row"><span class="lp-eco-time">14:30</span><span class="lp-eco-flag">🇺🇸</span><div class="lp-eco-dots"><span style="background:#ef4444"></span><span style="background:#ef4444"></span><span style="background:#ef4444"></span></div><span class="lp-eco-name">Core PPI m/m</span><span class="lp-eco-val">0.5%</span></div>
+            <div class="lp-eco-row"><span class="lp-eco-time">14:30</span><span class="lp-eco-flag">🇺🇸</span><div class="lp-eco-dots"><span style="background:#F4C70F"></span><span style="background:#F4C70F"></span><span style="background:#F4C70F;opacity:.3"></span></div><span class="lp-eco-name">Unemployment Claims</span><span class="lp-eco-val">220K</span></div>
+            <div class="lp-eco-row"><span class="lp-eco-time">14:45</span><span class="lp-eco-flag">🇪🇺</span><div class="lp-eco-dots"><span style="background:#ef4444"></span><span style="background:#ef4444"></span><span style="background:#ef4444"></span></div><span class="lp-eco-name">ECB Press Conference</span><span class="lp-eco-val">—</span></div>
+            <div class="lp-eco-row"><span class="lp-eco-time">16:30</span><span class="lp-eco-flag">🇺🇸</span><div class="lp-eco-dots"><span style="background:#10b981"></span><span style="background:#10b981;opacity:.3"></span><span style="background:#10b981;opacity:.3"></span></div><span class="lp-eco-name">Natural Gas Storage</span><span class="lp-eco-val">101B</span></div>
+            <div class="lp-eco-row"><span class="lp-eco-time">19:01</span><span class="lp-eco-flag">🇺🇸</span><div class="lp-eco-dots"><span style="background:#F4C70F"></span><span style="background:#F4C70F"></span><span style="background:#F4C70F;opacity:.3"></span></div><span class="lp-eco-name">30-y Bond Auction</span><span class="lp-eco-val">5.05</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="lp-feat">
+        <div class="ft-card">
+          <div class="ft-card-head">Outils de trading <span class="ft-card-val o">4 calculateurs</span></div>
+          <div class="lp-outil-grid">
+            <div class="lp-outil-card"><div class="lp-outil-icon" style="background:rgba(244,199,15,0.12);color:#F4C70F"><i class="ti ti-calculator"></i></div><div><div class="lp-outil-title">Calculateur de lot</div><div class="lp-outil-desc">Taille de position optimale</div></div></div>
+            <div class="lp-outil-card"><div class="lp-outil-icon" style="background:rgba(16,185,129,0.12);color:#10b981"><i class="ti ti-arrows-up-down"></i></div><div><div class="lp-outil-title">Calculateur RR</div><div class="lp-outil-desc">Risk/Reward & objectifs</div></div></div>
+            <div class="lp-outil-card"><div class="lp-outil-icon" style="background:rgba(59,130,246,0.12);color:#3b82f6"><i class="ti ti-currency-dollar"></i></div><div><div class="lp-outil-title">Valeur du pip</div><div class="lp-outil-desc">P&L estimé par trade</div></div></div>
+            <div class="lp-outil-card"><div class="lp-outil-icon" style="background:rgba(168,85,247,0.12);color:#a855f7"><i class="ti ti-target"></i></div><div><div class="lp-outil-title">Objectif de compte</div><div class="lp-outil-desc">Projection de croissance</div></div></div>
+          </div>
+          <div class="lp-outil-example">
+            <div class="lp-outil-ex-label">Calculateur de lot — exemple</div>
+            <div class="lp-outil-ex-row">
+              <div class="lp-outil-ex-field"><div class="lp-outil-ex-lbl">Instrument</div><div class="lp-outil-ex-val">EURUSD</div></div>
+              <div class="lp-outil-ex-field"><div class="lp-outil-ex-lbl">Capital</div><div class="lp-outil-ex-val">10 000$</div></div>
+              <div class="lp-outil-ex-field"><div class="lp-outil-ex-lbl">Risque</div><div class="lp-outil-ex-val">1%</div></div>
+              <div class="lp-outil-ex-field" style="border-color:rgba(244,199,15,0.3)"><div class="lp-outil-ex-lbl">Résultat</div><div class="lp-outil-ex-val" style="color:#F4C70F">0.50 lot</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="lp-feat-text">
+          <div class="lp-feat-tag" style="color:#F4C70F"><div class="ft-ic" style="background:rgba(244,199,15,0.12)"><i class="ti ti-tool"></i></div>Outils de trading</div>
+          <h3>Calcule, planifie,<br><em>execute avec précision.</em></h3>
+          <p>Calculateurs de lot, RR, valeur du pip et projection de compte — tous les outils pour préparer tes trades et gérer ton risque.</p>
+          <div class="ft-bullets">
+            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Calculateur de taille de position en 1 clic</div>
+            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Visualisation du Risk/Reward avant d'entrer</div>
+            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Projection de croissance de ton compte</div>
           </div>
         </div>
       </div>
