@@ -525,7 +525,7 @@ $('cal-next').addEventListener('click',()=>{cM++;if(cM>11){cM=0;cY++;}renderCal(
 const AN_PALETTE = ['#4ade80','#60a5fa','#f59e0b','#f87171','#a78bfa','#34d399','#fb923c','#38bdf8'];
 const AN_DIR_KEYS  = ['BUY','SELL'];
 const AN_SESS_KEYS = ['London','New York','Asia'];
-const AN_SETUP_KEYS= ['OTE','FVG','BOS','MSS','Autre'];
+const AN_SETUP_KEYS= ['OTE','FVG','BOS','MSS','PRT','Autre'];
 
 async function loadAnalytics() {
   try {
@@ -541,7 +541,7 @@ async function loadAnalytics() {
       renderPairTable([]);
       renderDonutSection('dir',  mkEmpty(AN_DIR_KEYS),  AN_PALETTE,AN_DIR_KEYS);
       renderDonutSection('sess', mkEmpty(AN_SESS_KEYS), AN_PALETTE,AN_SESS_KEYS);
-      renderDonutSection('setup',mkEmpty(AN_SETUP_KEYS),AN_PALETTE,AN_SETUP_KEYS);
+      renderDonutSection('setup',{},AN_PALETTE,[]);
       renderPerfJour([]);
       renderFrequency([]);
       return;
@@ -571,9 +571,10 @@ async function loadAnalytics() {
     const sessKeys=[...AN_SESS_KEYS,...Object.keys(bySess).filter(k=>!AN_SESS_KEYS.includes(k)&&k!=='Non définie')];
     renderDonutSection('sess',bySess,AN_PALETTE,sessKeys);
 
-    const bySetup=mkEmpty(AN_SETUP_KEYS);
-    trades.forEach(t=>{const s=t.setup||'Autre';if(!bySetup[s])bySetup[s]={total:0,wins:0};bySetup[s].total++;if(t.result==='WIN')bySetup[s].wins++;});
-    const setupKeys=[...AN_SETUP_KEYS,...Object.keys(bySetup).filter(k=>!AN_SETUP_KEYS.includes(k))];
+    const bySetup={};
+    trades.forEach(t=>{const s=(t.setup||'Autre').trim();if(!bySetup[s])bySetup[s]={total:0,wins:0};bySetup[s].total++;if(t.result==='WIN')bySetup[s].wins++;});
+    const setupKeys=Object.keys(bySetup).filter(k=>bySetup[k].total>0);
+    if(!setupKeys.length) setupKeys.push('Autre');
     renderDonutSection('setup',bySetup,AN_PALETTE,setupKeys);
 
     renderPairTable(s.byPair);
@@ -655,13 +656,20 @@ function renderDonutSection(id,dataObj,palette,keys){
         ctx2.beginPath();ctx2.arc(cx,cy,r,0,Math.PI*2);
         ctx2.strokeStyle='rgba(200,200,200,0.12)';ctx2.lineWidth=thick;ctx2.stroke();
         const ang=wr[i]*Math.PI*2;
+        const hasData=dataObj[keys[i]]&&dataObj[keys[i]].total>0;
         if(ang>0.01){
           ctx2.beginPath();ctx2.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+ang);
           ctx2.strokeStyle=colors[i];ctx2.lineWidth=thick+(h===i?3:0);ctx2.lineCap='round';ctx2.stroke();
+        } else if(hasData){
+          ctx2.beginPath();ctx2.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+0.08);
+          ctx2.strokeStyle='rgba(239,68,68,0.85)';ctx2.lineWidth=4;ctx2.lineCap='round';ctx2.stroke();
         }
       }
       ctx2.save();
       if(h!==null&&h<n){
+        const bgR=30;
+        ctx2.beginPath();ctx2.arc(cx,cy,bgR,0,Math.PI*2);
+        ctx2.fillStyle='rgba(15,17,23,0.45)';ctx2.fill();
         ctx2.font='bold 12px Inter,sans-serif';ctx2.fillStyle=colors[h];ctx2.textAlign='center';ctx2.textBaseline='middle';
         ctx2.fillText(keys[h],cx,cy-8);
         ctx2.font='11px Inter,sans-serif';ctx2.fillStyle='#9ca3af';
