@@ -35,6 +35,33 @@ router.post('/accounts', requireAuth, (req, res) => {
   res.json({ id: row.lastInsertRowid });
 });
 
+router.patch('/accounts/:id', requireAuth, (req, res) => {
+  const { name, type, broker, initial_balance } = req.body;
+  const acc = db.prepare('SELECT * FROM accounts WHERE id = ? AND user_id = ?').get(req.params.id, req.session.userId);
+  if (!acc) return res.status(404).json({ error: 'Compte introuvable' });
+  db.prepare('UPDATE accounts SET name=?, type=?, broker=?, initial_balance=? WHERE id=?')
+    .run(name||acc.name, type||acc.type, broker||acc.broker, parseFloat(initial_balance)||acc.initial_balance, req.params.id);
+  res.json({ ok: true });
+});
+
+router.patch('/accounts/:id', requireAuth, (req, res) => {
+  const { name, type, broker, initial_balance } = req.body;
+  const acc = db.prepare('SELECT * FROM accounts WHERE id = ? AND user_id = ?').get(req.params.id, req.session.userId);
+  if (!acc) return res.status(404).json({ error: 'Compte introuvable' });
+  db.prepare('UPDATE accounts SET name=?, type=?, broker=?, initial_balance=? WHERE id=?')
+    .run(name||acc.name, type||acc.type, broker||acc.broker, parseFloat(initial_balance)||acc.initial_balance, req.params.id);
+  res.json({ ok: true });
+});
+
+router.patch('/accounts/:id', requireAuth, (req, res) => {
+  const { name, type, broker, initial_balance } = req.body;
+  const acc = db.prepare('SELECT * FROM accounts WHERE id = ? AND user_id = ?').get(req.params.id, req.session.userId);
+  if (!acc) return res.status(404).json({ error: 'Compte introuvable' });
+  db.prepare('UPDATE accounts SET name=?, type=?, broker=?, initial_balance=? WHERE id=?')
+    .run(name||acc.name, type||acc.type, broker||null, parseFloat(initial_balance)||acc.initial_balance, req.params.id);
+  res.json({ ok: true });
+});
+
 router.delete('/accounts/:id', requireAuth, (req, res) => {
   db.prepare('DELETE FROM accounts WHERE id = ? AND user_id = ?').run(req.params.id, req.session.userId);
   res.json({ success: true });

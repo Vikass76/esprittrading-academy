@@ -666,3 +666,10 @@ select option {
 #tab-formation .fm-guarantee-icon{grid-column:1;grid-row:1;align-self:center}
 #tab-formation .fm-guarantee-title{grid-column:2;grid-row:1;align-self:center;font-size:.88rem;font-weight:800;color:var(--text)}
 #tab-formation .fm-guarantee-desc{grid-column:1/-1;grid-row:2;font-size:.78rem;color:var(--text-muted);line-height:1.6;margin-top:6px}
+#edit-acc-modal{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center}
+#edit-acc-modal.hidden{display:none!important}
+#edit-acc-modal .modal-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:0}
+#edit-acc-modal{background:rgba(0,0,0,0.85)!important}
+#edit-acc-modal .modal-box{background:#13131e!important;border-radius:14px;overflow:hidden;width:420px}
+#edit-acc-modal .modal-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid rgba(255,255,255,0.08);font-size:.95rem;font-weight:800}
+#edit-acc-modal .modal-cls{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;padding:4px}

@@ -827,5 +827,29 @@ function lpTab(t){
 
 <div id="toasts"></div>
 <script src="/js/app.js"></script>
+<div id="edit-acc-modal" class="modal-overlay hidden" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="modal-box" style="max-width:420px;width:100%">
+    <div class="modal-hd"><span>Modifier le compte</span><button onclick="document.getElementById('edit-acc-modal').classList.add('hidden')" class="modal-cls"><i class="ti ti-x"></i></button></div>
+    <div class="modal-bd" style="display:flex;flex-direction:column;gap:14px;padding:20px">
+      <input type="hidden" id="eacc-id"/>
+      <div class="fg"><label>Nom du compte *</label><input type="text" id="eacc-name" placeholder="Compte réel"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="fg"><label>Type</label>
+          <select id="eacc-type">
+            <option value="live">Live</option>
+            <option value="prop">Prop Firm</option>
+            <option value="demo">Démo</option>
+          </select>
+        </div>
+        <div class="fg"><label>Capital initial</label><input type="number" id="eacc-balance" placeholder="10000"/></div>
+      </div>
+      <div class="fg"><label>Broker / Prop Firm</label><input type="text" id="eacc-broker" placeholder="ICMarkets, FTMO..."/></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
+        <button class="btn btn-ghost" onclick="document.getElementById('edit-acc-modal').classList.add('hidden')">Annuler</button>
+        <button class="btn btn-primary" onclick="saveEditAcc()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

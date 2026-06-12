@@ -118,6 +118,7 @@ function renderAccBar() {
         +'<div style="font-size:.68rem;color:var(--text-muted)">$'+bal+' <span style="color:'+pctColor+'">'+(parseFloat(pct)>=0?'+':'')+pct+'%</span></div></div>'
         +'<div style="display:flex;align-items:center;gap:3px">'
         +'<span style="font-size:.58rem;font-weight:700;text-transform:uppercase;padding:1px 5px;border-radius:3px;background:'+typeBg+';color:'+typeColor+'">'+a.type+'</span>'
+        +'<button onclick="editAcc('+a.id+',event)" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:.7rem;padding:2px"><i class="ti ti-edit"></i></button>'
         +'<button onclick="delAcc('+a.id+',event)" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:.7rem;padding:2px"><i class="ti ti-x"></i></button>'
         +'</div></div>';
     }).join('');
@@ -136,6 +137,30 @@ function renderAccBar() {
   }
   const addBtn = document.getElementById('sb-add-acc');
   if (addBtn) addBtn.onclick = () => document.getElementById('acc-modal').classList.remove('hidden');
+}
+function editAcc(id, e) {
+  e.stopPropagation();
+  const a = accounts.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('eacc-id').value = a.id;
+  document.getElementById('eacc-name').value = a.name;
+  document.getElementById('eacc-type').value = a.type;
+  document.getElementById('eacc-broker').value = a.broker || '';
+  document.getElementById('eacc-balance').value = a.initial_balance || '';
+  document.getElementById('edit-acc-modal').classList.remove('hidden');
+}
+async function saveEditAcc() {
+  const id = document.getElementById('eacc-id').value;
+  const d = {
+    name: document.getElementById('eacc-name').value,
+    type: document.getElementById('eacc-type').value,
+    broker: document.getElementById('eacc-broker').value,
+    initial_balance: parseFloat(document.getElementById('eacc-balance').value) || 0
+  };
+  await api('PATCH', '/trades/accounts/' + id, d);
+  document.getElementById('edit-acc-modal').classList.add('hidden');
+  await loadAccounts();
+  toast('Compte modifié', 'success');
 }
 async function delAcc(id, e) {
   e.stopPropagation();
@@ -1037,6 +1062,7 @@ function renderAccBar() {
         +'<div style="font-size:.68rem;color:var(--text-muted)">$'+bal+' <span style="color:'+pc+'">'+(parseFloat(pct)>=0?'+':'')+pct+'%</span></div></div>'
         +'<div style="display:flex;align-items:center;gap:3px">'
         +'<span style="font-size:.58rem;font-weight:700;text-transform:uppercase;padding:1px 5px;border-radius:3px;background:'+tbg+';color:'+tc+'">'+a.type+'</span>'
+        +'<button onclick="editAcc('+a.id+',event)" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:.7rem;padding:2px"><i class="ti ti-edit"></i></button>'
         +'<button onclick="delAcc('+a.id+',event)" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:.7rem;padding:2px"><i class="ti ti-x"></i></button>'
         +'</div></div>';
     }).join('');
