@@ -354,6 +354,8 @@ function openAddTrade() {
   setTimeout(()=>{ initPairSearch(); const pi=document.getElementById('pair-search-input');if(pi)pi.value=''; const ph=document.getElementById('pair-search-hidden');if(ph)ph.value=''; },50);
   $('trade-form').querySelector('[name="trade_date"]').value = new Date().toISOString().split('T')[0];
   $('trade-modal').classList.remove('hidden');
+  const tdi=document.getElementById('trade-date-input');
+  if(tdi) tdi.max=new Date().toISOString().split('T')[0];
 }
 ['add-trade-btn','dash-add-btn','mob-add'].forEach(id => $(id)?.addEventListener('click', openAddTrade));
 $('tm-close').addEventListener('click', () => $('trade-modal').classList.add('hidden'));
