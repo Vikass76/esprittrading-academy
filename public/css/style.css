@@ -652,13 +652,17 @@ select option {
 #tab-formation .fm-guarantee-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
 #tab-formation .fm-guarantee-title{font-size:.85rem;font-weight:800;color:var(--text)}
 #tab-formation .fm-guarantee-desc{font-size:.78rem;color:var(--text-muted);line-height:1.65}
-#tab-formation #formation-community > div:first-child{text-align:center;display:flex;flex-direction:column;align-items:center}
-#tab-formation .fm-step{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto auto;column-gap:10px;align-items:start}
+#tab-formation .fm-hero-cta{order:99}
+#tab-formation #formation-community{display:flex;flex-direction:column}
+#tab-formation .fm-hero-cta{margin-top:32px}
+#tab-formation #formation-community::before{content:"Formation OTE 705";display:block;font-size:1.8rem;font-weight:900;color:var(--gold);text-align:center;margin-bottom:24px}
+#tab-formation #formation-community::before{content:none}
+#tab-formation .fm-step{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto auto;column-gap:10px}
 #tab-formation .fm-step-num{grid-column:1/-1}
-#tab-formation .fm-step-icon{grid-column:1;grid-row:2;margin-top:2px}
-#tab-formation .fm-step-title{grid-column:2;grid-row:2;font-size:.88rem;font-weight:800;color:var(--text);align-self:center}
-#tab-formation .fm-step-desc{grid-column:1/-1;grid-row:3;font-size:.78rem;color:var(--text-muted);line-height:1.6;margin-top:4px}
-#tab-formation .fm-guarantee{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:10px;align-items:start}
-#tab-formation .fm-guarantee-icon{grid-column:1;grid-row:1;margin-top:2px}
-#tab-formation .fm-guarantee-title{grid-column:2;grid-row:1;font-size:.88rem;font-weight:800;color:var(--text);align-self:center}
-#tab-formation .fm-guarantee-desc{grid-column:1/-1;grid-row:2;font-size:.78rem;color:var(--text-muted);line-height:1.6;margin-top:4px}
+#tab-formation .fm-step-icon{grid-column:1;grid-row:2;align-self:center}
+#tab-formation .fm-step-title{grid-column:2;grid-row:2;align-self:center;font-size:.88rem;font-weight:800;color:var(--text)}
+#tab-formation .fm-step-desc{grid-column:1/-1;grid-row:3;font-size:.78rem;color:var(--text-muted);line-height:1.6;margin-top:6px}
+#tab-formation .fm-guarantee{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:10px}
+#tab-formation .fm-guarantee-icon{grid-column:1;grid-row:1;align-self:center}
+#tab-formation .fm-guarantee-title{grid-column:2;grid-row:1;align-self:center;font-size:.88rem;font-weight:800;color:var(--text)}
+#tab-formation .fm-guarantee-desc{grid-column:1/-1;grid-row:2;font-size:.78rem;color:var(--text-muted);line-height:1.6;margin-top:6px}

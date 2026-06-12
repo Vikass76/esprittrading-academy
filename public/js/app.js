@@ -363,7 +363,9 @@ $('trade-form').addEventListener('submit', async e => {
   e.preventDefault();
   try {
     const form = new FormData($('trade-form'));
-    const result = form.get('result');
+    const setupVal = form.get('setup');
+    if(setupVal && setupVal.trim()) saveSetupTag(setupVal.trim());
+    const result = (form.get('result')||'').trim();
     let rr = parseFloat(form.get('rr')) || 0;
     let pnl = parseFloat(form.get('pnl')) || 0;
     if (result === 'WIN')  { rr = Math.abs(rr); pnl = Math.abs(pnl); }
@@ -657,42 +659,26 @@ let _perfJourChart=null;
 function renderPerfJour(trades){
   if(_perfJourChart){try{_perfJourChart.destroy();}catch(e){}_perfJourChart=null;}
   const days=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
-  const byDay=days.map(d=>({label:d,pnl:0,wins:0,total:0}));
+  const byDay=days.map(d=>({label:d,pnl:0,wins:0,losses:0,total:0,gainsPnl:0,lossesPnl:0}));
   trades.forEach(t=>{
     const d=new Date(t.trade_date+'T12:00:00').getDay();
-    byDay[d].pnl+=parseFloat(t.pnl)||0;
+    const pnlVal=parseFloat(t.pnl)||0;
+    byDay[d].pnl+=pnlVal;
     byDay[d].total++;
-    if(t.result==='WIN')byDay[d].wins++;
+    if(t.result==='WIN'){byDay[d].wins++;byDay[d].gainsPnl+=pnlVal;}
+    else{byDay[d].losses++;byDay[d].lossesPnl+=pnlVal;}
   });
   const cvs=document.getElementById('c-perf-jour');
   if(!cvs)return;
-  const data=byDay.map(d=>d.total>0?parseFloat(d.pnl.toFixed(2)):null);
+  const dataGains=byDay.map(d=>d.gainsPnl>0?parseFloat(d.gainsPnl.toFixed(2)):null);
+  const dataLosses=byDay.map(d=>d.lossesPnl<0?parseFloat(d.lossesPnl.toFixed(2)):null);
   const winRates=byDay.map(d=>d.total?Math.round(d.wins/d.total*100):null);
   _perfJourChart=new Chart(cvs.getContext('2d'),{
     type:'bar',
-    data:{labels:days,datasets:[{
-      data,
-      backgroundColor:function(ctx){
-        const v=data[ctx.dataIndex];
-        if(v===null) return 'transparent';
-        const chart=ctx.chart;
-        const {ctx:c,chartArea}=chart;
-        if(!chartArea) return v>=0?'rgba(16,185,129,0.85)':'rgba(239,68,68,0.85)';
-        const zeroX=chart.scales.x.getPixelForValue(0);
-        if(v>=0){
-          const g=c.createLinearGradient(zeroX,0,chartArea.right,0);
-          g.addColorStop(0,'rgba(16,185,129,0.9)');
-          g.addColorStop(1,'rgba(5,150,105,0.2)');
-          return g;
-        } else {
-          const g=c.createLinearGradient(chartArea.left,0,zeroX,0);
-          g.addColorStop(0,'rgba(239,68,68,0.15)');
-          g.addColorStop(1,'rgba(239,68,68,0.9)');
-          return g;
-        }
-      },
-      borderRadius:3,borderSkipped:false,barThickness:14
-    }]},
+    data:{labels:days,datasets:[
+      {data:dataGains,backgroundColor:function(ctx){const chart=ctx.chart;const {ctx:c,chartArea}=chart;if(!chartArea)return 'rgba(16,185,129,0.85)';const zeroX=chart.scales.x.getPixelForValue(0);const g=c.createLinearGradient(zeroX,0,chartArea.right,0);g.addColorStop(0,'rgba(16,185,129,0.9)');g.addColorStop(1,'rgba(5,150,105,0.2)');return g;},borderRadius:3,borderSkipped:false,barThickness:14,stack:'a'},
+      {data:dataLosses,backgroundColor:function(ctx){const chart=ctx.chart;const {ctx:c,chartArea}=chart;if(!chartArea)return 'rgba(239,68,68,0.85)';const zeroX=chart.scales.x.getPixelForValue(0);const g=c.createLinearGradient(chartArea.left,0,zeroX,0);g.addColorStop(0,'rgba(239,68,68,0.15)');g.addColorStop(1,'rgba(239,68,68,0.9)');return g;},borderRadius:3,borderSkipped:false,barThickness:14,stack:'a'}
+    ]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
       layout:{padding:{right:75,top:30}},
@@ -1379,3 +1365,51 @@ function renderPerfBlocks(trades) {
     });
   });
 }
+
+// ── SETUP SUGGESTIONS ─────────────────────────
+function getSetups(){try{return JSON.parse(localStorage.getItem('et_setups')||'[]');}catch(e){return[];}}
+function saveSetupTag(s){if(!s.trim())return;const arr=getSetups();if(!arr.includes(s.trim())){arr.push(s.trim());localStorage.setItem('et_setups',JSON.stringify(arr));}}
+function delSetupTag(s){localStorage.setItem('et_setups',JSON.stringify(getSetups().filter(x=>x!==s)));renderSetupSuggestions();}
+function renderSetupSuggestions(){
+  const input=document.getElementById('setup-input');
+  const box=document.getElementById('setup-suggestions');
+  if(!input||!box)return;
+  const val=input.value.toLowerCase();
+  const arr=getSetups().filter(s=>!val||s.toLowerCase().includes(val));
+  if(!arr.length){box.style.display='none';return;}
+  box.innerHTML=arr.map(s=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;font-size:.82rem;color:var(--text-2)" onmousedown="event.preventDefault();document.getElementById('setup-input').value='${s}';document.getElementById('setup-suggestions').style.display='none'" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background=''">
+    <span>${s}</span>
+    <button onmousedown="event.stopPropagation();event.preventDefault();delSetupTag('${s}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:.8rem;padding:2px 4px"><i class="ti ti-x"></i></button>
+  </div>`).join('');
+  box.style.display='block';
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#setup-input')&&!e.target.closest('#setup-suggestions'))
+    {const b=document.getElementById('setup-suggestions');if(b)b.style.display='none';}
+});
+document.addEventListener('click', function setupInit(e){
+  const input=document.getElementById('setup-input');
+  if(!input) return;
+  document.removeEventListener('click', setupInit);
+  input.addEventListener('focus',()=>renderSetupSuggestions());
+  input.addEventListener('input',()=>renderSetupSuggestions());
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===','){
+      const v=input.value.trim().replace(/,$/,'');
+      if(v){saveSetupTag(v);input.value=v;}
+      document.getElementById('setup-suggestions').style.display='none';
+    }
+  });
+});
+// Réinit à chaque ouverture du modal trade
+document.addEventListener('click', e=>{
+  if(e.target.closest('[onclick*="trade-modal"]')||e.target.id==='new-trade-btn'||e.target.closest('#new-trade-btn')){
+    setTimeout(()=>{
+      const input=document.getElementById('setup-input');
+      if(input){
+        input.addEventListener('focus',()=>renderSetupSuggestions());
+        input.addEventListener('input',()=>renderSetupSuggestions());
+      }
+    },100);
+  }
+});

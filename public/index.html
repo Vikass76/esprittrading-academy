@@ -658,7 +658,10 @@ function lpTab(t){
           <select name="timeframe"><option value="">—</option><option>M1</option><option>M2</option><option>M3</option><option>M5</option><option>M15</option><option>M30</option><option>H1</option><option>H4</option><option>D1</option></select></div>
       </div>
       <div class="grid3" style="margin-top:12px">
-        <div class="fg"><label>Setup</label><input type="text" name="setup" placeholder="OTE, FVG, BOS..."/></div>
+        <div class="fg" style="position:relative"><label>Setup</label>
+          <input type="text" name="setup" id="setup-input" placeholder="OTE, FVG, BOS..." autocomplete="off" style="position:relative"/>
+          <div id="setup-suggestions" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:9999;background:#1a1a27;border:1px solid rgba(255,255,255,0.12);border-radius:8px;max-height:180px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.5)"></div>
+        </div>
       </div>
       <div class="fg" style="margin-top:12px"><label>État émotionnel</label>
         <select name="emotions"><option value="">—</option><option>Serein</option><option>Stressé</option><option>Anxieux</option><option>Confiant</option><option>Neutre</option><option>Euphorique</option><option>Découragé</option></select></div>
@@ -751,14 +754,14 @@ function lpTab(t){
   <div class="modal">
     <div class="mh"><h3>Nouveau compte</h3><button class="mclose" id="acm-close"><i class="ti ti-x"></i></button></div>
     <form id="acc-form">
-      <div class="fg"><label>Nom du compte *</label><input type="text" name="name" placeholder="Compte Réel — ICMarkets" required/></div>
+      <div class="fg"><label>Nom du compte *</label><input type="text" name="name" placeholder="Compte réel" required/></div>
       <div class="grid2" style="margin-top:12px">
         <div class="fg"><label>Type</label><select name="type"><option value="live">Live</option><option value="demo">Demo</option><option value="backtest">Backtest</option></select></div>
         <div class="fg"><label>Devise</label><select name="currency"><option value="USD">USD $</option><option value="EUR">EUR €</option><option value="GBP">GBP £</option></select></div>
       </div>
       <div class="grid2" style="margin-top:12px">
         <div class="fg"><label>Capital initial</label><input type="number" name="initial_balance" placeholder="10000"/></div>
-        <div class="fg"><label>Broker</label><input type="text" name="broker" placeholder="ICMarkets..."/></div>
+        <div class="fg"><label>Broker / Prop Firm</label><input type="text" name="broker" placeholder="ICMarkets..."/></div>
       </div>
       <div class="mfoot">
         <button type="button" class="btn btn-secondary" id="acm-cancel">Annuler</button>
