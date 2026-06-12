@@ -35,28 +35,29 @@ app.use('/api/admin', require('./routes/admin'));
 app.use('/api/videos', require('./routes/videos'));
 app.use('/api/trades', require('./routes/trades'));
 
+const { execFile } = require('child_process');
+let _ecoCache = null, _ecoCacheTime = 0;
 app.get('/api/eco-calendar', (req, res) => {
-  const { from, to } = req.query;
-  const url = 'https://nfs.faireconomy.media/ff_calendar_thisweek.json';
-  https.get(url, r => {
-    let data = '';
-    r.on('data', c => data += c);
-    r.on('end', () => {
-      try {
-        const events = JSON.parse(data);
-        const mapped = events.map(e => ({
-          event: e.title,
-          country: e.country,
-          time: e.date,
-          impact: e.impact ? e.impact.toLowerCase() : 'low',
-          actual: e.actual || null,
-          estimate: e.forecast || null,
-          prev: e.previous || null
-        }));
-        res.json(mapped);
-      } catch(e) { res.json([]); }
-    });
-  }).on('error', () => res.json([]));
+  if (_ecoCache && Date.now() - _ecoCacheTime < 30*60*1000) {
+    return res.json(_ecoCache);
+  }
+  execFile('curl', ['-s', '--max-time', '10', '-A', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36', 'https://nfs.faireconomy.media/ff_calendar_thisweek.json'], (err, stdout) => {
+    try {
+      const events = JSON.parse(stdout);
+      const mapped = events.map(e => ({
+        event: e.title,
+        country: e.country,
+        time: e.date,
+        impact: e.impact ? e.impact.toLowerCase() : 'low',
+        actual: e.actual || null,
+        estimate: e.forecast || null,
+        prev: e.previous || null
+      }));
+      _ecoCache = mapped;
+      _ecoCacheTime = Date.now();
+      res.json(mapped);
+    } catch(e) { if (_ecoCache) res.json(_ecoCache); else res.json([]); }
+  });
 });
 
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../public/index.html')));
