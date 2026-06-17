@@ -160,6 +160,8 @@ async function saveEditAcc() {
   await api('PATCH', '/trades/accounts/' + id, d);
   document.getElementById('edit-acc-modal').classList.add('hidden');
   await loadAccounts();
+  stats = null;
+  await loadDashboard();
   toast('Compte modifié', 'success');
 }
 async function delAcc(id, e) {
