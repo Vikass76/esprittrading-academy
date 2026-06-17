@@ -250,9 +250,9 @@
         </div>
         <div id="reset-view" class="hidden">
           <h3 style="margin-bottom:16px">Nouveau mot de passe</h3>
-          <div class="fg"><label>Nouveau mot de passe</label><input type="password" id="reset-password" required/></div>
-          <div class="fg" style="margin-top:12px"><label>Confirmer</label><input type="password" id="reset-confirm" required/></div>
-          <div id="reset-msg" class="login-error hidden"></div>
+          <div class="fg"><label>Nouveau mot de passe</label><input type="password" id="reset-password" required autocomplete="new-password"/></div>
+          <div class="fg" style="margin-top:12px"><label>Confirmer</label><input type="password" id="reset-confirm" required autocomplete="new-password"/></div>
+          <div id="reset-msg" class="hidden" style="font-size:.82rem;margin-top:8px;padding:10px 14px;border-radius:8px;border:1px solid"></div>
           <button class="btn btn-primary btn-full btn-lg" style="margin-top:18px" id="reset-btn" onclick="submitReset()">Réinitialiser</button>
         </div>
         <div id="register-view" class="hidden">

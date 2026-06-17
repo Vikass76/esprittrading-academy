@@ -115,7 +115,7 @@ router.post('/reset-password', async (req, res) => {
   const user = db.prepare('SELECT * FROM users WHERE reset_token = ?').get(token);
   if (!user) return res.status(400).json({ error: 'Lien invalide ou expiré' });
   if (Date.now() > user.reset_token_expiry) return res.status(400).json({ error: 'Lien expiré' });
-  const hash = await require('bcryptjs').hash(password, 10);
+  const hash = await bcrypt.hash(password, 10);
   db.prepare('UPDATE users SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE id = ?').run(hash, user.id);
   res.json({ ok: true });
 });
