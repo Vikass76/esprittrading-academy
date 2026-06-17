@@ -661,7 +661,7 @@ async function loadAnalytics() {
       renderPairTable([]);
       renderDonutSection('dir',  mkEmpty(AN_DIR_KEYS),  AN_PALETTE,AN_DIR_KEYS);
       renderDonutSection('sess', mkEmpty(AN_SESS_KEYS), AN_PALETTE,AN_SESS_KEYS);
-      renderDonutSection('setup',{},AN_PALETTE,[]);
+      renderDonutSection('setup',{'':{ total:0,wins:0}},['rgba(255,255,255,0.08)'],['']);
       renderPerfJour([]);
       renderFrequency([]);
       return;
@@ -695,7 +695,7 @@ async function loadAnalytics() {
     trades.forEach(t=>{const s=(t.setup||'Autre').trim();if(!bySetup[s])bySetup[s]={total:0,wins:0};bySetup[s].total++;if(t.result==='WIN')bySetup[s].wins++;});
     const setupKeys=Object.keys(bySetup).filter(k=>bySetup[k].total>0);
     if(!setupKeys.length) setupKeys.push('Autre');
-    renderDonutSection('setup',bySetup,AN_PALETTE,setupKeys);
+    renderDonutSection('setup',setupKeys.length?bySetup:{'':{ total:0,wins:0}},setupKeys.length?AN_PALETTE:['rgba(255,255,255,0.08)'],setupKeys.length?setupKeys:['']);
 
     renderPairTable(s.byPair);
     renderPerfJour(trades);
@@ -736,7 +736,7 @@ function renderDonutSection(id,dataObj,palette,keys){
         }else{
           ctx.font='bold 20px Inter,sans-serif';ctx.fillStyle=total>0?'#fff':'#374151';ctx.textAlign='center';ctx.textBaseline='middle';
           ctx.fillText(total||'0',cx,cy-8);
-          ctx.font='10px Inter,sans-serif';ctx.fillStyle='#6b7280';ctx.fillText('trades',cx,cy+10);
+          ctx.font='10px Inter,sans-serif';ctx.fillStyle='#6b7280';ctx.fillText(total===1?'trade':'trades',cx,cy+10);
         }
         // % sur segments
         if(total>0){
