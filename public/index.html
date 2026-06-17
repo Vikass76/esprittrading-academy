@@ -640,18 +640,18 @@ function lpTab(t){
           <input type="text" id="pair-search-input" placeholder="Ex: EURUSD, BTCUSD..." autocomplete="off" style="width:100%"/>
           <input type="hidden" id="pair-search-hidden" name="pair"/></div>
         <div class="fg"><label>Direction *</label>
-          <select name="direction" required><option value="LONG">BUY</option><option value="SHORT">SELL</option></select></div>
+          <select name="direction"><option value="LONG">BUY</option><option value="SHORT">SELL</option></select></div>
         <div class="fg"><label>Résultat *</label>
-          <select name="result" required><option value="WIN">WIN</option><option value="LOSS">LOSS</option><option value="BE">Break Even</option></select></div>
+          <select name="result"><option value="WIN">WIN</option><option value="LOSS">LOSS</option><option value="BE">Break Even</option></select></div>
       </div>
       <div class="grid3" style="margin-top:12px">
-        <div class="fg"><label>RR *</label><input type="number" name="rr" step="0.1" placeholder="2.5" required autocomplete="off"/></div>
+        <div class="fg"><label>RR *</label><input type="number" name="rr" step="0.1" placeholder="2.5" autocomplete="off"/></div>
         <div class="fg"><label>P&L ($)</label><input type="number" name="pnl" step="0.01" placeholder="150"/></div>
         <div class="fg"><label>Lot size</label><input type="number" name="lot_size" step="0.01" placeholder="0.10"/></div>
       </div>
 
       <div class="grid3" style="margin-top:12px">
-        <div class="fg"><label>Date *</label><input type="date" name="trade_date" id="trade-date-input" required/></div>
+        <div class="fg"><label>Date *</label><input type="date" name="trade_date" id="trade-date-input"/></div>
         <div class="fg"><label>Session</label>
           <select name="session"><option value="">—</option><option>London</option><option>New York</option><option>Asia</option></select></div>
         <div class="fg"><label>Timeframe</label>
@@ -672,7 +672,7 @@ function lpTab(t){
         <div class="fg"><label>Higher Timeframe (HTF)</label><input type="file" name="screenshot2" accept="image/*"/></div>
       </div>
       <div class="fg" style="margin-top:12px"><label>Compte *</label>
-        <select name="account_id" id="trade-acc-sel" required><option value="">Choisir son compte</option></select></div>
+        <select name="account_id" id="trade-acc-sel"><option value="">Choisir son compte</option></select></div>
       <div class="mfoot">
         <button type="button" class="btn btn-secondary" id="tm-cancel">Annuler</button>
         <button type="submit" class="btn btn-primary">Enregistrer</button>

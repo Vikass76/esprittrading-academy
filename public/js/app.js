@@ -376,6 +376,8 @@ function openAddTrade() {
     return;
   }
   $('trade-form').reset();
+  document.querySelectorAll('.field-error').forEach(el => el.remove());
+  document.querySelectorAll('.field-error-input').forEach(el => el.classList.remove('field-error-input'));
   setTimeout(()=>{ initPairSearch(); const pi=document.getElementById('pair-search-input');if(pi)pi.value=''; const ph=document.getElementById('pair-search-hidden');if(ph)ph.value=''; },50);
   $('trade-form').querySelector('[name="trade_date"]').value = new Date().toISOString().split('T')[0];
   $('trade-modal').classList.remove('hidden');
@@ -386,10 +388,86 @@ function openAddTrade() {
 $('tm-close').addEventListener('click', () => $('trade-modal').classList.add('hidden'));
 $('tm-cancel').addEventListener('click', () => $('trade-modal').classList.add('hidden'));
 $('trade-modal').addEventListener('click', e => { if(e.target===$('trade-modal')) $('trade-modal').classList.add('hidden'); });
+$('trade-form').addEventListener('input', e => {
+  const fg = e.target.closest('.fg');
+  if (!fg) return;
+  fg.querySelectorAll('.field-error').forEach(el => el.remove());
+  e.target.classList.remove('field-error-input');
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'pair-search-input') {
+    const h = document.getElementById('pair-search-hidden');
+    if (h) { h.classList.remove('field-error-input'); const fg = h.closest('.fg'); if (fg) fg.querySelectorAll('.field-error').forEach(el => el.remove()); }
+  }
+  if (e.target.id === 'setup-input') {
+    e.target.classList.remove('field-error-input');
+    const fg = e.target.closest('.fg'); if (fg) fg.querySelectorAll('.field-error').forEach(el => el.remove());
+  }
+});
+document.addEventListener('click', e => {
+  if (e.target.closest('#pair-search-results') || e.target.id === 'pair-search-input') {
+    setTimeout(() => {
+      const h = document.getElementById('pair-search-hidden');
+      if (h && h.value) { h.classList.remove('field-error-input'); const fg = h.closest('.fg'); if (fg) fg.querySelectorAll('.field-error').forEach(el => el.remove()); }
+    }, 100);
+  }
+  if (e.target.closest('#setup-suggestions')) {
+    setTimeout(() => {
+      const s = document.getElementById('setup-input');
+      if (s && s.value) { s.classList.remove('field-error-input'); const fg = s.closest('.fg'); if (fg) fg.querySelectorAll('.field-error').forEach(el => el.remove()); }
+    }, 100);
+  }
+});
+$('trade-form').addEventListener('change', e => {
+  const fg = e.target.closest('.fg');
+  if (!fg) return;
+  fg.querySelectorAll('.field-error').forEach(el => el.remove());
+  e.target.classList.remove('field-error-input');
+});
 $('trade-form').addEventListener('submit', async e => {
   e.preventDefault();
+  document.querySelectorAll('.field-error').forEach(el => el.remove());
+  document.querySelectorAll('.field-error-input').forEach(el => el.classList.remove('field-error-input'));
+
+  const form = new FormData($('trade-form'));
+  let hasError = false;
+
+  function showError(inputEl, msg) {
+    if (!inputEl) return;
+    inputEl.classList.add('field-error-input');
+    const err = document.createElement('div');
+    err.className = 'field-error';
+    err.style.cssText = 'color:#ef4444;font-size:11px;margin-top:3px;';
+    err.textContent = msg;
+    const fg = inputEl.closest('.fg');
+    if (fg) fg.appendChild(err);
+    hasError = true;
+  }
+
+  const pairVal = form.get('pair');
+  if (!pairVal || !pairVal.trim()) showError(document.getElementById('pair-search-hidden'), 'La paire est obligatoire');
+
+  const dateVal = form.get('trade_date');
+  if (!dateVal) showError(document.getElementById('trade-date-input'), 'La date est obligatoire');
+
+  const rrVal = form.get('rr');
+  if (rrVal === '' || rrVal === null) showError(document.querySelector('[name="rr"]'), 'Le RR est obligatoire');
+
+  const pnlVal = form.get('pnl');
+  if (pnlVal === '' || pnlVal === null) showError(document.querySelector('[name="pnl"]'), 'Le P&L est obligatoire');
+
+  const accountVal = form.get('account_id');
+  if (!accountVal || !accountVal.trim()) showError(document.getElementById('trade-acc-sel'), 'Le compte est obligatoire');
+
+  const sessionVal = form.get('session');
+  if (!sessionVal || !sessionVal.trim()) showError(document.querySelector('select[name="session"]'), 'La session est obligatoire');
+
+  const setupVal2 = form.get('setup');
+  if (!setupVal2 || !setupVal2.trim()) showError(document.getElementById('setup-input'), 'Le setup est obligatoire');
+
+  if (hasError) return;
+
   try {
-    const form = new FormData($('trade-form'));
     const setupVal = form.get('setup');
     if(setupVal && setupVal.trim()) saveSetupTag(setupVal.trim());
     const result = (form.get('result')||'').trim();
@@ -1117,7 +1195,7 @@ function initPairSearch() {
     drop.querySelectorAll('.pair-opt').forEach(el=>{
       el.addEventListener('mouseover',()=>el.style.background='var(--gold-light)');
       el.addEventListener('mouseout',()=>el.style.background='');
-      el.addEventListener('mousedown',e=>{e.preventDefault();input.value=el.dataset.val;hidden.value=el.dataset.val;drop.style.display='none';});
+      el.addEventListener('mousedown',e=>{e.preventDefault();input.value=el.dataset.val;hidden.value=el.dataset.val;drop.style.display='none';hidden.classList.remove('field-error-input');const fg=hidden.closest('.fg');if(fg)fg.querySelectorAll('.field-error').forEach(el=>el.remove());});
     });
   }
   input.addEventListener('input',()=>{hidden.value='';show(input.value);});
@@ -1408,12 +1486,13 @@ function saveSetupTag(s){if(!s.trim())return;const arr=getSetups();if(!arr.inclu
 function delSetupTag(s){localStorage.setItem('et_setups',JSON.stringify(getSetups().filter(x=>x!==s)));renderSetupSuggestions();}
 function renderSetupSuggestions(){
   const input=document.getElementById('setup-input');
+  if(input){input.addEventListener('input',()=>{input.classList.remove('field-error-input');const fg=input.closest('.fg');if(fg)fg.querySelectorAll('.field-error').forEach(e=>e.remove());});}
   const box=document.getElementById('setup-suggestions');
   if(!input||!box)return;
   const val=input.value.toLowerCase();
   const arr=getSetups().filter(s=>!val||s.toLowerCase().includes(val));
   if(!arr.length){box.style.display='none';return;}
-  box.innerHTML=arr.map(s=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;font-size:.82rem;color:var(--text-2)" onmousedown="event.preventDefault();document.getElementById('setup-input').value='${s}';document.getElementById('setup-suggestions').style.display='none'" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background=''">
+  box.innerHTML=arr.map(s=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;font-size:.82rem;color:var(--text-2)" onmousedown="event.preventDefault();const si=document.getElementById('setup-input');si.value='${s}';si.classList.remove('field-error-input');const fg=si.closest('.fg');if(fg)fg.querySelectorAll('.field-error').forEach(e=>e.remove());document.getElementById('setup-suggestions').style.display='none'" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background=''">
     <span>${s}</span>
     <button onmousedown="event.stopPropagation();event.preventDefault();delSetupTag('${s}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:.8rem;padding:2px 4px"><i class="ti ti-x"></i></button>
   </div>`).join('');
