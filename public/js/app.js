@@ -1242,15 +1242,28 @@ document.getElementById('register-form')?.addEventListener('submit', async e => 
 });
 
 // ═══ CALENDRIER ÉCONOMIQUE ═══
+let ecoWeekOffset = 0;
+let ecoImpactFilter = 'all';
+function setEcoFilter(f) {
+  ecoImpactFilter = f;
+  document.querySelectorAll('.eco-filter-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('ef-' + f);
+  if (btn) btn.classList.add('active');
+  loadEcoCalendar();
+}
 async function loadEcoCalendar() {
   const container = document.getElementById('eco-cal-content');
   if (!container) return;
   container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)">Chargement...</div>';
   try {
     const today = new Date();
-    const from = today.toISOString().split('T')[0];
-    const to = new Date(today.getTime() + 7*24*60*60*1000).toISOString().split('T')[0];
-    const res = await fetch('/api/eco-calendar?from=' + from + '&to=' + to);
+    const from = new Date(today.getTime() + ecoWeekOffset*7*24*60*60*1000).toISOString().split('T')[0];
+    const to = new Date(today.getTime() + (ecoWeekOffset+1)*7*24*60*60*1000).toISOString().split('T')[0];
+    const label = ecoWeekOffset === 0 ? 'Cette semaine' : ecoWeekOffset === 1 ? 'Semaine prochaine' : ecoWeekOffset === -1 ? 'Semaine dernière' : (ecoWeekOffset > 0 ? '+'+ecoWeekOffset+' semaines' : ecoWeekOffset+' semaines');
+    const labelEl = document.getElementById('eco-week-label');
+    if (labelEl) labelEl.textContent = label;
+    const weekParam = ecoWeekOffset >= 1 ? 'next' : 'this';
+    const res = await fetch('/api/eco-calendar?week=' + weekParam);
     const raw = await res.json();
     // Garder tous les impacts mais filtrer les pays pertinents pour traders
     const TRADER_COUNTRIES = ['USD','EUR','GBP','JPY','CAD','AUD','NZD','CHF','CNY','ALL','US','EU','GB','JP','CA','AU','NZ','CH','CN','DE','FR'];
@@ -1258,7 +1271,9 @@ async function loadEcoCalendar() {
       const c = (e.country||'').toUpperCase();
       const imp = (e.impact||'').toLowerCase();
       // Garder si pays trader OU impact high
-      const d=(e.time||"").substring(0,10); const td=new Date().toISOString().split("T")[0]; return d>=td && TRADER_COUNTRIES.includes(c);
+      const d=(e.time||"").substring(0,10); const td=new Date().toISOString().split("T")[0];
+      const impactOk = ecoImpactFilter === 'all' || (e.impact||'').toLowerCase() === ecoImpactFilter;
+      return d.length===10 && (ecoWeekOffset>0 || d>=td) && TRADER_COUNTRIES.includes(c) && impactOk;
     });
     if (!data.length) { container.innerHTML = '<div class="empty"><p>Aucun événement.</p></div>'; return; }
     const MONTHS = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
@@ -1272,17 +1287,13 @@ async function loadEcoCalendar() {
       grouped[d].push(e);
     });
     const sortedDates = Object.keys(grouped).sort();
-    container.innerHTML = sortedDates.map(date => {
+    const tableRows = sortedDates.map(date => {
       const p = date.split('-');
       const d = new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2]));
       const isToday = date === from;
       const label = DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
-      return '<div style="margin-bottom:24px">'
-        + '<div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;border-radius:8px;margin-bottom:8px;background:' + (isToday?'var(--gold-light)':'var(--bg-subtle)') + ';color:' + (isToday?'var(--gold-dark)':'var(--text-muted)') + '">' + label + (isToday?' — Aujourd\'hui':'') + '</div>'
-        + '<table style="width:100%;border-collapse:collapse"><thead><tr style="font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--text-light)">'
-        + '<th style="text-align:left;padding:6px 10px">Heure</th><th style="text-align:left;padding:6px 10px">Dev.</th><th style="padding:6px 10px">Impact</th><th style="text-align:left;padding:6px 10px">Événement</th><th style="text-align:right;padding:6px 10px">Actuel</th><th style="text-align:right;padding:6px 10px">Prévu</th><th style="text-align:right;padding:6px 10px">Préc.</th>'
-        + '</tr></thead><tbody>'
-        + grouped[date].map((e,i) => {
+      const dayHeader = '<tr><td colspan="7" style="padding:0;height:20px;background:transparent"></td></tr><tr><td colspan="7" style="padding:12px 16px;font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;background:' + (isToday?'var(--gold)':'#2a2a3a') + ';color:' + (isToday?'#000':'#fff') + ';border-radius:8px 8px 0 0">' + label + (isToday?' — Aujourd\'hui':'') + '</td></tr>';
+      return dayHeader + grouped[date].map((e,i) => {
           const impact = (e.impact||'').toLowerCase();
           const ic = impact==='high'?'var(--red)':impact==='medium'?'#f97316':'#9ca3af';
           const stars = impact==='high'?'<span style="color:var(--red)">●●●</span>':impact==='medium'?'<span style="color:#f97316">●●</span><span style="color:#e5e0d8">●</span>':'<span style="color:var(--green)">●</span><span style="color:#e5e0d8">●●</span>';
@@ -1301,8 +1312,11 @@ async function loadEcoCalendar() {
             + '<td style="padding:10px;text-align:right;font-size:.82rem;color:var(--text-muted)">' + forecast + '</td>'
             + '<td style="padding:10px;text-align:right;font-size:.82rem;color:var(--text-muted)">' + prev + '</td>'
             + '</tr>';
-        }).join('') + '</tbody></table></div>';
+        }).join('');
     }).join('');
+    container.innerHTML = '<table style="width:100%;border-collapse:collapse"><thead><tr style="font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--text-light);position:sticky;top:0;background:var(--bg-card)">'
+      + '<th style="text-align:left;padding:6px 10px">Heure</th><th style="text-align:left;padding:6px 10px">Dev.</th><th style="padding:6px 10px">Impact</th><th style="text-align:left;padding:6px 10px">Événement</th><th style="text-align:right;padding:6px 10px">Actuel</th><th style="text-align:right;padding:6px 10px">Prévu</th><th style="text-align:right;padding:6px 10px">Préc.</th>'
+      + '</tr></thead><tbody>' + tableRows + '</tbody></table>';
   } catch(ex) { container.innerHTML = '<div class="empty"><p>Erreur de chargement.</p></div>'; console.error(ex); }
 }
 

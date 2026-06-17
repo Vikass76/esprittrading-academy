@@ -38,10 +38,15 @@ app.use('/api/trades', require('./routes/trades'));
 const { execFile } = require('child_process');
 let _ecoCache = null, _ecoCacheTime = 0;
 app.get('/api/eco-calendar', (req, res) => {
-  if (_ecoCache && Date.now() - _ecoCacheTime < 30*60*1000) {
-    return res.json(_ecoCache);
+  const week = req.query.week === 'next' ? 'next' : 'this';
+  const cacheKey = week;
+  if (!global._ecoCaches) global._ecoCaches = {};
+  if (!global._ecoCacheTimes) global._ecoCacheTimes = {};
+  if (global._ecoCaches[cacheKey] && Date.now() - global._ecoCacheTimes[cacheKey] < 30*60*1000) {
+    return res.json(global._ecoCaches[cacheKey]);
   }
-  execFile('curl', ['-s', '--max-time', '10', '-A', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36', 'https://nfs.faireconomy.media/ff_calendar_thisweek.json'], (err, stdout) => {
+  const url = week === 'next' ? 'https://nfs.faireconomy.media/ff_calendar_nextweek.json' : 'https://nfs.faireconomy.media/ff_calendar_thisweek.json';
+  execFile('curl', ['-s', '--max-time', '10', '-A', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36', url], (err, stdout) => {
     try {
       const events = JSON.parse(stdout);
       const mapped = events.map(e => ({
@@ -53,10 +58,10 @@ app.get('/api/eco-calendar', (req, res) => {
         estimate: e.forecast || null,
         prev: e.previous || null
       }));
-      _ecoCache = mapped;
-      _ecoCacheTime = Date.now();
+      global._ecoCaches[cacheKey] = mapped;
+      global._ecoCacheTimes[cacheKey] = Date.now();
       res.json(mapped);
-    } catch(e) { if (_ecoCache) res.json(_ecoCache); else res.json([]); }
+    } catch(e) { if (global._ecoCaches[cacheKey]) res.json(global._ecoCaches[cacheKey]); else res.json([]); }
   });
 });
 

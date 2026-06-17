@@ -409,7 +409,13 @@ function lpTab(t){
       <section id="tab-eco-cal" class="tab-section hidden">
         <div class="ph">
           <div><h2>Calendrier économique</h2><p>Annonces et événements de la semaine</p></div>
-          <button class="btn btn-secondary btn-sm" onclick="loadEcoCalendar()"><i class="ti ti-refresh"></i> Actualiser</button>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-secondary btn-sm eco-filter-btn active" onclick="setEcoFilter('all')" id="ef-all">Tous</button>
+            <button class="btn btn-secondary btn-sm eco-filter-btn" onclick="setEcoFilter('high')" id="ef-high"><span style="color:var(--red)">●●●</span> High</button>
+            <button class="btn btn-secondary btn-sm eco-filter-btn" onclick="setEcoFilter('medium')" id="ef-medium"><span style="color:#f97316">●●</span> Medium</button>
+            <button class="btn btn-secondary btn-sm eco-filter-btn" onclick="setEcoFilter('low')" id="ef-low"><span style="color:#9ca3af">●</span> Low</button>
+            <button class="btn btn-secondary btn-sm" onclick="loadEcoCalendar()"><i class="ti ti-refresh"></i> Actualiser</button>
+          </div>
         </div>
         <div id="eco-cal-content"></div>
       </section>
