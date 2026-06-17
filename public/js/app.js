@@ -10,6 +10,27 @@ const api = async (m, p, b, isForm) => {
   if (!r.ok) throw new Error(d.error || 'Erreur serveur');
   return d;
 };
+function renameAction(title, currentValue) {
+  return new Promise(resolve => {
+    const modal = document.getElementById('rename-modal');
+    document.getElementById('rename-title').textContent = title;
+    const input = document.getElementById('rename-input');
+    input.value = currentValue || '';
+    modal.classList.remove('hidden');
+    input.focus();
+    function cleanup(result) {
+      modal.classList.add('hidden');
+      document.getElementById('rename-ok').replaceWith(document.getElementById('rename-ok').cloneNode(true));
+      document.getElementById('rename-cancel').replaceWith(document.getElementById('rename-cancel').cloneNode(true));
+      document.getElementById('rename-close').replaceWith(document.getElementById('rename-close').cloneNode(true));
+      resolve(result);
+    }
+    document.getElementById('rename-ok').addEventListener('click', () => cleanup(input.value.trim() || null));
+    document.getElementById('rename-cancel').addEventListener('click', () => cleanup(null));
+    document.getElementById('rename-close').addEventListener('click', () => cleanup(null));
+    input.addEventListener('keydown', e => { if(e.key==='Enter') cleanup(input.value.trim() || null); });
+  });
+}
 function confirmAction(title, msg) {
   return new Promise(resolve => {
     const modal = document.getElementById('confirm-modal');
@@ -1096,7 +1117,7 @@ async function loadAdminMods(){
       </div>`;
     }).join('');
     el.querySelectorAll('.mu').forEach(b=>b.addEventListener('click',async()=>{await api('PATCH',`/admin/modules/${b.dataset.id}/position`,{direction:b.dataset.dir});loadAdminMods();}));
-    el.querySelectorAll('.em').forEach(b=>b.addEventListener('click',async()=>{const t=prompt('Nouveau nom :',b.dataset.title);if(!t)return;await api('PATCH',`/admin/modules/${b.dataset.id}`,{title:t});toast('Module renommé','success');loadAdminMods();}));
+    el.querySelectorAll('.em').forEach(b=>b.addEventListener('click',async()=>{const t=await renameAction('Renommer le module',b.dataset.title);if(!t)return;await api('PATCH',`/admin/modules/${b.dataset.id}`,{title:t});toast('Module renommé','success');loadAdminMods();}));
     el.querySelectorAll('.vu').forEach(b=>b.addEventListener('click',async()=>{await api('PATCH',`/admin/videos/${b.dataset.id}/position`,{direction:b.dataset.dir});loadAdminMods();}));
     el.querySelectorAll('.dm').forEach(b=>b.addEventListener('click',async()=>{if(!await confirmAction('Supprimer ce module ?', ''))return;await api('DELETE',`/admin/modules/${b.dataset.id}`);toast('Module supprimé','success');loadAdminMods();}));
     el.querySelectorAll('.dv').forEach(b=>b.addEventListener('click',async()=>{if(!await confirmAction(`Supprimer "${b.dataset.t}" ?`, 'Cette action est irréversible.'))return;await api('DELETE',`/admin/videos/${b.dataset.id}`);toast('Vidéo supprimée','success');loadAdminMods();}));
@@ -1251,23 +1272,73 @@ document.getElementById('show-login')?.addEventListener('click', () => {
   document.getElementById('login-view').classList.remove('hidden');
 });
 
+async function submitForgot() {
+  const email = document.getElementById('forgot-email').value;
+  const msg = document.getElementById('forgot-msg');
+  const btn = document.getElementById('forgot-btn');
+  msg.classList.add('hidden');
+  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(email)) { msg.textContent = 'Email invalide'; msg.classList.remove('hidden'); return; }
+  btn.textContent = 'Envoi...'; btn.disabled = true;
+  try {
+    await api('POST', '/auth/forgot-password', { email });
+    msg.style.color = '#10b981';
+    msg.textContent = 'Lien envoyé ! Vérifie ta boite mail.';
+    msg.classList.remove('hidden');
+  } catch(ex) { msg.style.color = ''; msg.textContent = ex.message; msg.classList.remove('hidden'); }
+  finally { btn.textContent = 'Envoyer le lien'; btn.disabled = false; }
+}
+async function submitReset() {
+  const token = new URLSearchParams(window.location.search).get('reset_token');
+  const password = document.getElementById('reset-password').value;
+  const confirm = document.getElementById('reset-confirm').value;
+  const msg = document.getElementById('reset-msg');
+  const btn = document.getElementById('reset-btn');
+  msg.classList.add('hidden');
+  if (password !== confirm) { msg.textContent = 'Les mots de passe ne correspondent pas'; msg.classList.remove('hidden'); return; }
+  if (password.length < 6) { msg.textContent = 'Mot de passe trop court (6 caractères min)'; msg.classList.remove('hidden'); return; }
+  btn.textContent = 'Réinitialisation...'; btn.disabled = true;
+  try {
+    await api('POST', '/auth/reset-password', { token, password });
+    msg.style.color = '#10b981';
+    msg.textContent = 'Mot de passe réinitialisé ! Redirection...';
+    msg.classList.remove('hidden');
+    setTimeout(() => { window.location.href = '/'; }, 2000);
+  } catch(ex) { msg.style.color = ''; msg.textContent = ex.message; msg.classList.remove('hidden'); }
+  finally { btn.textContent = 'Réinitialiser'; btn.disabled = false; }
+}
+// Vérifier si on a un token de reset dans l'URL
+if (new URLSearchParams(window.location.search).get('reset_token')) {
+  document.addEventListener('DOMContentLoaded', () => lpTab('reset'));
+}
 document.getElementById('register-form')?.addEventListener('submit', async e => {
   e.preventDefault();
   const btn = document.getElementById('register-btn');
   const err = document.getElementById('register-error');
   err.classList.add('hidden');
+  const password = document.getElementById('reg-password').value;
+  const confirm = document.getElementById('reg-confirm').value;
+  const email = document.getElementById('reg-email').value;
+  // Validation email stricte
+  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(email)) { err.textContent = 'Email invalide'; err.classList.remove('hidden'); return; }
+  // Validation confirmation mot de passe
+  if (password !== confirm) { err.textContent = 'Les mots de passe ne correspondent pas'; err.classList.remove('hidden'); return; }
   btn.textContent = 'Création...'; btn.disabled = true;
   try {
-    const data = await api('POST', '/auth/register', {
+    await api('POST', '/auth/register', {
       firstname: document.getElementById('reg-firstname').value,
       lastname: document.getElementById('reg-lastname').value,
-      email: document.getElementById('reg-email').value,
-      password: document.getElementById('reg-password').value
+      email: email,
+      password: password
     });
-    showApp(data);
+    err.style.color = '#10b981';
+    err.textContent = 'Compte créé ! Vérifie ton email pour confirmer ton compte.';
+    err.classList.remove('hidden');
+    btn.textContent = 'Email envoyé ✓'; btn.disabled = true;
   } catch(ex) {
-    err.textContent = ex.message; err.classList.remove('hidden');
-  } finally { btn.textContent = 'Créer mon compte'; btn.disabled = false; }
+    err.style.color = ''; err.textContent = ex.message; err.classList.remove('hidden');
+  } finally { if(!btn.disabled) { btn.textContent = 'Créer mon compte'; btn.disabled = false; } }
 });
 
 // ═══ CALENDRIER ÉCONOMIQUE ═══
