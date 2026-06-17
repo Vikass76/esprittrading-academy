@@ -1277,7 +1277,7 @@ async function submitForgot() {
   const msg = document.getElementById('forgot-msg');
   const btn = document.getElementById('forgot-btn');
   msg.classList.add('hidden');
-  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9\-]+(?:\.[a-zA-Z0-9\-]+)*\.[a-zA-Z]{2,}$/;
   if (!emailRegex.test(email)) { msg.textContent = 'Email invalide'; msg.classList.remove('hidden'); return; }
   btn.textContent = 'Envoi...'; btn.disabled = true;
   try {
@@ -1320,7 +1320,7 @@ document.getElementById('register-form')?.addEventListener('submit', async e => 
   const confirm = document.getElementById('reg-confirm').value;
   const email = document.getElementById('reg-email').value;
   // Validation email stricte
-  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9\-]+(?:\.[a-zA-Z0-9\-]+)*\.[a-zA-Z]{2,}$/;
   if (!emailRegex.test(email)) { err.textContent = 'Email invalide'; err.classList.remove('hidden'); return; }
   // Validation confirmation mot de passe
   if (password !== confirm) { err.textContent = 'Les mots de passe ne correspondent pas'; err.classList.remove('hidden'); return; }

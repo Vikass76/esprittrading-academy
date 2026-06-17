@@ -276,6 +276,19 @@
   </div>
 </div>
 <script>
+// Afficher message si email vérifié
+if (new URLSearchParams(window.location.search).get('verified') === '1') {
+  document.addEventListener('DOMContentLoaded', () => {
+    const err = document.getElementById('login-error');
+    if (err) {
+      err.style.color = '#10b981';
+      err.style.borderColor = '#10b981';
+      err.style.background = 'rgba(16,185,129,0.1)';
+      err.textContent = '✓ Email confirmé ! Tu peux maintenant te connecter.';
+      err.classList.remove('hidden');
+    }
+  });
+}
 function lpTab(t){
   var isLogin=t==='login';
   var isRegister=t==='register';

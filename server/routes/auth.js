@@ -54,7 +54,7 @@ router.post('/register', async (req, res) => {
   const { firstname, lastname, email, password } = req.body;
   if (!firstname || !lastname || !email || !password) return res.status(400).json({ error: 'Tous les champs sont requis' });
   // Validation email stricte
-  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9\-]+(?:\.[a-zA-Z0-9\-]+)*\.[a-zA-Z]{2,}$/;
   if (!emailRegex.test(email)) return res.status(400).json({ error: 'Email invalide' });
   if (password.length < 6) return res.status(400).json({ error: 'Mot de passe trop court (6 caractères min)' });
   const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
