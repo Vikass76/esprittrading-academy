@@ -673,3 +673,15 @@ select option {
 #edit-acc-modal .modal-box{background:#13131e!important;border-radius:14px;overflow:hidden;width:420px}
 #edit-acc-modal .modal-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid rgba(255,255,255,0.08);font-size:.95rem;font-weight:800}
 #edit-acc-modal .modal-cls{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;padding:4px}
+
+/* ══ RESPONSIVE MOBILE ════════════════════ */
+@media(max-width:768px){
+  .login-right{width:100% !important}
+  .lp-right{width:100% !important;position:relative;height:auto}
+  #edit-acc-modal .modal-box{width:100% !important}
+  .main-wrap{overflow-x:hidden;max-width:100vw}
+  .page{overflow-x:hidden}
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tbl{min-width:560px}
+  #dash-week-cal{overflow-x:auto;-webkit-overflow-scrolling:touch}
+}
