@@ -23,8 +23,13 @@ passport.use(new GoogleStrategy({
     if (user) {
       db.prepare('UPDATE users SET google_id = ? WHERE id = ?').run(googleId, user.id);
     } else {
-      const row = db.prepare('INSERT INTO users (username, email, password, role, google_id, firstname, lastname) VALUES (?,?,?,?,?,?,?)')
-        .run(name, email, '', 'community', googleId, profile.name.givenName||name, profile.name.familyName||'');
+      const baseName = (profile.name.givenName||name).toLowerCase().replace(/\s+/g,'.');
+      let username = baseName + '.' + Date.now().toString().slice(-4);
+      while(db.prepare('SELECT id FROM users WHERE username=?').get(username)) {
+        username = baseName + '.' + Math.floor(Math.random()*9000+1000);
+      }
+      const row = db.prepare('INSERT INTO users (username, email, password, role, google_id, firstname, lastname, email_verified) VALUES (?,?,?,?,?,?,?,?)')
+        .run(username, email, '', 'community', googleId, profile.name.givenName||name, profile.name.familyName||'', 1);
       user = db.prepare('SELECT * FROM users WHERE id = ?').get(row.lastInsertRowid);
     }
   }
