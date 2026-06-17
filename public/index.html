@@ -331,7 +331,7 @@ function lpTab(t){
         <div class="sb-avatar" id="user-initials">?</div>
         <div class="sb-uname" id="nav-username"></div>
         <div class="sb-actions" style="display:flex;gap:2px">
-          <button id="change-pwd-btn" title="Mot de passe"><i class="ti ti-lock"></i></button>
+          <button id="edit-profile-btn" title="Mon profil"><i class="ti ti-user-edit"></i></button>
           <button id="logout-btn" title="Déconnexion"><i class="ti ti-logout"></i></button>
         </div>
       </div>
@@ -817,11 +817,19 @@ function lpTab(t){
 <!-- MODAL MDP -->
 <div class="overlay hidden" id="pwd-modal">
   <div class="modal">
-    <div class="mh"><h3>Changer le mot de passe</h3><button class="mclose" id="pm-close"><i class="ti ti-x"></i></button></div>
+    <div class="mh"><h3>Mon profil</h3><button class="mclose" id="pm-close"><i class="ti ti-x"></i></button></div>
     <form id="pwd-form">
-      <div class="fg"><label>Mot de passe actuel</label><input type="password" id="pwd-cur" required/></div>
-      <div class="fg" style="margin-top:12px"><label>Nouveau mot de passe</label><input type="password" id="pwd-new" required/></div>
-      <div class="fg" style="margin-top:12px"><label>Confirmer</label><input type="password" id="pwd-cf" required/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="fg"><label>Prénom</label><input type="text" id="profile-firstname"/></div>
+        <div class="fg"><label>Nom</label><input type="text" id="profile-lastname"/></div>
+      </div>
+      <div class="fg" style="margin-top:12px"><label>Email</label><input type="email" id="profile-email"/></div>
+      <div style="border-top:1px solid var(--border);margin:16px 0;padding-top:16px">
+        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px">Changer le mot de passe (laisser vide pour ne pas modifier)</p>
+        <div class="fg"><label>Mot de passe actuel</label><input type="password" id="pwd-cur"/></div>
+        <div class="fg" style="margin-top:12px"><label>Nouveau mot de passe</label><input type="password" id="pwd-new"/></div>
+        <div class="fg" style="margin-top:12px"><label>Confirmer</label><input type="password" id="pwd-cf"/></div>
+      </div>
       <div class="mfoot">
         <button type="button" class="btn btn-secondary" id="pm-cancel">Annuler</button>
         <button type="submit" class="btn btn-primary">Mettre à jour</button>

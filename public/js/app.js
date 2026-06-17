@@ -1048,7 +1048,16 @@ function calcObj(){
 ['o-cap','o-tgt','o-pct','o-tr'].forEach(id=>$(id)?.addEventListener('input',calcObj));
 
 /* ── MDP ── */
-$('change-pwd-btn').addEventListener('click',()=>{$('pwd-form').reset();$('pwd-modal').classList.remove('hidden');});
+document.getElementById('edit-profile-btn')?.addEventListener('click', async ()=>{
+  if(!user) { try { user = await api('GET','/auth/me'); } catch(e){} }
+  document.getElementById('profile-firstname').value = user?.firstname || '';
+  document.getElementById('profile-lastname').value = user?.lastname || '';
+  document.getElementById('profile-email').value = user?.email || '';
+  document.getElementById('pwd-cur').value = '';
+  document.getElementById('pwd-new').value = '';
+  document.getElementById('pwd-cf').value = '';
+  $('pwd-modal').classList.remove('hidden');
+});
 $('pm-close').addEventListener('click',()=>$('pwd-modal').classList.add('hidden'));
 $('pm-cancel').addEventListener('click',()=>$('pwd-modal').classList.add('hidden'));
 $('pwd-form').addEventListener('submit',async e=>{

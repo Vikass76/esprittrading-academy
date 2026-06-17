@@ -139,6 +139,21 @@ router.get('/google/callback',
   }
 );
 
+router.patch('/profile', async (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: 'Non connecté' });
+  const { firstname, lastname, email } = req.body;
+  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.session.userId);
+  if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+  if (email && email !== user.email) {
+    const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9\-]+(?:\.[a-zA-Z0-9\-]+)*\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) return res.status(400).json({ error: 'Email invalide' });
+    const existing = db.prepare('SELECT id FROM users WHERE email = ? AND id != ?').get(email, req.session.userId);
+    if (existing) return res.status(400).json({ error: 'Email déjà utilisé' });
+  }
+  db.prepare('UPDATE users SET firstname=?, lastname=?, email=? WHERE id=?')
+    .run(firstname||user.firstname, lastname||user.lastname, email||user.email, req.session.userId);
+  res.json({ ok: true });
+});
 router.get('/me', (req, res) => {
   if (!req.session.userId) return res.status(401).json({ error: 'Non connecté' });
   const user = db.prepare('SELECT id, username, role, email, firstname, lastname FROM users WHERE id = ?').get(req.session.userId);
