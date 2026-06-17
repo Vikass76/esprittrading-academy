@@ -81,6 +81,39 @@ router.post('/modules', requireAdmin, (req, res) => {
   res.json({ id: result.lastInsertRowid, title, description, position: pos });
 });
 
+router.patch('/modules/:id', requireAdmin, (req, res) => {
+  const { title, position } = req.body;
+  const mod = db.prepare('SELECT * FROM modules WHERE id = ?').get(req.params.id);
+  if (!mod) return res.status(404).json({ error: 'Module introuvable' });
+  if (title) db.prepare('UPDATE modules SET title = ? WHERE id = ?').run(title, req.params.id);
+  if (position !== undefined) db.prepare('UPDATE modules SET position = ? WHERE id = ?').run(position, req.params.id);
+  res.json({ ok: true });
+});
+router.patch('/modules/:id/position', requireAdmin, (req, res) => {
+  const { direction } = req.body;
+  const mod = db.prepare('SELECT * FROM modules ORDER BY position').all();
+  const idx = mod.findIndex(m => m.id == req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Module introuvable' });
+  const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+  if (swapIdx < 0 || swapIdx >= mod.length) return res.json({ ok: true });
+  const posA = mod[idx].position, posB = mod[swapIdx].position;
+  db.prepare('UPDATE modules SET position = ? WHERE id = ?').run(posB, mod[idx].id);
+  db.prepare('UPDATE modules SET position = ? WHERE id = ?').run(posA, mod[swapIdx].id);
+  res.json({ ok: true });
+});
+router.patch('/videos/:id/position', requireAdmin, (req, res) => {
+  const { direction } = req.body;
+  const video = db.prepare('SELECT * FROM videos WHERE id = ?').get(req.params.id);
+  if (!video) return res.status(404).json({ error: 'Vidéo introuvable' });
+  const vids = db.prepare('SELECT * FROM videos WHERE module_id = ? ORDER BY position').all(video.module_id);
+  const idx = vids.findIndex(v => v.id == req.params.id);
+  const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+  if (swapIdx < 0 || swapIdx >= vids.length) return res.json({ ok: true });
+  const posA = vids[idx].position, posB = vids[swapIdx].position;
+  db.prepare('UPDATE videos SET position = ? WHERE id = ?').run(posB, vids[idx].id);
+  db.prepare('UPDATE videos SET position = ? WHERE id = ?').run(posA, vids[swapIdx].id);
+  res.json({ ok: true });
+});
 router.delete('/modules/:id', requireAdmin, (req, res) => {
   db.prepare('DELETE FROM modules WHERE id = ?').run(req.params.id);
   res.json({ success: true });

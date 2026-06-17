@@ -1082,12 +1082,22 @@ async function loadAdminMods(){
       const vids=(va.find(x=>x.id===m.id)||{videos:[]}).videos;
       vids.forEach(v=>vcache.set(String(v.id),v));
       return `<div class="adm-mod">
-        <div class="adm-mod-h"><span class="adm-mod-n"><i class="ti ti-folder" style="color:var(--gold-dark)"></i>${m.title}<span class="mod-cnt">${vids.length}</span></span>
-        <button class="btn btn-danger btn-sm dm" data-id="${m.id}">Supprimer</button></div>
-        ${vids.map(v=>`<div class="adm-vid-row">${getThumb(v)}<span class="adm-vid-title">${v.title}</span><div class="adm-vid-acts"><button class="btn btn-secondary btn-sm ev" data-id="${v.id}">Modifier</button><button class="btn btn-danger btn-sm dv" data-id="${v.id}" data-t="${v.title}">Suppr.</button></div></div>`).join('')}
+        <div class="adm-mod-h">
+          <span class="adm-mod-n"><i class="ti ti-folder" style="color:var(--gold-dark)"></i>${m.title}<span class="mod-cnt">${vids.length}</span></span>
+          <div style="display:flex;gap:6px;align-items:center">
+            <button class="btn btn-secondary btn-sm mu" data-id="${m.id}" data-dir="up" title="Monter">↑</button>
+            <button class="btn btn-secondary btn-sm mu" data-id="${m.id}" data-dir="down" title="Descendre">↓</button>
+            <button class="btn btn-secondary btn-sm em" data-id="${m.id}" data-title="${m.title}">Renommer</button>
+            <button class="btn btn-danger btn-sm dm" data-id="${m.id}">Supprimer</button>
+          </div>
+        </div>
+        ${vids.map(v=>`<div class="adm-vid-row">${getThumb(v)}<span class="adm-vid-title">${v.title}</span><div class="adm-vid-acts"><button class="btn btn-secondary btn-sm vu" data-id="${v.id}" data-dir="up">↑</button><button class="btn btn-secondary btn-sm vu" data-id="${v.id}" data-dir="down">↓</button><button class="btn btn-secondary btn-sm ev" data-id="${v.id}">Modifier</button><button class="btn btn-danger btn-sm dv" data-id="${v.id}" data-t="${v.title}">Suppr.</button></div></div>`).join('')}
         ${!vids.length?`<div style="padding:10px 16px;font-size:.78rem;color:var(--text-muted)">Aucune vidéo.</div>`:''}
       </div>`;
     }).join('');
+    el.querySelectorAll('.mu').forEach(b=>b.addEventListener('click',async()=>{await api('PATCH',`/admin/modules/${b.dataset.id}/position`,{direction:b.dataset.dir});loadAdminMods();}));
+    el.querySelectorAll('.em').forEach(b=>b.addEventListener('click',async()=>{const t=prompt('Nouveau nom :',b.dataset.title);if(!t)return;await api('PATCH',`/admin/modules/${b.dataset.id}`,{title:t});toast('Module renommé','success');loadAdminMods();}));
+    el.querySelectorAll('.vu').forEach(b=>b.addEventListener('click',async()=>{await api('PATCH',`/admin/videos/${b.dataset.id}/position`,{direction:b.dataset.dir});loadAdminMods();}));
     el.querySelectorAll('.dm').forEach(b=>b.addEventListener('click',async()=>{if(!await confirmAction('Supprimer ce module ?', ''))return;await api('DELETE',`/admin/modules/${b.dataset.id}`);toast('Module supprimé','success');loadAdminMods();}));
     el.querySelectorAll('.dv').forEach(b=>b.addEventListener('click',async()=>{if(!await confirmAction(`Supprimer "${b.dataset.t}" ?`, 'Cette action est irréversible.'))return;await api('DELETE',`/admin/videos/${b.dataset.id}`);toast('Vidéo supprimée','success');loadAdminMods();}));
     el.querySelectorAll('.ev').forEach(b=>b.addEventListener('click',()=>openEditVid(vcache.get(b.dataset.id))));
