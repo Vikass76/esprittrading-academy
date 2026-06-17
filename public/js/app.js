@@ -1092,12 +1092,43 @@ async function loadAdminUsers(){
     el.innerHTML=users.map(u=>`<div class="user-row">
       <div><div class="u-name">${u.username}</div><div class="u-date">Créé le ${fmtDate(u.created_at?.split('T')[0])}</div></div>
       <div style="display:flex;gap:5px">
-        <button class="btn btn-secondary btn-sm rst" data-id="${u.id}" data-n="${u.username}">Réinit.</button>
+        <button class="btn btn-secondary btn-sm vw" data-id="${u.id}" data-n="${u.firstname||u.username}">Voir</button><button class="btn btn-secondary btn-sm rst" data-id="${u.id}" data-n="${u.username}">Réinit.</button>
         <button class="btn btn-danger btn-sm del" data-id="${u.id}">Suppr.</button>
       </div></div>`).join('');
+    el.querySelectorAll('.vw').forEach(b=>b.addEventListener('click',()=>openUserView(b.dataset.id,b.dataset.n)));
     el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',async()=>{if(!await confirmAction('Supprimer cet élève ?', ''))return;await api('DELETE',`/admin/users/${b.dataset.id}`);toast('Élève supprimé','success');loadAdminUsers();}));
     el.querySelectorAll('.rst').forEach(b=>b.addEventListener('click',async()=>{const p=prompt(`Nouveau MDP pour ${b.dataset.n} :`);if(!p)return;await api('PATCH',`/admin/users/${b.dataset.id}/password`,{password:p});toast('MDP réinitialisé','success');}));
   }catch{toast('Erreur élèves','error');}
+}
+async function openUserView(userId, name) {
+  const modal = document.getElementById('user-view-modal');
+  document.getElementById('uv-name').textContent = name;
+  document.getElementById('uv-body').innerHTML = '<div style="text-align:center;padding:40px">Chargement...</div>';
+  modal.classList.remove('hidden');
+  try {
+    const data = await api('GET', '/trades/user/' + userId);
+    const list = data.trades;
+    if (!list.length) { document.getElementById('uv-body').innerHTML = '<p>Aucun trade.</p>'; return; }
+    const wins=list.filter(t=>t.result==='WIN').length;
+    const losses=list.filter(t=>t.result==='LOSS').length;
+    const be=list.filter(t=>t.result==='BE').length;
+    const totalRR=list.reduce((s,t)=>s+(parseFloat(t.rr)||0),0);
+    const totalPnl=list.reduce((s,t)=>s+(parseFloat(t.pnl)||0),0);
+    const wr=list.length?(wins/list.length*100).toFixed(1):0;
+    let rows="";
+    list.forEach(t=>{
+      const rr=parseFloat(t.rr)||0,pnl=parseFloat(t.pnl)||0;
+      const dir=(t.direction||'LONG')==='LONG'?'BUY':'SELL';
+      rows+='<tr><td>'+fmtDate(t.trade_date)+'</td><td>'+t.pair+'</td><td>'+dir+'</td><td>'+rbadge(t.result)+'</td><td>'+(rr>=0?'+':'')+rr+'R</td><td>'+(pnl>=0?'+$':'-$')+Math.abs(pnl).toFixed(2)+'</td><td>'+(t.session||'—')+'</td><td>'+(t.setup||'—')+'</td></tr>';
+    });
+    let h='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">';
+    h+='<div class="kcard"><div class="kcard-label">TRADES</div><div class="kcard-val">'+list.length+'</div><div class="kcard-sub">'+wins+'W '+losses+'L '+be+'BE</div></div>';
+    h+='<div class="kcard"><div class="kcard-label">WIN RATE</div><div class="kcard-val">'+wr+'%</div></div>';
+    h+='<div class="kcard"><div class="kcard-label">RR</div><div class="kcard-val">'+(totalRR>=0?'+':'')+totalRR.toFixed(1)+'R</div></div>';
+    h+='<div class="kcard"><div class="kcard-label">P&L</div><div class="kcard-val">'+(totalPnl>=0?'+$':'-$')+Math.abs(totalPnl).toFixed(0)+'</div></div></div>';
+    h+='<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Paire</th><th>Dir.</th><th>Résultat</th><th>RR</th><th>P&L</th><th>Session</th><th>Setup</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+    document.getElementById('uv-body').innerHTML = h;
+  } catch(e) { document.getElementById('uv-body').innerHTML = '<p>Erreur.</p>'; }
 }
 $('user-form').addEventListener('submit',async e=>{e.preventDefault();await api('POST','/admin/users',{username:$('new-uname').value,password:$('new-upwd').value});$('user-form').reset();toast('Élève créé !','success');loadAdminUsers();});
 

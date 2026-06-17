@@ -137,6 +137,15 @@ function recalcBalance(db, account_id, user_id) {
     .run(acc.initial_balance + tot.total, account_id, user_id);
 }
 
+router.get('/user/:userId', requireAuth, (req, res) => {
+  const { from, to } = req.query;
+  let q = 'SELECT * FROM trades WHERE user_id = ?'; const p = [req.params.userId];
+  if (from) { q += ' AND trade_date >= ?'; p.push(from); }
+  if (to) { q += ' AND trade_date <= ?'; p.push(to); }
+  q += ' ORDER BY trade_date DESC, id DESC';
+  const t = db.prepare(q).all(...p);
+  res.json({ trades: t, total: t.length });
+});
 router.get('/', requireAuth, (req, res) => {
   const { pair, result, from, to, session, setup, direction, account_id } = req.query;
   let query = 'SELECT t.*, a.name as account_name FROM trades t LEFT JOIN accounts a ON t.account_id = a.id WHERE t.user_id = ?';

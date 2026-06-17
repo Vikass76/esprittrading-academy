@@ -900,6 +900,15 @@ function lpTab(t){
 </div>
 
 <div id="toasts"></div>
+<div class="overlay hidden" id="user-view-modal" style="z-index:10000;align-items:flex-start;padding:20px">
+  <div class="modal modal-lg" style="max-width:900px;width:100%;margin-top:20px">
+    <div class="mh">
+      <h3>Journal de <span id="uv-name"></span></h3>
+      <button class="mclose" onclick="document.getElementById('user-view-modal').classList.add('hidden')"><i class="ti ti-x"></i></button>
+    </div>
+    <div style="padding:4px 0" id="uv-body"></div>
+  </div>
+</div>
 <div class="overlay hidden" id="rename-modal" style="z-index:10000">
   <div class="modal" style="max-width:400px">
     <div class="mh"><h3 id="rename-title">Renommer</h3><button class="mclose" id="rename-close"><i class="ti ti-x"></i></button></div>
