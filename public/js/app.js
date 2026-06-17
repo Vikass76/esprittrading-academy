@@ -71,7 +71,7 @@ function showApp(me) {
   $('nav-username').textContent = me.username;
   $('user-initials').textContent = me.username.slice(0,2).toUpperCase();
   if (me.role === 'admin') document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
-  if (me.role === 'student' || me.role === 'admin') { $('formation-student').classList.remove('hidden'); $('formation-community').classList.add('hidden'); }
+  if (me.role === 'student' || me.role === 'admin') { $('formation-student').classList.remove('hidden'); $('formation-community').classList.add('hidden'); const up = document.getElementById('formation-upsell'); if(up) up.style.display='none'; }
   else { $('formation-student').classList.add('hidden'); $('formation-community').classList.remove('hidden'); }
   loadAccounts().then(() => { switchTab('dashboard'); loadDashboard(); });
 }
