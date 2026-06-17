@@ -10,6 +10,25 @@ const api = async (m, p, b, isForm) => {
   if (!r.ok) throw new Error(d.error || 'Erreur serveur');
   return d;
 };
+function confirmAction(title, msg) {
+  return new Promise(resolve => {
+    const modal = document.getElementById('confirm-modal');
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-msg').textContent = msg || '';
+    modal.classList.remove('hidden');
+    const ok = document.getElementById('confirm-ok');
+    const cancel = document.getElementById('confirm-cancel');
+    function cleanup(result) {
+      modal.classList.add('hidden');
+      ok.replaceWith(ok.cloneNode(true));
+      cancel.replaceWith(cancel.cloneNode(true));
+      resolve(result);
+    }
+    document.getElementById('confirm-ok').addEventListener('click', () => cleanup(true));
+    document.getElementById('confirm-cancel').addEventListener('click', () => cleanup(false));
+    modal.addEventListener('click', e => { if(e.target===modal) cleanup(false); }, {once:true});
+  });
+}
 function toast(msg, type='info') {
   const el = document.createElement('div');
   el.className = `toast t-${type === 'success' ? 'ok' : type === 'error' ? 'err' : 'info'}`;
@@ -166,7 +185,7 @@ async function saveEditAcc() {
 }
 async function delAcc(id, e) {
   e.stopPropagation();
-  if (!confirm('Supprimer ce compte ?')) return;
+  if (!await confirmAction('Supprimer ce compte ?', '')) return;
   await api('DELETE',`/trades/accounts/${id}`);
   selAcc = null;
   await loadAccounts();
@@ -515,7 +534,7 @@ $('dm-close').addEventListener('click',closeDetail);
 $('dm-close2').addEventListener('click',closeDetail);
 $('detail-modal').addEventListener('click',e=>{if(e.target===$('detail-modal'))closeDetail();});
 $('d-del').addEventListener('click',async()=>{
-  if(!detailId||!confirm('Supprimer ce trade ?')) return;
+  if(!detailId||!await confirmAction('Supprimer ce trade ?', '')) return;
   await api('DELETE',`/trades/${detailId}`);
   toast('Trade supprimé','success'); closeDetail(); loadTrades(); loadDashboard(); loadAccounts();
 });
@@ -1046,7 +1065,7 @@ async function loadAdminUsers(){
         <button class="btn btn-secondary btn-sm rst" data-id="${u.id}" data-n="${u.username}">Réinit.</button>
         <button class="btn btn-danger btn-sm del" data-id="${u.id}">Suppr.</button>
       </div></div>`).join('');
-    el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',async()=>{if(!confirm('Supprimer ?'))return;await api('DELETE',`/admin/users/${b.dataset.id}`);toast('Élève supprimé','success');loadAdminUsers();}));
+    el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',async()=>{if(!await confirmAction('Supprimer cet élève ?', ''))return;await api('DELETE',`/admin/users/${b.dataset.id}`);toast('Élève supprimé','success');loadAdminUsers();}));
     el.querySelectorAll('.rst').forEach(b=>b.addEventListener('click',async()=>{const p=prompt(`Nouveau MDP pour ${b.dataset.n} :`);if(!p)return;await api('PATCH',`/admin/users/${b.dataset.id}/password`,{password:p});toast('MDP réinitialisé','success');}));
   }catch{toast('Erreur élèves','error');}
 }
@@ -1069,8 +1088,8 @@ async function loadAdminMods(){
         ${!vids.length?`<div style="padding:10px 16px;font-size:.78rem;color:var(--text-muted)">Aucune vidéo.</div>`:''}
       </div>`;
     }).join('');
-    el.querySelectorAll('.dm').forEach(b=>b.addEventListener('click',async()=>{if(!confirm('Supprimer ce module ?'))return;await api('DELETE',`/admin/modules/${b.dataset.id}`);toast('Module supprimé','success');loadAdminMods();}));
-    el.querySelectorAll('.dv').forEach(b=>b.addEventListener('click',async()=>{if(!confirm(`Supprimer "${b.dataset.t}" ?`))return;await api('DELETE',`/admin/videos/${b.dataset.id}`);toast('Vidéo supprimée','success');loadAdminMods();}));
+    el.querySelectorAll('.dm').forEach(b=>b.addEventListener('click',async()=>{if(!await confirmAction('Supprimer ce module ?', ''))return;await api('DELETE',`/admin/modules/${b.dataset.id}`);toast('Module supprimé','success');loadAdminMods();}));
+    el.querySelectorAll('.dv').forEach(b=>b.addEventListener('click',async()=>{if(!await confirmAction(`Supprimer "${b.dataset.t}" ?`, 'Cette action est irréversible.'))return;await api('DELETE',`/admin/videos/${b.dataset.id}`);toast('Vidéo supprimée','success');loadAdminMods();}));
     el.querySelectorAll('.ev').forEach(b=>b.addEventListener('click',()=>openEditVid(vcache.get(b.dataset.id))));
     sel.innerHTML=mods.map(m=>`<option value="${m.id}">${m.title}</option>`).join('');
   }catch{toast('Erreur modules','error');}
