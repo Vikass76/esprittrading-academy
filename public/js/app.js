@@ -1296,11 +1296,7 @@ function initPairSearch() {
 }
 
 // Init pair search on open
-document.querySelectorAll('#add-trade-btn,#dash-add-btn,#mob-add').forEach(btn => {
-  btn.addEventListener('click', () => {
-    setTimeout(()=>{ initPairSearch(); const pi=document.getElementById('pair-search-input');if(pi)pi.value=''; const ph=document.getElementById('pair-search-hidden');if(ph)ph.value=''; },50);
-  });
-});
+
 
 // ═══ REGISTER ═══
 document.getElementById('show-register')?.addEventListener('click', () => {
