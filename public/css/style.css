@@ -685,3 +685,7 @@ select option {
   .tbl{min-width:560px}
   #dash-week-cal{overflow-x:auto;-webkit-overflow-scrolling:touch}
 }
+
+@media(max-width:768px){
+  #tab-analytics [style*="grid-template-columns:1fr 1fr 1fr"]{grid-template-columns:1fr !important}
+}
