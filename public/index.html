@@ -1,977 +1,3154 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Esprit Trading</title>
-<link rel="stylesheet" href="/css/style.css"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css"/>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-</head>
-<body>
-
-<!-- LOGIN -->
-<div id="login-page">
-  <nav class="lp-nav">
-    <div class="lp-nav-logo">
-      <img src="/logo.jpg" alt="Esprit Trading"/>
-      <div><div class="lp-nav-name">Esprit Trading</div><div class="lp-nav-sub">OTE 705</div></div>
-    </div>
-    <div class="lp-nav-badge">Plateforme 100% gratuite</div>
-  </nav>
-  <div class="lp-split">
-    <div class="lp-left">
-      <div class="lp-hero-glow"></div>
-      <div class="lp-badge"><span class="lp-dot"></span>Rejoins la communauté OTE 705</div>
-      <h1 class="lp-title">Pilote ta progression,<br>trade <em>avec intention.</em></h1>
-      <p class="lp-desc">Journal de trades, analytics en temps réel et suivi de performance — tout ce qu'il te faut pour passer au niveau supérieur.</p>
-      <div class="lp-feat">
-        <div class="lp-feat-text">
-          <div class="lp-feat-tag" style="color:#10b981"><div class="ft-ic" style="background:rgba(16,185,129,0.12)"><i class="ti ti-trending-up"></i></div>Courbe de capital</div>
-          <h3>Suis ta progression<br><em>trade après trade.</em></h3>
-          <p>Ta courbe de capital se met à jour automatiquement à chaque trade. Visualise ta croissance et détecte tes drawdowns.</p>
-          <div class="ft-bullets">
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#10b981"></span>Courbe journalière en temps réel</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#10b981"></span>Suivi du drawdown maximum autorisé</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#10b981"></span>Gestion multi-comptes (réel, prop firm, démo)</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Esprit Trading</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <!-- LOGIN -->
+    <div id="login-page">
+      <nav class="lp-nav">
+        <div class="lp-nav-logo">
+          <img src="/logo.jpg" alt="Esprit Trading" />
+          <div>
+            <div class="lp-nav-name">Esprit Trading</div>
+            <div class="lp-nav-sub">OTE 705</div>
           </div>
         </div>
-        <div class="ft-card">
-          <div class="ft-card-head">Suivi de capital <span class="ft-card-val g">↑ +12.4%</span></div>
-          <svg viewBox="0 0 360 85" width="100%" height="85" preserveAspectRatio="none">
-            <defs><linearGradient id="ftg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10b981" stop-opacity="0.2"/><stop offset="100%" stop-color="#10b981" stop-opacity="0"/></linearGradient></defs>
-            <path d="M0,78 L30,72 L60,75 L90,63 L120,60 L150,48 L180,43 L210,31 L240,34 L270,20 L300,16 L330,8 L360,4 L360,85 L0,85Z" fill="url(#ftg1)"/>
-            <path d="M0,78 L30,72 L60,75 L90,63 L120,60 L150,48 L180,43 L210,31 L240,34 L270,20 L300,16 L330,8 L360,4" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="360" cy="4" r="4" fill="#10b981"/>
-          </svg>
-          <div class="ft-mini-stats">
-            <div class="ft-ms"><div class="ft-ms-l">Capital</div><div class="ft-ms-v w">12 480$</div></div>
-            <div class="ft-ms"><div class="ft-ms-l">Ce mois</div><div class="ft-ms-v g">+1 480$</div></div>
-            <div class="ft-ms"><div class="ft-ms-l">Drawdown</div><div class="ft-ms-v r">-3.2%</div></div>
+        <div class="lp-nav-badge">Plateforme 100% gratuite</div>
+      </nav>
+      <div class="lp-split">
+        <div class="lp-left">
+          <div class="lp-hero-glow"></div>
+          <div class="lp-badge">
+            <span class="lp-dot"></span>Rejoins la communauté OTE 705
           </div>
-        </div>
-      </div>
-      <div class="lp-feat">
-        <div class="lp-feat-text">
-          <div class="lp-feat-tag" style="color:#F4C70F"><div class="ft-ic" style="background:rgba(244,199,15,0.12)"><i class="ti ti-list-details"></i></div>Journal de trades</div>
-          <h3>Enregistre chaque trade,<br><em>apprends de chacun.</em></h3>
-          <p>Note chaque trade avec sa direction, son RR et son résultat. Un historique complet pour comprendre ce qui fonctionne.</p>
-          <div class="ft-bullets">
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Direction, instrument, date, RR, résultat</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Notes personnelles et captures d'écran</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Filtres par compte, date et instrument</div>
-          </div>
-        </div>
-        <div class="ft-card">
-          <div class="ft-card-head">Journal de trades <span class="ft-card-val o">24 trades</span></div>
-          <div class="ft-trades">
-            <div class="ft-trade"><span class="ft-dir long">LONG</span><span class="ft-pair">NQ · Futures</span><span class="ft-date">11 juin</span><span class="ft-rr">2.5R</span><span class="ft-res g">+$312</span></div>
-            <div class="ft-trade"><span class="ft-dir short">SHORT</span><span class="ft-pair">ES · Futures</span><span class="ft-date">10 juin</span><span class="ft-rr">1.8R</span><span class="ft-res g">+$224</span></div>
-            <div class="ft-trade"><span class="ft-dir long">LONG</span><span class="ft-pair">GC · Gold</span><span class="ft-date">9 juin</span><span class="ft-rr">-1R</span><span class="ft-res r">-$125</span></div>
-            <div class="ft-trade"><span class="ft-dir short">SHORT</span><span class="ft-pair">NQ · Futures</span><span class="ft-date">9 juin</span><span class="ft-rr">3.1R</span><span class="ft-res g">+$387</span></div>
-            <div class="ft-trade"><span class="ft-dir long">LONG</span><span class="ft-pair">CL · Oil</span><span class="ft-date">7 juin</span><span class="ft-rr">2.2R</span><span class="ft-res g">+$275</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="lp-feat">
-        <div class="lp-feat-text">
-          <div class="lp-feat-tag" style="color:#F4C70F"><div class="ft-ic" style="background:rgba(244,199,15,0.12)"><i class="ti ti-calendar-stats"></i></div>Calendrier de performance</div>
-          <h3>Repère tes patterns,<br><em>trade aux bons moments.</em></h3>
-          <p>Chaque journée colorée selon ton résultat. Identifie tes meilleurs jours et les périodes à éviter.</p>
-          <div class="ft-bullets">
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Vue mensuelle colorée par résultat</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Détection des patterns hebdomadaires</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Résumé wins / losses / break-even</div>
-          </div>
-        </div>
-        <div class="ft-card">
-          <div class="ft-card-head">Calendrier <span class="ft-card-val o">Juin 2025</span></div>
-          <div class="ft-cal-hd"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
-          <div class="ft-cal">
-            <div class="ft-cd e"></div><div class="ft-cd e"></div><div class="ft-cd e"></div><div class="ft-cd e"></div><div class="ft-cd e"></div><div class="ft-cd o">1</div><div class="ft-cd o">2</div>
-            <div class="ft-cd w">3</div><div class="ft-cd l">4</div><div class="ft-cd w">5</div><div class="ft-cd w">6</div><div class="ft-cd o">7</div><div class="ft-cd o">8</div><div class="ft-cd o">9</div>
-            <div class="ft-cd w">10</div><div class="ft-cd w">11</div><div class="ft-cd b">12</div><div class="ft-cd l">13</div><div class="ft-cd w">14</div><div class="ft-cd o">15</div><div class="ft-cd o">16</div>
-            <div class="ft-cd w">17</div><div class="ft-cd w">18</div><div class="ft-cd l">19</div><div class="ft-cd w">20</div><div class="ft-cd w">21</div><div class="ft-cd o">22</div><div class="ft-cd o">23</div>
-            <div class="ft-cd w">24</div><div class="ft-cd b">25</div><div class="ft-cd w">26</div><div class="ft-cd w">27</div><div class="ft-cd o">28</div><div class="ft-cd o">29</div><div class="ft-cd o">30</div>
-          </div>
-          <div class="ft-cal-stats">
-            <div class="ft-cs"><div class="ft-cs-v g">16</div><div class="ft-cs-l">Gagnants</div></div>
-            <div class="ft-cs"><div class="ft-cs-v r">4</div><div class="ft-cs-l">Perdants</div></div>
-            <div class="ft-cs"><div class="ft-cs-v b">2</div><div class="ft-cs-l">Break-even</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="lp-feat">
-        <div class="lp-feat-text">
-          <div class="lp-feat-tag" style="color:#3b82f6"><div class="ft-ic" style="background:rgba(59,130,246,0.12)"><i class="ti ti-chart-bar"></i></div>Analytics détaillés</div>
-          <h3>Comprends où tu<br><em>gagnes vraiment.</em></h3>
-          <p>Win rate, RR moyen, profit factor par session — toutes tes stats au même endroit.</p>
-          <div class="ft-bullets">
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#3b82f6"></span>Analyse par session (London, NY, Asie)</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#3b82f6"></span>Statistiques par instrument et direction</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#3b82f6"></span>Évolution du RR et du profit factor</div>
-          </div>
-        </div>
-        <div class="ft-card">
-          <div class="ft-card-head">Analytics avancés <span class="ft-card-val o">Ce mois</span></div>
-          <div class="lp-an-grid">
-            <div class="lp-an-block">
-              <div class="lp-an-title">Trades par session</div>
-              <div class="lp-an-donut">
-                <svg viewBox="0 0 80 80" width="80" height="80">
-                  <circle cx="40" cy="40" r="28" fill="none" stroke="#1a1a27" stroke-width="11"/>
-                  <circle cx="40" cy="40" r="28" fill="none" stroke="#10b981" stroke-width="11" stroke-dasharray="88 88" stroke-dashoffset="22" transform="rotate(-90 40 40)"/>
-                  <circle cx="40" cy="40" r="28" fill="none" stroke="#3b82f6" stroke-width="11" stroke-dasharray="44 132" stroke-dashoffset="-66" transform="rotate(-90 40 40)"/>
-                  <circle cx="40" cy="40" r="28" fill="none" stroke="#F4C70F" stroke-width="11" stroke-dasharray="44 132" stroke-dashoffset="-110" transform="rotate(-90 40 40)"/>
-                  <text x="40" y="44" text-anchor="middle" font-size="11" font-weight="800" fill="white">24</text>
-                </svg>
-                <div class="lp-an-legend">
-                  <div class="lp-an-leg-item"><span style="background:#10b981"></span>London 50%</div>
-                  <div class="lp-an-leg-item"><span style="background:#3b82f6"></span>NY 25%</div>
-                  <div class="lp-an-leg-item"><span style="background:#F4C70F"></span>Asia 25%</div>
+          <h1 class="lp-title">
+            Pilote ta progression,<br />trade <em>avec intention.</em>
+          </h1>
+          <p class="lp-desc">
+            Journal de trades, analytics en temps réel et suivi de performance —
+            tout ce qu'il te faut pour passer au niveau supérieur.
+          </p>
+          <div class="lp-feat">
+            <div class="lp-feat-text">
+              <div class="lp-feat-tag" style="color: #10b981">
+                <div class="ft-ic" style="background: rgba(16, 185, 129, 0.12)">
+                  <i class="ti ti-trending-up"></i>
+                </div>
+                Courbe de capital
+              </div>
+              <h3>Suis ta progression<br /><em>trade après trade.</em></h3>
+              <p>
+                Ta courbe de capital se met à jour automatiquement à chaque
+                trade. Visualise ta croissance et détecte tes drawdowns.
+              </p>
+              <div class="ft-bullets">
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #10b981"></span
+                  >Courbe journalière en temps réel
+                </div>
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #10b981"></span>Suivi
+                  du drawdown maximum autorisé
+                </div>
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #10b981"></span
+                  >Gestion multi-comptes (réel, prop firm, démo)
                 </div>
               </div>
             </div>
-            <div class="lp-an-block">
-              <div class="lp-an-title">Win rate global</div>
-              <div class="lp-an-donut">
-                <svg viewBox="0 0 80 80" width="80" height="80">
-                  <circle cx="40" cy="40" r="28" fill="none" stroke="#1a1a27" stroke-width="11"/>
-                  <circle cx="40" cy="40" r="28" fill="none" stroke="#10b981" stroke-width="11" stroke-dasharray="118 58" stroke-dashoffset="0" transform="rotate(-90 40 40)"/>
-                  <circle cx="40" cy="40" r="28" fill="none" stroke="#ef4444" stroke-width="11" stroke-dasharray="58 118" stroke-dashoffset="-118" transform="rotate(-90 40 40)"/>
-                  <text x="40" y="38" text-anchor="middle" font-size="10" font-weight="800" fill="#10b981">67%</text>
-                  <text x="40" y="50" text-anchor="middle" font-size="7" fill="#6b7280">win rate</text>
-                </svg>
-                <div class="lp-an-legend">
-                  <div class="lp-an-leg-item"><span style="background:#10b981"></span>Wins 67%</div>
-                  <div class="lp-an-leg-item"><span style="background:#ef4444"></span>Losses 33%</div>
+            <div class="ft-card">
+              <div class="ft-card-head">
+                Suivi de capital <span class="ft-card-val g">↑ +12.4%</span>
+              </div>
+              <svg
+                viewBox="0 0 360 85"
+                width="100%"
+                height="85"
+                preserveAspectRatio="none"
+              >
+                <defs>
+                  <linearGradient id="ftg1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#10b981" stop-opacity="0.2" />
+                    <stop offset="100%" stop-color="#10b981" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="M0,78 L30,72 L60,75 L90,63 L120,60 L150,48 L180,43 L210,31 L240,34 L270,20 L300,16 L330,8 L360,4 L360,85 L0,85Z"
+                  fill="url(#ftg1)"
+                />
+                <path
+                  d="M0,78 L30,72 L60,75 L90,63 L120,60 L150,48 L180,43 L210,31 L240,34 L270,20 L300,16 L330,8 L360,4"
+                  fill="none"
+                  stroke="#10b981"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <circle cx="360" cy="4" r="4" fill="#10b981" />
+              </svg>
+              <div class="ft-mini-stats">
+                <div class="ft-ms">
+                  <div class="ft-ms-l">Capital</div>
+                  <div class="ft-ms-v w">12 480$</div>
+                </div>
+                <div class="ft-ms">
+                  <div class="ft-ms-l">Ce mois</div>
+                  <div class="ft-ms-v g">+1 480$</div>
+                </div>
+                <div class="ft-ms">
+                  <div class="ft-ms-l">Drawdown</div>
+                  <div class="ft-ms-v r">-3.2%</div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="lp-an-title" style="margin:12px 0 8px">Performance par jour</div>
-          <div class="lp-vbars">
-            <div class="lp-vbar-col"><div class="lp-vbar-fill" style="height:80%"></div><span>Lun</span></div>
-            <div class="lp-vbar-col"><div class="lp-vbar-fill" style="height:55%"></div><span>Mar</span></div>
-            <div class="lp-vbar-col"><div class="lp-vbar-fill" style="height:100%"></div><span>Mer</span></div>
-            <div class="lp-vbar-col"><div class="lp-vbar-fill lp-vbar-r" style="height:25%"></div><span>Jeu</span></div>
-            <div class="lp-vbar-col"><div class="lp-vbar-fill" style="height:40%"></div><span>Ven</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="lp-feat">
-        <div class="lp-feat-text">
-          <div class="lp-feat-tag" style="color:#3b82f6"><div class="ft-ic" style="background:rgba(59,130,246,0.12)"><i class="ti ti-calendar-event"></i></div>Calendrier économique</div>
-          <h3>Anticipe les news,<br><em>trade sans surprise.</em></h3>
-          <p>Consulte les annonces économiques avant de trader. Impact, devise, heure — tout est là pour ne jamais te faire surprendre.</p>
-          <div class="ft-bullets">
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#3b82f6"></span>Filtrage par impact (faible, moyen, fort)</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#3b82f6"></span>Mise à jour automatique chaque semaine</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#3b82f6"></span>Données réelles en temps réel</div>
-          </div>
-        </div>
-        <div class="ft-card">
-          <div class="ft-card-head">Calendrier économique <span class="ft-card-val o">Aujourd'hui</span></div>
-          <div class="lp-eco-list">
-            <div class="lp-eco-row"><span class="lp-eco-time">14:15</span><span class="lp-eco-flag">🇪🇺</span><div class="lp-eco-dots"><span style="background:#ef4444"></span><span style="background:#ef4444"></span><span style="background:#ef4444"></span></div><span class="lp-eco-name">Main Refinancing Rate</span><span class="lp-eco-val">2.40%</span></div>
-            <div class="lp-eco-row"><span class="lp-eco-time">14:30</span><span class="lp-eco-flag">🇺🇸</span><div class="lp-eco-dots"><span style="background:#ef4444"></span><span style="background:#ef4444"></span><span style="background:#ef4444"></span></div><span class="lp-eco-name">Core PPI m/m</span><span class="lp-eco-val">0.5%</span></div>
-            <div class="lp-eco-row"><span class="lp-eco-time">14:30</span><span class="lp-eco-flag">🇺🇸</span><div class="lp-eco-dots"><span style="background:#F4C70F"></span><span style="background:#F4C70F"></span><span style="background:#F4C70F;opacity:.3"></span></div><span class="lp-eco-name">Unemployment Claims</span><span class="lp-eco-val">220K</span></div>
-            <div class="lp-eco-row"><span class="lp-eco-time">14:45</span><span class="lp-eco-flag">🇪🇺</span><div class="lp-eco-dots"><span style="background:#ef4444"></span><span style="background:#ef4444"></span><span style="background:#ef4444"></span></div><span class="lp-eco-name">ECB Press Conference</span><span class="lp-eco-val">—</span></div>
-            <div class="lp-eco-row"><span class="lp-eco-time">16:30</span><span class="lp-eco-flag">🇺🇸</span><div class="lp-eco-dots"><span style="background:#10b981"></span><span style="background:#10b981;opacity:.3"></span><span style="background:#10b981;opacity:.3"></span></div><span class="lp-eco-name">Natural Gas Storage</span><span class="lp-eco-val">101B</span></div>
-            <div class="lp-eco-row"><span class="lp-eco-time">19:01</span><span class="lp-eco-flag">🇺🇸</span><div class="lp-eco-dots"><span style="background:#F4C70F"></span><span style="background:#F4C70F"></span><span style="background:#F4C70F;opacity:.3"></span></div><span class="lp-eco-name">30-y Bond Auction</span><span class="lp-eco-val">5.05</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="lp-feat">
-        <div class="ft-card">
-          <div class="ft-card-head">Outils de trading <span class="ft-card-val o">4 calculateurs</span></div>
-          <div class="lp-outil-grid">
-            <div class="lp-outil-card"><div class="lp-outil-icon" style="background:rgba(244,199,15,0.12);color:#F4C70F"><i class="ti ti-calculator"></i></div><div><div class="lp-outil-title">Calculateur de lot</div><div class="lp-outil-desc">Taille de position optimale</div></div></div>
-            <div class="lp-outil-card"><div class="lp-outil-icon" style="background:rgba(16,185,129,0.12);color:#10b981"><i class="ti ti-arrows-up-down"></i></div><div><div class="lp-outil-title">Calculateur RR</div><div class="lp-outil-desc">Risk/Reward & objectifs</div></div></div>
-            <div class="lp-outil-card"><div class="lp-outil-icon" style="background:rgba(59,130,246,0.12);color:#3b82f6"><i class="ti ti-currency-dollar"></i></div><div><div class="lp-outil-title">Valeur du pip</div><div class="lp-outil-desc">P&L estimé par trade</div></div></div>
-            <div class="lp-outil-card"><div class="lp-outil-icon" style="background:rgba(168,85,247,0.12);color:#a855f7"><i class="ti ti-target"></i></div><div><div class="lp-outil-title">Objectif de compte</div><div class="lp-outil-desc">Projection de croissance</div></div></div>
-          </div>
-          <div class="lp-outil-example">
-            <div class="lp-outil-ex-label">Calculateur de lot — exemple</div>
-            <div class="lp-outil-ex-row">
-              <div class="lp-outil-ex-field"><div class="lp-outil-ex-lbl">Instrument</div><div class="lp-outil-ex-val">EURUSD</div></div>
-              <div class="lp-outil-ex-field"><div class="lp-outil-ex-lbl">Capital</div><div class="lp-outil-ex-val">10 000$</div></div>
-              <div class="lp-outil-ex-field"><div class="lp-outil-ex-lbl">Risque</div><div class="lp-outil-ex-val">1%</div></div>
-              <div class="lp-outil-ex-field" style="border-color:rgba(244,199,15,0.3)"><div class="lp-outil-ex-lbl">Résultat</div><div class="lp-outil-ex-val" style="color:#F4C70F">0.50 lot</div></div>
-            </div>
-          </div>
-        </div>
-        <div class="lp-feat-text">
-          <div class="lp-feat-tag" style="color:#F4C70F"><div class="ft-ic" style="background:rgba(244,199,15,0.12)"><i class="ti ti-tool"></i></div>Outils de trading</div>
-          <h3>Calcule, planifie,<br><em>execute avec précision.</em></h3>
-          <p>Calculateurs de lot, RR, valeur du pip et projection de compte — tous les outils pour préparer tes trades et gérer ton risque.</p>
-          <div class="ft-bullets">
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Calculateur de taille de position en 1 clic</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Visualisation du Risk/Reward avant d'entrer</div>
-            <div class="ft-bullet"><span class="ft-bdot" style="background:#F4C70F"></span>Projection de croissance de ton compte</div>
-          </div>
-        </div>
-      </div>
-      <p class="login-footer" style="padding-bottom:48px">Esprit Trading &copy; 2025 · Gratuit pour tous</p>
-    </div>
-    <div class="lp-right">
-      <div class="lp-form-wrap">
-        <div class="lp-tabs">
-          <button class="lp-tab active" id="lp-tab-login" onclick="lpTab('login')">Se connecter</button>
-          <button class="lp-tab" id="lp-tab-register" onclick="lpTab('register')">Créer un compte</button>
-        </div>
-        <div id="login-view">
-          <form id="login-form">
-            <div class="fg"><label>Identifiant ou email</label><input type="text" id="username" autocomplete="username" autofocus required/></div>
-            <div class="fg" style="margin-top:12px"><label>Mot de passe</label><input type="password" id="password" autocomplete="current-password" required/></div>
-            <div id="login-error" class="login-error hidden"></div>
-            <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top:18px" id="login-btn">Se connecter</button>
-            <p style="text-align:center;font-size:.78rem;margin-top:10px"><button type="button" class="btn btn-ghost btn-sm" style="color:var(--text-muted);padding:0" onclick="event.preventDefault();event.stopPropagation();lpTab('forgot')">Mot de passe oublié ?</button></p>
-          </form>
-          <div style="display:flex;align-items:center;gap:10px;margin:18px 0">
-            <div style="flex:1;height:1px;background:var(--border)"></div>
-            <span style="font-size:.75rem;color:var(--text-muted)">ou</span>
-            <div style="flex:1;height:1px;background:var(--border)"></div>
-          </div>
-          <a href="/api/auth/google" class="btn btn-secondary btn-full" style="gap:10px">
-            <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.8 6C12.4 13.2 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.7 10.7l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.3-7.7 2.3-6.2 0-11.5-4.2-13.4-9.8l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>
-            Continuer avec Google
-          </a>
-          <p style="text-align:center;font-size:.78rem;color:var(--text-muted);margin-top:14px">
-            Pas encore de compte ? <button class="btn btn-ghost btn-sm" id="show-register" style="color:var(--gold-dark);font-weight:700;padding:0" onclick="lpTab('register')">Créer un compte gratuit</button>
-          </p>
-        </div>
-        <div id="forgot-view" class="hidden">
-          <h3 style="margin-bottom:16px">Mot de passe oublié</h3>
-          <div class="fg"><label>Email</label><input type="email" id="forgot-email" required/></div>
-          <div id="forgot-msg" class="hidden" style="font-size:.82rem;margin-top:8px;padding:10px 14px;border-radius:8px;border:1px solid"></div>
-          <button class="btn btn-primary btn-full btn-lg" style="margin-top:18px" id="forgot-btn" onclick="submitForgot()">Envoyer le lien</button>
-          <p style="text-align:center;font-size:.78rem;color:var(--text-muted);margin-top:14px"><button class="btn btn-ghost btn-sm" style="color:var(--gold-dark);font-weight:700;padding:0" onclick="lpTab('login')">Retour à la connexion</button></p>
-        </div>
-        <div id="reset-view" class="hidden">
-          <h3 style="margin-bottom:16px">Nouveau mot de passe</h3>
-          <div class="fg"><label>Nouveau mot de passe</label><input type="password" id="reset-password" required autocomplete="new-password"/></div>
-          <div class="fg" style="margin-top:12px"><label>Confirmer</label><input type="password" id="reset-confirm" required autocomplete="new-password"/></div>
-          <div id="reset-msg" class="hidden" style="font-size:.82rem;margin-top:8px;padding:10px 14px;border-radius:8px;border:1px solid"></div>
-          <button class="btn btn-primary btn-full btn-lg" style="margin-top:18px" id="reset-btn" onclick="submitReset()">Réinitialiser</button>
-        </div>
-        <div id="register-view" class="hidden">
-          <form id="register-form">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-              <div class="fg"><label>Prénom</label><input type="text" id="reg-firstname" required/></div>
-              <div class="fg"><label>Nom</label><input type="text" id="reg-lastname" required/></div>
-            </div>
-            <div class="fg" style="margin-top:12px"><label>Email</label><input type="email" id="reg-email" required/></div>
-            <div class="fg" style="margin-top:12px"><label>Mot de passe</label><input type="password" id="reg-password" required/></div>
-            <div class="fg" style="margin-top:12px"><label>Confirmer le mot de passe</label><input type="password" id="reg-confirm" required/></div>
-            <div id="register-error" class="hidden" style="font-size:.82rem;margin-top:8px;padding:10px 14px;border-radius:8px;border:1px solid"></div>
-            <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top:18px" id="register-btn">Créer mon compte</button>
-          </form>
-          <p style="text-align:center;font-size:.78rem;color:var(--text-muted);margin-top:14px">
-            Déjà un compte ? <button class="btn btn-ghost btn-sm" id="show-login" style="color:var(--gold-dark);font-weight:700;padding:0" onclick="lpTab('login')">Se connecter</button>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<script>
-// Afficher message si email vérifié
-if (new URLSearchParams(window.location.search).get('verified') === '1') {
-  document.addEventListener('DOMContentLoaded', () => {
-    const err = document.getElementById('login-error');
-    if (err) {
-      err.style.color = '#10b981';
-      err.style.borderColor = '#10b981';
-      err.style.background = 'rgba(16,185,129,0.1)';
-      err.textContent = '✓ Email confirmé ! Tu peux maintenant te connecter.';
-      err.classList.remove('hidden');
-    }
-  });
-}
-function lpTab(t){
-  var isLogin=t==='login';
-  var isRegister=t==='register';
-  var isForgot=t==='forgot';
-  var isReset=t==='reset';
-  document.getElementById('login-view').classList.toggle('hidden',!isLogin);
-  document.getElementById('register-view').classList.toggle('hidden',!isRegister);
-  var fv=document.getElementById('forgot-view'); if(fv) fv.classList.toggle('hidden',!isForgot);
-  var rv=document.getElementById('reset-view'); if(rv) rv.classList.toggle('hidden',!isReset);
-  document.getElementById('lp-tab-login').classList.toggle('active',isLogin);
-  document.getElementById('lp-tab-register').classList.toggle('active',isRegister);
-}
-</script>
-
-<!-- APP -->
-<div id="app" class="hidden">
-  <div class="sb-ov" id="sb-ov"></div>
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sb-logo">
-      <img src="/logo.jpg" alt=""/>
-      <div class="sb-logo-text"><div class="name">Esprit Trading <span style="font-size:.55rem;font-weight:700;background:var(--gold);color:#000;padding:2px 6px;border-radius:4px;vertical-align:middle;letter-spacing:.05em">BÊTA</span></div><div class="sub">OTE 705</div></div>
-    </div>
-    <div id="sb-accounts" style="padding:10px;border-bottom:1px solid #EDE9E2"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9CA3AF">Comptes</span><button id="sb-add-acc" style="background:none;border:none;cursor:pointer;color:#6B7280;font-size:.72rem;padding:2px 6px;border-radius:5px;display:flex;align-items:center;gap:3px"><i class="ti ti-plus"></i> Ajouter</button></div><div id="sb-acc-list"></div></div><nav class="sb-nav">
-      <div class="sb-section">Principal</div>
-      <button class="nav-item" data-tab="dashboard"><span class="ni"><i class="ti ti-layout-dashboard"></i></span>Dashboard</button>
-      <button class="nav-item" data-tab="journal"><span class="ni"><i class="ti ti-list-details"></i></span>Journal</button>
-      <button class="nav-item" data-tab="calendar"><span class="ni"><i class="ti ti-calendar-month"></i></span>Calendrier</button>
-      <button class="nav-item" data-tab="analytics"><span class="ni"><i class="ti ti-chart-dots-3"></i></span>Analytics</button>
-      <div class="sb-section" style="margin-top:8px">Ressources</div>
-      <button class="nav-item" data-tab="eco-cal"><span class="ni"><i class="ti ti-news"></i></span>Calendrier éco</button>
-      <button class="nav-item" data-tab="outils"><span class="ni"><i class="ti ti-tool"></i></span>Outils</button>
-      <button class="nav-item" data-tab="formation"><span class="ni"><i class="ti ti-video"></i></span>Formation</button>
-      <div class="sb-section admin-only hidden" style="margin-top:8px">Admin</div>
-      <button class="nav-item admin-only hidden" data-tab="admin"><span class="ni"><i class="ti ti-settings-2"></i></span>Admin</button>
-    </nav>
-    <div class="sb-bottom">
-      <div class="sb-user">
-        <div class="sb-avatar" id="user-initials">?</div>
-        <div class="sb-uname" id="nav-username"></div>
-        <div class="sb-actions" style="display:flex;gap:2px">
-          <button id="edit-profile-btn" title="Mon profil"><i class="ti ti-user-edit"></i></button>
-          <button id="logout-btn" title="Déconnexion"><i class="ti ti-logout"></i></button>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <div class="main-wrap">
-    <div class="mob-header">
-      <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
-      <div style="display:flex;align-items:center;gap:7px">
-        <img src="/logo.jpg" style="width:26px;height:26px;border-radius:50%;object-fit:cover;border:2px solid var(--gold)"/>
-        <span style="font-weight:700;font-size:.88rem;font-family:'DM Sans',sans-serif">Esprit Trading</span>
-      </div>
-      <button class="btn btn-primary btn-sm" id="mob-add">+ Trade</button>
-    </div>
-
-    <div class="page">
-
-      <!-- DASHBOARD -->
-      <section id="tab-dashboard" class="tab-section hidden">
-        <div class="ph">
-          <div><h2>Dashboard</h2><p>Vue d'ensemble de vos performances</p></div>
-          <button class="btn btn-primary" id="dash-add-btn"><i class="ti ti-plus"></i> Nouveau trade</button>
-        </div>
-        <div class="acc-bar" id="acc-bar"></div>
-        <div class="kpi-grid" id="dash-kpis"></div>
-        <div class="chart-row chart-row-1">
-          <div class="ccard ch-260"><div class="ccard-title">Courbe d'équité — RR cumulé</div><div class="ccard-body"><canvas id="c-equity"></canvas></div></div>
-        </div>
-        <div id="dash-week-cal" style="margin-top:16px"></div>
-      </section>
-
-      <!-- JOURNAL -->
-      <section id="tab-journal" class="tab-section hidden">
-        <div class="ph">
-          <div><h2>Journal</h2><p>Historique détaillé de tous vos trades</p></div>
-          <button class="btn btn-primary" id="add-trade-btn"><i class="ti ti-plus"></i> Nouveau trade</button>
-        </div>
-        <div class="filters">
-          <select class="filter-select" id="f-pair"><option value="">Toutes les paires</option><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>GOLD</option><option>XAUUSD</option><option>NASDAQ</option><option>US30</option><option>SP500</option><option>BTCUSD</option><option>ETHUSD</option><option>GBPJPY</option><option>EURJPY</option></select>
-          <select class="filter-select" id="f-result"><option value="">Tous résultats</option><option value="WIN">WIN</option><option value="LOSS">LOSS</option><option value="BE">Break Even</option></select>
-          <select class="filter-select" id="f-dir"><option value="">BUY & SELL</option><option value="LONG">BUY</option><option value="SHORT">SELL</option></select>
-          <select class="filter-select" id="f-sess"><option value="">Toutes sessions</option><option>London</option><option>New York</option><option>Asia</option></select>
-          <input type="date" class="filter-input" id="f-from"/>
-          <input type="date" class="filter-input" id="f-to"/>
-          <button class="btn btn-secondary btn-sm" id="f-reset"><i class="ti ti-x"></i> Reset</button>
-          <span class="filters-count" id="f-count"></span>
-        </div>
-        <div class="tbl-wrap">
-          <table class="tbl" id="trades-tbl">
-            <thead><tr>
-              <th>Date</th><th>Paire</th><th>Direction</th><th>Résultat</th>
-              <th>RR</th><th>P&L</th><th>Session</th><th>Setup</th><th>LTF</th><th>HTF</th>
-            </tr></thead>
-            <tbody id="trades-body"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- CALENDAR -->
-      <section id="tab-calendar" class="tab-section hidden">
-        <div class="ph">
-          <div><h2>Calendrier</h2><p>Vue mensuelle de votre activité</p></div>
-          <div class="cal-nav">
-            <button class="btn btn-secondary btn-sm" id="cal-prev"><i class="ti ti-chevron-left"></i></button>
-            <span class="cal-nav-label" id="cal-label"></span>
-            <button class="btn btn-secondary btn-sm" id="cal-next"><i class="ti ti-chevron-right"></i></button>
-          </div>
-        </div>
-        <div class="cal-grid-head" id="cal-heads"></div>
-        <div class="cal-grid" id="cal-grid"></div>
-      </section>
-
-      <!-- ANALYTICS -->
-      <section id="tab-analytics" class="tab-section hidden">
-        <div class="ph"><div><h2>Analytics</h2><p>Analyse approfondie de vos performances</p></div></div>
-        <div class="kpi-grid" id="an-kpis"></div>
-        <div style="display:none"><canvas id="c-day"></canvas><canvas id="c-rrdist"></canvas><canvas id="c-setup"></canvas><canvas id="c-monthly"></canvas></div>
-        <div id="winners-losers" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px"></div>
-        <div class="an-section-title">Performances par type d’opération <i class="ti ti-info-circle an-info-icon"></i></div>
-        <div class="an-donut-grid">
-          <div class="an-card"><div class="an-card-title">Total des opérations</div><div class="an-legend" id="leg-dir-total"></div><div class="an-donut-wrap"><canvas id="c-dir-total"></canvas></div></div>
-          <div class="an-card"><div class="an-card-title">Taux de gain</div><div class="an-legend" id="leg-dir-wr"></div><div class="an-donut-wrap an-donut-multi" id="wrap-dir-wr"></div></div>
-        </div>
-        <div class="an-section-title">Performances par session <i class="ti ti-info-circle an-info-icon"></i></div>
-        <div class="an-donut-grid">
-          <div class="an-card"><div class="an-card-title">Total des opérations</div><div class="an-legend" id="leg-sess-total"></div><div class="an-donut-wrap"><canvas id="c-sess-total"></canvas></div></div>
-          <div class="an-card"><div class="an-card-title">Taux de gain</div><div class="an-legend" id="leg-sess-wr"></div><div class="an-donut-wrap an-donut-multi" id="wrap-sess-wr"></div></div>
-        </div>
-        <div class="an-section-title">Performances par setup <i class="ti ti-info-circle an-info-icon"></i></div>
-        <div class="an-donut-grid">
-          <div class="an-card"><div class="an-card-title">Total des opérations</div><div class="an-legend" id="leg-setup-total"></div><div class="an-donut-wrap"><canvas id="c-setup-total"></canvas></div></div>
-          <div class="an-card"><div class="an-card-title">Taux de gain</div><div class="an-legend" id="leg-setup-wr"></div><div class="an-donut-wrap an-donut-multi" id="wrap-setup-wr"></div></div>
-        </div>
-        <div class="an-section-title" style="margin-top:8px">Performance par paire</div>
-        <div class="an-card" style="margin-bottom:28px"><table class="perf-table" id="pair-tbl"></table></div>
-        <div class="an-section-title" style="margin-top:8px">Performances par jour <i class="ti ti-info-circle an-info-icon"></i></div>
-        <div class="an-card" style="margin-bottom:28px"><div id="perf-jour-wrap" style="position:relative;height:280px;width:100%;"><canvas id="c-perf-jour" style="position:absolute;top:0;left:0;width:100%;height:100%;"></canvas></div></div>
-        <div class="an-section-title" style="margin-top:8px">Fréquence moyenne des trades <i class="ti ti-info-circle an-info-icon"></i></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:28px">
-          <div class="an-card"><div class="an-freq-title">Trades / jour <span class="an-freq-avg" id="freq-day-avg"></span></div><div style="position:relative;height:200px"><canvas id="c-freq-day"></canvas></div></div>
-          <div class="an-card"><div class="an-freq-title">Trades / semaine <span class="an-freq-avg" id="freq-week-avg"></span></div><div style="position:relative;height:200px"><canvas id="c-freq-week"></canvas></div></div>
-          <div class="an-card"><div class="an-freq-title">Trades / mois <span class="an-freq-avg" id="freq-month-avg"></span></div><div style="position:relative;height:200px"><canvas id="c-freq-month"></canvas></div></div>
-        </div>
-      </section>
-
-      <!-- ECO CALENDAR -->
-      <section id="tab-eco-cal" class="tab-section hidden">
-        <div class="ph">
-          <div><h2>Calendrier économique</h2><p>Annonces et événements de la semaine</p></div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-secondary btn-sm eco-filter-btn active" onclick="setEcoFilter('all')" id="ef-all">Tous</button>
-            <button class="btn btn-secondary btn-sm eco-filter-btn" onclick="setEcoFilter('high')" id="ef-high"><span style="color:var(--red)">●●●</span> High</button>
-            <button class="btn btn-secondary btn-sm eco-filter-btn" onclick="setEcoFilter('medium')" id="ef-medium"><span style="color:#f97316">●●</span> Medium</button>
-            <button class="btn btn-secondary btn-sm eco-filter-btn" onclick="setEcoFilter('low')" id="ef-low"><span style="color:#9ca3af">●</span> Low</button>
-            <button class="btn btn-secondary btn-sm" onclick="loadEcoCalendar()"><i class="ti ti-refresh"></i> Actualiser</button>
-          </div>
-        </div>
-        <div id="eco-cal-content"></div>
-      </section>
-
-      <!-- OUTILS -->
-      <section id="tab-outils" class="tab-section hidden">
-        <div class="ph"><div><h2>Outils</h2><p>Calculateurs et aide à la décision</p></div></div>
-        <div class="tools-grid">
-          <div class="tool">
-            <div class="tool-head"><div class="tool-ico"><i class="ti ti-calculator"></i></div><div><h3>Calculateur de lot</h3><p>Taille de position optimale</p></div></div>
-            <div class="fg"><label>Instrument</label>
-              <select id="l-inst"><option value="EURUSD">EURUSD</option><option value="GBPUSD">GBPUSD</option><option value="USDJPY">USDJPY</option><option value="GOLD">GOLD / XAUUSD</option><option value="NASDAQ">NASDAQ</option><option value="US30">US30</option><option value="BTCUSD">BTCUSD</option><option value="GBPJPY">GBPJPY</option></select></div>
-            <div class="grid2" style="margin-top:10px">
-              <div class="fg"><label>Capital ($)</label><input type="number" id="l-bal" placeholder="10000"/></div>
-              <div class="fg"><label>Risque (%)</label><input type="number" id="l-risk" placeholder="1" step="0.1"/></div>
-            </div>
-            <div class="fg" style="margin-top:10px"><label>Stop Loss (pips)</label><input type="number" id="l-sl" placeholder="20"/></div>
-            <div class="tool-result hidden" id="l-res">
-              <div class="tr-row"><span class="l">Taille de lot</span><span class="v o" id="l-out-sz">—</span></div>
-              <div class="tr-row"><span class="l">Unités</span><span class="v" id="l-out-un">—</span></div>
-              <div class="tr-row"><span class="l">Montant risqué</span><span class="v" id="l-out-ri">—</span></div>
-            </div>
-          </div>
-          <div class="tool">
-            <div class="tool-head"><div class="tool-ico"><i class="ti ti-arrows-up-down"></i></div><div><h3>Calculateur RR</h3><p>Risk/Reward & objectifs</p></div></div>
-            <div class="grid2">
-              <div class="fg"><label>Entrée</label><input type="number" id="r-entry" step="0.00001" placeholder="1.10000"/></div>
-              <div class="fg"><label>Stop Loss</label><input type="number" id="r-sl" step="0.00001" placeholder="1.09800"/></div>
-            </div>
-            <div class="fg" style="margin-top:10px"><label>Take Profit</label><input type="number" id="r-tp" step="0.00001" placeholder="1.10400"/></div>
-            <div class="tool-result hidden" id="r-res">
-              <div class="tr-row"><span class="l">Risk (pips)</span><span class="v" id="r-risk">—</span></div>
-              <div class="tr-row"><span class="l">Reward (pips)</span><span class="v" id="r-rew">—</span></div>
-              <div class="tr-row"><span class="l">Ratio R/R</span><span class="v o" id="r-rat">—</span></div>
-            </div>
-          </div>
-          <div class="tool">
-            <div class="tool-head"><div class="tool-ico"><i class="ti ti-currency-dollar"></i></div><div><h3>Valeur du pip</h3><p>P&L estimé par trade</p></div></div>
-            <div class="fg"><label>Instrument</label>
-              <select id="p-inst"><option value="EURUSD">EURUSD</option><option value="GBPUSD">GBPUSD</option><option value="USDJPY">USDJPY</option><option value="GOLD">GOLD</option><option value="NASDAQ">NASDAQ</option><option value="US30">US30</option></select></div>
-            <div class="grid2" style="margin-top:10px">
-              <div class="fg"><label>Lots</label><input type="number" id="p-lots" placeholder="0.10" step="0.01"/></div>
-              <div class="fg"><label>Nb pips</label><input type="number" id="p-pips" placeholder="20"/></div>
-            </div>
-            <div class="tool-result hidden" id="p-res">
-              <div class="tr-row"><span class="l">Valeur / pip</span><span class="v" id="p-val">—</span></div>
-              <div class="tr-row"><span class="l">P&L estimé</span><span class="v o" id="p-pnl">—</span></div>
-            </div>
-          </div>
-          <div class="tool">
-            <div class="tool-head"><div class="tool-ico"><i class="ti ti-target"></i></div><div><h3>Objectif de compte</h3><p>Projection de croissance</p></div></div>
-            <div class="grid2">
-              <div class="fg"><label>Capital initial ($)</label><input type="number" id="o-cap" placeholder="10000"/></div>
-              <div class="fg"><label>Objectif ($)</label><input type="number" id="o-tgt" placeholder="20000"/></div>
-            </div>
-            <div class="grid2" style="margin-top:10px">
-              <div class="fg"><label>% / mois</label><input type="number" id="o-pct" placeholder="5" step="0.1"/></div>
-              <div class="fg"><label>Trades / mois</label><input type="number" id="o-tr" placeholder="20"/></div>
-            </div>
-            <div class="tool-result hidden" id="o-res">
-              <div class="tr-row"><span class="l">Mois nécessaires</span><span class="v o" id="o-mo">—</span></div>
-              <div class="tr-row"><span class="l">Gain total</span><span class="v" id="o-gain">—</span></div>
-              <div class="tr-row"><span class="l">Trades totaux</span><span class="v" id="o-tot">—</span></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- FORMATION -->
-      <section id="tab-formation" class="tab-section hidden">
-        <div class="ph"><div><h2>Formation</h2><p>Modules et vidéos de cours</p></div></div>
-        <div id="formation-student" class="mod-list"></div>
-        <div id="formation-community" class="hidden">
-
-          <div style="margin-bottom:28px">
-            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(244,199,15,0.1);border:1px solid rgba(244,199,15,0.2);border-radius:99px;padding:4px 14px;font-size:.65rem;font-weight:800;color:#d4a800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px"><i class="ti ti-lock"></i> Contenu exclusif membres</div>
-            <h2 style="font-size:1.8rem;font-weight:900;color:var(--gold);letter-spacing:-.03em;margin-bottom:6px">Formation OTE 705</h2>
-            <p style="font-size:.85rem;color:var(--text-muted);max-width:600px;line-height:1.7">Maîtrise un process clair, répétable et discipliné — le même que Nathan applique chaque jour.</p>
-          </div>
-
-
-          <div class="fm-stitle" style="margin-bottom:16px">Le problème</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:16px">
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px">
-              <div style="font-size:.65rem;font-weight:700;color:var(--gold);margin-bottom:8px">01</div>
-              <h3 style="font-size:.88rem;font-weight:800;color:#fff;margin-bottom:6px">Tu changes de stratégie en permanence</h3>
-              <p style="font-size:.78rem;color:var(--text-muted);line-height:1.5">ICT, SMC, Wyckoff... tu testes tout sans jamais rien maîtriser vraiment.</p>
-            </div>
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px">
-              <div style="font-size:.65rem;font-weight:700;color:var(--gold);margin-bottom:8px">02</div>
-              <h3 style="font-size:.88rem;font-weight:800;color:#fff;margin-bottom:6px">Tu connais la théorie mais tu n'exécutes pas</h3>
-              <p style="font-size:.78rem;color:var(--text-muted);line-height:1.5">Tu hésites, tu over-trades ou tu sors trop tôt. La discipline te fait défaut.</p>
-            </div>
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px">
-              <div style="font-size:.65rem;font-weight:700;color:var(--gold);margin-bottom:8px">03</div>
-              <h3 style="font-size:.88rem;font-weight:800;color:#fff;margin-bottom:6px">Tu avances seul, sans correction</h3>
-              <p style="font-size:.78rem;color:var(--text-muted);line-height:1.5">Pas de mentor, pas de feedback. Tu répètes les mêmes erreurs.</p>
-            </div>
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px">
-              <div style="font-size:.65rem;font-weight:700;color:var(--gold);margin-bottom:8px">04</div>
-              <h3 style="font-size:.88rem;font-weight:800;color:#fff;margin-bottom:6px">Les prop firms te semblent inaccessibles</h3>
-              <p style="font-size:.78rem;color:var(--text-muted);line-height:1.5">Il te manque un process testé et répétable.</p>
-            </div>
-          </div>
-          <div class="fm-stitle">La méthode OTE 705</div>
-          <div class="fm-steps">
-            <div class="fm-step">
-              <div class="fm-step-num">01</div>
-              <div class="fm-step-icon"><i class="ti ti-book"></i></div>
-              <div class="fm-step-title">Bases ICT / SMC</div>
-              <div class="fm-step-desc">FVG, Order Block, structure de marché. Les concepts essentiels sans blabla.</div>
-            </div>
-            <div class="fm-step">
-              <div class="fm-step-num">02</div>
-              <div class="fm-step-icon"><i class="ti ti-target"></i></div>
-              <div class="fm-step-title">Stratégie OTE 705</div>
-              <div class="fm-step-desc">Entrée, exécution, sortie — un plan clair. Quand entrer, où poser le stop, quand ne pas trader.</div>
-            </div>
-            <div class="fm-step">
-              <div class="fm-step-num">03</div>
-              <div class="fm-step-icon"><i class="ti ti-chart-line"></i></div>
-              <div class="fm-step-title">Backtest sur cas réels</div>
-              <div class="fm-step-desc">La stratégie appliquée sur de vrais cas pour ancrer les bons réflexes.</div>
-            </div>
-            <div class="fm-step">
-              <div class="fm-step-num">04</div>
-              <div class="fm-step-icon"><i class="ti ti-brain"></i></div>
-              <div class="fm-step-title">Psychologie & discipline</div>
-              <div class="fm-step-desc">90% des traders ne sont pas rentables parce qu'ils cassent leur plan. On règle ça.</div>
-            </div>
-          </div>
-
-          <div class="fm-stitle">Ce que disent les membres</div>
-          <div class="fm-reviews">
-            <div class="fm-review">
-              <div class="fm-review-stars">★★★★★</div>
-              <div class="fm-review-text">"Process clair, suivi au top. J'ai passé ma première prop firm en 3 semaines."</div>
-              <div class="fm-review-author">— Thomas R. · Telegram</div>
-            </div>
-            <div class="fm-review">
-              <div class="fm-review-stars">★★★★★</div>
-              <div class="fm-review-text">"J'avais essayé 4 formations avant. C'est la seule où j'ai vraiment progressé."</div>
-              <div class="fm-review-author">— Karim B. · Instagram</div>
-            </div>
-            <div class="fm-review">
-              <div class="fm-review-stars">★★★★★</div>
-              <div class="fm-review-text">"Le coaching 2x par semaine change tout. Nathan corrige en live, pas en théorie."</div>
-              <div class="fm-review-author">— Sarah M. · Trustpilot</div>
-            </div>
-          </div>
-
-          <div class="fm-stitle">Nos engagements</div>
-          <div class="fm-guarantees">
-            <div class="fm-guarantee">
-              <div class="fm-guarantee-icon" style="color:#10b981;background:rgba(16,185,129,0.1)"><i class="ti ti-shield-check"></i></div>
-              <div class="fm-guarantee-title">Rentable ou remboursé</div>
-              <div class="fm-guarantee-desc">Si après 6 mois tu n'es pas rentable en appliquant la méthode : remboursement intégral.</div>
-            </div>
-            <div class="fm-guarantee">
-              <div class="fm-guarantee-icon" style="color:#F4C70F;background:rgba(244,199,15,0.1)"><i class="ti ti-infinity"></i></div>
-              <div class="fm-guarantee-title">Accès à vie</div>
-              <div class="fm-guarantee-desc">Tout le contenu actuel et futur reste accessible à vie. Zéro pression.</div>
-            </div>
-            <div class="fm-guarantee">
-              <div class="fm-guarantee-icon" style="color:#3b82f6;background:rgba(59,130,246,0.1)"><i class="ti ti-message-circle"></i></div>
-              <div class="fm-guarantee-title">Réponse garantie</div>
-              <div class="fm-guarantee-desc">Questions, blocages, psychologie — chaque message reçoit une réponse.</div>
-            </div>
-            <div class="fm-guarantee">
-              <div class="fm-guarantee-icon" style="color:#a855f7;background:rgba(168,85,247,0.1)"><i class="ti ti-gift"></i></div>
-              <div class="fm-guarantee-title">Compte 10K offert</div>
-              <div class="fm-guarantee-desc">Un compte Whales Capital 10K (valeur 250€) offert au paiement.</div>
-            </div>
-          </div>
-
-        </div>
-
-          <div id="formation-upsell" style="background:linear-gradient(135deg,rgba(244,199,15,0.06),rgba(244,199,15,0.02));border:1px solid rgba(244,199,15,0.2);border-radius:16px;padding:40px;text-align:center;margin-top:28px;display:flex;flex-direction:column;align-items:center;gap:12px">
-            <div style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:99px;padding:4px 14px;font-size:.65rem;font-weight:800;color:#ef4444;text-transform:uppercase;letter-spacing:.08em">Sélection requise · Places limitées</div>
-            <h3 style="font-size:1.6rem;font-weight:900;color:#fff;letter-spacing:-.03em;margin:0">Passe au niveau supérieur</h3>
-            <p style="font-size:.85rem;color:rgba(255,255,255,0.55);max-width:480px;line-height:1.7;margin:0">Réserve ton appel gratuit de 30 min. Nathan évalue ta situation et t'explique comment il peut t'aider.</p>
-            <a href="https://esprittrading.fr" target="_blank" class="btn btn-primary btn-lg">Réserver mon appel gratuit →</a>
-            <div style="font-size:.7rem;color:rgba(255,255,255,0.3)">Gratuit · 30 min · Sans engagement</div>
-          </div>
-
-      </section>
-
-      <!-- ADMIN -->
-      <section id="tab-admin" class="tab-section hidden admin-only">
-        <div class="ph"><div><h2>Administration</h2></div></div>
-        <div class="atabs">
-          <button class="atab on" data-atab="modules">Modules & Vidéos</button>
-          <button class="atab" data-atab="users">Élèves</button>
-        </div>
-        <div id="atab-modules">
-          <div class="adm-grid">
-            <div><h3 style="font-size:.88rem;margin-bottom:12px">Modules</h3><div id="adm-mods"></div></div>
-            <div>
-              <div class="card" style="margin-bottom:14px">
-                <h3 style="font-size:.85rem;margin-bottom:14px">Nouveau module</h3>
-                <form id="mod-form"><div class="fg"><label>Titre</label><input type="text" id="mod-title" required/></div><button type="submit" class="btn btn-primary btn-full" style="margin-top:10px">Créer</button></form>
+          <div class="lp-feat">
+            <div class="lp-feat-text">
+              <div class="lp-feat-tag" style="color: #f4c70f">
+                <div class="ft-ic" style="background: rgba(244, 199, 15, 0.12)">
+                  <i class="ti ti-list-details"></i>
+                </div>
+                Journal de trades
               </div>
-              <div class="card">
-                <h3 style="font-size:.85rem;margin-bottom:14px">Ajouter une vidéo</h3>
-                <form id="vid-form">
-                  <div class="fg"><label>Module</label><select id="vid-mod" required></select></div>
-                  <div class="fg" style="margin-top:10px"><label>Titre</label><input type="text" id="vid-title" required/></div>
-                  <div class="fg" style="margin-top:10px"><label>Description</label><textarea id="vid-desc" style="min-height:50px"></textarea></div>
-                  <div style="margin-top:10px">
-                    <label class="flabel" style="display:block;margin-bottom:6px">Source</label>
-                    <div style="display:flex;gap:14px;margin-bottom:10px">
-                      <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="radio" name="vsrc" id="vsrc-url" value="url" checked/> URL</label>
-                      <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="radio" name="vsrc" id="vsrc-file" value="file"/> Fichier</label>
+              <h3>
+                Enregistre chaque trade,<br /><em>apprends de chacun.</em>
+              </h3>
+              <p>
+                Note chaque trade avec sa direction, son RR et son résultat. Un
+                historique complet pour comprendre ce qui fonctionne.
+              </p>
+              <div class="ft-bullets">
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #f4c70f"></span
+                  >Direction, instrument, date, RR, résultat
+                </div>
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #f4c70f"></span>Notes
+                  personnelles et captures d'écran
+                </div>
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #f4c70f"></span
+                  >Filtres par compte, date et instrument
+                </div>
+              </div>
+            </div>
+            <div class="ft-card">
+              <div class="ft-card-head">
+                Journal de trades <span class="ft-card-val o">24 trades</span>
+              </div>
+              <div class="ft-trades">
+                <div class="ft-trade">
+                  <span class="ft-dir long">LONG</span
+                  ><span class="ft-pair">NQ · Futures</span
+                  ><span class="ft-date">11 juin</span
+                  ><span class="ft-rr">2.5R</span
+                  ><span class="ft-res g">+$312</span>
+                </div>
+                <div class="ft-trade">
+                  <span class="ft-dir short">SHORT</span
+                  ><span class="ft-pair">ES · Futures</span
+                  ><span class="ft-date">10 juin</span
+                  ><span class="ft-rr">1.8R</span
+                  ><span class="ft-res g">+$224</span>
+                </div>
+                <div class="ft-trade">
+                  <span class="ft-dir long">LONG</span
+                  ><span class="ft-pair">GC · Gold</span
+                  ><span class="ft-date">9 juin</span
+                  ><span class="ft-rr">-1R</span
+                  ><span class="ft-res r">-$125</span>
+                </div>
+                <div class="ft-trade">
+                  <span class="ft-dir short">SHORT</span
+                  ><span class="ft-pair">NQ · Futures</span
+                  ><span class="ft-date">9 juin</span
+                  ><span class="ft-rr">3.1R</span
+                  ><span class="ft-res g">+$387</span>
+                </div>
+                <div class="ft-trade">
+                  <span class="ft-dir long">LONG</span
+                  ><span class="ft-pair">CL · Oil</span
+                  ><span class="ft-date">7 juin</span
+                  ><span class="ft-rr">2.2R</span
+                  ><span class="ft-res g">+$275</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="lp-feat">
+            <div class="lp-feat-text">
+              <div class="lp-feat-tag" style="color: #f4c70f">
+                <div class="ft-ic" style="background: rgba(244, 199, 15, 0.12)">
+                  <i class="ti ti-calendar-stats"></i>
+                </div>
+                Calendrier de performance
+              </div>
+              <h3>
+                Repère tes patterns,<br /><em>trade aux bons moments.</em>
+              </h3>
+              <p>
+                Chaque journée colorée selon ton résultat. Identifie tes
+                meilleurs jours et les périodes à éviter.
+              </p>
+              <div class="ft-bullets">
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #f4c70f"></span>Vue
+                  mensuelle colorée par résultat
+                </div>
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #f4c70f"></span
+                  >Détection des patterns hebdomadaires
+                </div>
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #f4c70f"></span
+                  >Résumé wins / losses / break-even
+                </div>
+              </div>
+            </div>
+            <div class="ft-card">
+              <div class="ft-card-head">
+                Calendrier <span class="ft-card-val o">Juin 2025</span>
+              </div>
+              <div class="ft-cal-hd">
+                <span>L</span><span>M</span><span>M</span><span>J</span
+                ><span>V</span><span>S</span><span>D</span>
+              </div>
+              <div class="ft-cal">
+                <div class="ft-cd e"></div>
+                <div class="ft-cd e"></div>
+                <div class="ft-cd e"></div>
+                <div class="ft-cd e"></div>
+                <div class="ft-cd e"></div>
+                <div class="ft-cd o">1</div>
+                <div class="ft-cd o">2</div>
+                <div class="ft-cd w">3</div>
+                <div class="ft-cd l">4</div>
+                <div class="ft-cd w">5</div>
+                <div class="ft-cd w">6</div>
+                <div class="ft-cd o">7</div>
+                <div class="ft-cd o">8</div>
+                <div class="ft-cd o">9</div>
+                <div class="ft-cd w">10</div>
+                <div class="ft-cd w">11</div>
+                <div class="ft-cd b">12</div>
+                <div class="ft-cd l">13</div>
+                <div class="ft-cd w">14</div>
+                <div class="ft-cd o">15</div>
+                <div class="ft-cd o">16</div>
+                <div class="ft-cd w">17</div>
+                <div class="ft-cd w">18</div>
+                <div class="ft-cd l">19</div>
+                <div class="ft-cd w">20</div>
+                <div class="ft-cd w">21</div>
+                <div class="ft-cd o">22</div>
+                <div class="ft-cd o">23</div>
+                <div class="ft-cd w">24</div>
+                <div class="ft-cd b">25</div>
+                <div class="ft-cd w">26</div>
+                <div class="ft-cd w">27</div>
+                <div class="ft-cd o">28</div>
+                <div class="ft-cd o">29</div>
+                <div class="ft-cd o">30</div>
+              </div>
+              <div class="ft-cal-stats">
+                <div class="ft-cs">
+                  <div class="ft-cs-v g">16</div>
+                  <div class="ft-cs-l">Gagnants</div>
+                </div>
+                <div class="ft-cs">
+                  <div class="ft-cs-v r">4</div>
+                  <div class="ft-cs-l">Perdants</div>
+                </div>
+                <div class="ft-cs">
+                  <div class="ft-cs-v b">2</div>
+                  <div class="ft-cs-l">Break-even</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="lp-feat">
+            <div class="lp-feat-text">
+              <div class="lp-feat-tag" style="color: #3b82f6">
+                <div class="ft-ic" style="background: rgba(59, 130, 246, 0.12)">
+                  <i class="ti ti-chart-bar"></i>
+                </div>
+                Analytics détaillés
+              </div>
+              <h3>Comprends où tu<br /><em>gagnes vraiment.</em></h3>
+              <p>
+                Win rate, RR moyen, profit factor par session — toutes tes stats
+                au même endroit.
+              </p>
+              <div class="ft-bullets">
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #3b82f6"></span
+                  >Analyse par session (London, NY, Asie)
+                </div>
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #3b82f6"></span
+                  >Statistiques par instrument et direction
+                </div>
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #3b82f6"></span
+                  >Évolution du RR et du profit factor
+                </div>
+              </div>
+            </div>
+            <div class="ft-card">
+              <div class="ft-card-head">
+                Analytics avancés <span class="ft-card-val o">Ce mois</span>
+              </div>
+              <div class="lp-an-grid">
+                <div class="lp-an-block">
+                  <div class="lp-an-title">Trades par session</div>
+                  <div class="lp-an-donut">
+                    <svg viewBox="0 0 80 80" width="80" height="80">
+                      <circle
+                        cx="40"
+                        cy="40"
+                        r="28"
+                        fill="none"
+                        stroke="#1a1a27"
+                        stroke-width="11"
+                      />
+                      <circle
+                        cx="40"
+                        cy="40"
+                        r="28"
+                        fill="none"
+                        stroke="#10b981"
+                        stroke-width="11"
+                        stroke-dasharray="88 88"
+                        stroke-dashoffset="22"
+                        transform="rotate(-90 40 40)"
+                      />
+                      <circle
+                        cx="40"
+                        cy="40"
+                        r="28"
+                        fill="none"
+                        stroke="#3b82f6"
+                        stroke-width="11"
+                        stroke-dasharray="44 132"
+                        stroke-dashoffset="-66"
+                        transform="rotate(-90 40 40)"
+                      />
+                      <circle
+                        cx="40"
+                        cy="40"
+                        r="28"
+                        fill="none"
+                        stroke="#F4C70F"
+                        stroke-width="11"
+                        stroke-dasharray="44 132"
+                        stroke-dashoffset="-110"
+                        transform="rotate(-90 40 40)"
+                      />
+                      <text
+                        x="40"
+                        y="44"
+                        text-anchor="middle"
+                        font-size="11"
+                        font-weight="800"
+                        fill="white"
+                      >
+                        24
+                      </text>
+                    </svg>
+                    <div class="lp-an-legend">
+                      <div class="lp-an-leg-item">
+                        <span style="background: #10b981"></span>London 50%
+                      </div>
+                      <div class="lp-an-leg-item">
+                        <span style="background: #3b82f6"></span>NY 25%
+                      </div>
+                      <div class="lp-an-leg-item">
+                        <span style="background: #f4c70f"></span>Asia 25%
+                      </div>
                     </div>
-                    <div id="vurl-wrap"><div class="fg"><label>URL YouTube / Lien</label><input type="url" id="vid-url"/></div></div>
-                    <div id="vfile-wrap" class="hidden"><div class="fg"><label>Fichier vidéo</label><input type="file" id="vid-file" accept="video/*"/></div></div>
                   </div>
-                  <div class="fg" style="margin-top:10px"><label>Miniature (optionnel)</label><input type="file" id="vid-cover" accept="image/*"/></div>
-                  <div class="prog-wrap hidden" id="uprog-wrap"><div class="prog-bg"><div class="prog-fill" id="uprog" style="width:0%"></div></div><div class="prog-lbl" id="uprog-lbl">0%</div></div>
-                  <button type="submit" class="btn btn-primary btn-full" style="margin-top:10px" id="vid-btn">Ajouter</button>
-                </form>
+                </div>
+                <div class="lp-an-block">
+                  <div class="lp-an-title">Win rate global</div>
+                  <div class="lp-an-donut">
+                    <svg viewBox="0 0 80 80" width="80" height="80">
+                      <circle
+                        cx="40"
+                        cy="40"
+                        r="28"
+                        fill="none"
+                        stroke="#1a1a27"
+                        stroke-width="11"
+                      />
+                      <circle
+                        cx="40"
+                        cy="40"
+                        r="28"
+                        fill="none"
+                        stroke="#10b981"
+                        stroke-width="11"
+                        stroke-dasharray="118 58"
+                        stroke-dashoffset="0"
+                        transform="rotate(-90 40 40)"
+                      />
+                      <circle
+                        cx="40"
+                        cy="40"
+                        r="28"
+                        fill="none"
+                        stroke="#ef4444"
+                        stroke-width="11"
+                        stroke-dasharray="58 118"
+                        stroke-dashoffset="-118"
+                        transform="rotate(-90 40 40)"
+                      />
+                      <text
+                        x="40"
+                        y="38"
+                        text-anchor="middle"
+                        font-size="10"
+                        font-weight="800"
+                        fill="#10b981"
+                      >
+                        67%
+                      </text>
+                      <text
+                        x="40"
+                        y="50"
+                        text-anchor="middle"
+                        font-size="7"
+                        fill="#6b7280"
+                      >
+                        win rate
+                      </text>
+                    </svg>
+                    <div class="lp-an-legend">
+                      <div class="lp-an-leg-item">
+                        <span style="background: #10b981"></span>Wins 67%
+                      </div>
+                      <div class="lp-an-leg-item">
+                        <span style="background: #ef4444"></span>Losses 33%
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="lp-an-title" style="margin: 12px 0 8px">
+                Performance par jour
+              </div>
+              <div class="lp-vbars">
+                <div class="lp-vbar-col">
+                  <div class="lp-vbar-fill" style="height: 80%"></div>
+                  <span>Lun</span>
+                </div>
+                <div class="lp-vbar-col">
+                  <div class="lp-vbar-fill" style="height: 55%"></div>
+                  <span>Mar</span>
+                </div>
+                <div class="lp-vbar-col">
+                  <div class="lp-vbar-fill" style="height: 100%"></div>
+                  <span>Mer</span>
+                </div>
+                <div class="lp-vbar-col">
+                  <div class="lp-vbar-fill lp-vbar-r" style="height: 25%"></div>
+                  <span>Jeu</span>
+                </div>
+                <div class="lp-vbar-col">
+                  <div class="lp-vbar-fill" style="height: 40%"></div>
+                  <span>Ven</span>
+                </div>
               </div>
             </div>
           </div>
+          <div class="lp-feat">
+            <div class="lp-feat-text">
+              <div class="lp-feat-tag" style="color: #3b82f6">
+                <div class="ft-ic" style="background: rgba(59, 130, 246, 0.12)">
+                  <i class="ti ti-calendar-event"></i>
+                </div>
+                Calendrier économique
+              </div>
+              <h3>Anticipe les news,<br /><em>trade sans surprise.</em></h3>
+              <p>
+                Consulte les annonces économiques avant de trader. Impact,
+                devise, heure — tout est là pour ne jamais te faire surprendre.
+              </p>
+              <div class="ft-bullets">
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #3b82f6"></span
+                  >Filtrage par impact (faible, moyen, fort)
+                </div>
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #3b82f6"></span>Mise
+                  à jour automatique chaque semaine
+                </div>
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #3b82f6"></span
+                  >Données réelles en temps réel
+                </div>
+              </div>
+            </div>
+            <div class="ft-card">
+              <div class="ft-card-head">
+                Calendrier économique
+                <span class="ft-card-val o">Aujourd'hui</span>
+              </div>
+              <div class="lp-eco-list">
+                <div class="lp-eco-row">
+                  <span class="lp-eco-time">14:15</span
+                  ><span class="lp-eco-flag">🇪🇺</span>
+                  <div class="lp-eco-dots">
+                    <span style="background: #ef4444"></span
+                    ><span style="background: #ef4444"></span
+                    ><span style="background: #ef4444"></span>
+                  </div>
+                  <span class="lp-eco-name">Main Refinancing Rate</span
+                  ><span class="lp-eco-val">2.40%</span>
+                </div>
+                <div class="lp-eco-row">
+                  <span class="lp-eco-time">14:30</span
+                  ><span class="lp-eco-flag">🇺🇸</span>
+                  <div class="lp-eco-dots">
+                    <span style="background: #ef4444"></span
+                    ><span style="background: #ef4444"></span
+                    ><span style="background: #ef4444"></span>
+                  </div>
+                  <span class="lp-eco-name">Core PPI m/m</span
+                  ><span class="lp-eco-val">0.5%</span>
+                </div>
+                <div class="lp-eco-row">
+                  <span class="lp-eco-time">14:30</span
+                  ><span class="lp-eco-flag">🇺🇸</span>
+                  <div class="lp-eco-dots">
+                    <span style="background: #f4c70f"></span
+                    ><span style="background: #f4c70f"></span
+                    ><span style="background: #f4c70f; opacity: 0.3"></span>
+                  </div>
+                  <span class="lp-eco-name">Unemployment Claims</span
+                  ><span class="lp-eco-val">220K</span>
+                </div>
+                <div class="lp-eco-row">
+                  <span class="lp-eco-time">14:45</span
+                  ><span class="lp-eco-flag">🇪🇺</span>
+                  <div class="lp-eco-dots">
+                    <span style="background: #ef4444"></span
+                    ><span style="background: #ef4444"></span
+                    ><span style="background: #ef4444"></span>
+                  </div>
+                  <span class="lp-eco-name">ECB Press Conference</span
+                  ><span class="lp-eco-val">—</span>
+                </div>
+                <div class="lp-eco-row">
+                  <span class="lp-eco-time">16:30</span
+                  ><span class="lp-eco-flag">🇺🇸</span>
+                  <div class="lp-eco-dots">
+                    <span style="background: #10b981"></span
+                    ><span style="background: #10b981; opacity: 0.3"></span
+                    ><span style="background: #10b981; opacity: 0.3"></span>
+                  </div>
+                  <span class="lp-eco-name">Natural Gas Storage</span
+                  ><span class="lp-eco-val">101B</span>
+                </div>
+                <div class="lp-eco-row">
+                  <span class="lp-eco-time">19:01</span
+                  ><span class="lp-eco-flag">🇺🇸</span>
+                  <div class="lp-eco-dots">
+                    <span style="background: #f4c70f"></span
+                    ><span style="background: #f4c70f"></span
+                    ><span style="background: #f4c70f; opacity: 0.3"></span>
+                  </div>
+                  <span class="lp-eco-name">30-y Bond Auction</span
+                  ><span class="lp-eco-val">5.05</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="lp-feat">
+            <div class="ft-card">
+              <div class="ft-card-head">
+                Outils de trading
+                <span class="ft-card-val o">4 calculateurs</span>
+              </div>
+              <div class="lp-outil-grid">
+                <div class="lp-outil-card">
+                  <div
+                    class="lp-outil-icon"
+                    style="background: rgba(244, 199, 15, 0.12); color: #f4c70f"
+                  >
+                    <i class="ti ti-calculator"></i>
+                  </div>
+                  <div>
+                    <div class="lp-outil-title">Calculateur de lot</div>
+                    <div class="lp-outil-desc">Taille de position optimale</div>
+                  </div>
+                </div>
+                <div class="lp-outil-card">
+                  <div
+                    class="lp-outil-icon"
+                    style="background: rgba(16, 185, 129, 0.12); color: #10b981"
+                  >
+                    <i class="ti ti-arrows-up-down"></i>
+                  </div>
+                  <div>
+                    <div class="lp-outil-title">Calculateur RR</div>
+                    <div class="lp-outil-desc">Risk/Reward & objectifs</div>
+                  </div>
+                </div>
+                <div class="lp-outil-card">
+                  <div
+                    class="lp-outil-icon"
+                    style="background: rgba(59, 130, 246, 0.12); color: #3b82f6"
+                  >
+                    <i class="ti ti-currency-dollar"></i>
+                  </div>
+                  <div>
+                    <div class="lp-outil-title">Valeur du pip</div>
+                    <div class="lp-outil-desc">P&L estimé par trade</div>
+                  </div>
+                </div>
+                <div class="lp-outil-card">
+                  <div
+                    class="lp-outil-icon"
+                    style="background: rgba(168, 85, 247, 0.12); color: #a855f7"
+                  >
+                    <i class="ti ti-target"></i>
+                  </div>
+                  <div>
+                    <div class="lp-outil-title">Objectif de compte</div>
+                    <div class="lp-outil-desc">Projection de croissance</div>
+                  </div>
+                </div>
+              </div>
+              <div class="lp-outil-example">
+                <div class="lp-outil-ex-label">
+                  Calculateur de lot — exemple
+                </div>
+                <div class="lp-outil-ex-row">
+                  <div class="lp-outil-ex-field">
+                    <div class="lp-outil-ex-lbl">Instrument</div>
+                    <div class="lp-outil-ex-val">EURUSD</div>
+                  </div>
+                  <div class="lp-outil-ex-field">
+                    <div class="lp-outil-ex-lbl">Capital</div>
+                    <div class="lp-outil-ex-val">10 000$</div>
+                  </div>
+                  <div class="lp-outil-ex-field">
+                    <div class="lp-outil-ex-lbl">Risque</div>
+                    <div class="lp-outil-ex-val">1%</div>
+                  </div>
+                  <div
+                    class="lp-outil-ex-field"
+                    style="border-color: rgba(244, 199, 15, 0.3)"
+                  >
+                    <div class="lp-outil-ex-lbl">Résultat</div>
+                    <div class="lp-outil-ex-val" style="color: #f4c70f">
+                      0.50 lot
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="lp-feat-text">
+              <div class="lp-feat-tag" style="color: #f4c70f">
+                <div class="ft-ic" style="background: rgba(244, 199, 15, 0.12)">
+                  <i class="ti ti-tool"></i>
+                </div>
+                Outils de trading
+              </div>
+              <h3>Calcule, planifie,<br /><em>execute avec précision.</em></h3>
+              <p>
+                Calculateurs de lot, RR, valeur du pip et projection de compte —
+                tous les outils pour préparer tes trades et gérer ton risque.
+              </p>
+              <div class="ft-bullets">
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #f4c70f"></span
+                  >Calculateur de taille de position en 1 clic
+                </div>
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #f4c70f"></span
+                  >Visualisation du Risk/Reward avant d'entrer
+                </div>
+                <div class="ft-bullet">
+                  <span class="ft-bdot" style="background: #f4c70f"></span
+                  >Projection de croissance de ton compte
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="login-footer" style="padding-bottom: 48px">
+            Esprit Trading &copy; 2025 · Gratuit pour tous
+          </p>
         </div>
-        <div id="atab-users" class="hidden">
-          <div class="adm-grid">
-            <div class="card"><h3 style="font-size:.88rem;margin-bottom:14px">Élèves inscrits</h3><div id="users-list"></div></div>
-            <div class="card"><h3 style="font-size:.88rem;margin-bottom:14px">Ajouter un élève</h3>
-              <form id="user-form">
-                <div class="fg"><label>Identifiant</label><input type="text" id="new-uname" required/></div>
-                <div class="fg" style="margin-top:10px"><label>Mot de passe</label><input type="password" id="new-upwd" required/></div>
-                <button type="submit" class="btn btn-primary btn-full" style="margin-top:14px">Créer l'élève</button>
+        <div class="lp-right">
+          <div class="lp-form-wrap">
+            <div class="lp-tabs">
+              <button
+                class="lp-tab active"
+                id="lp-tab-login"
+                onclick="lpTab('login')"
+              >
+                Se connecter
+              </button>
+              <button
+                class="lp-tab"
+                id="lp-tab-register"
+                onclick="lpTab('register')"
+              >
+                Créer un compte
+              </button>
+            </div>
+            <div id="login-view">
+              <form id="login-form">
+                <div class="fg">
+                  <label>Identifiant ou email</label
+                  ><input
+                    type="text"
+                    id="username"
+                    autocomplete="username"
+                    autofocus
+                    required
+                  />
+                </div>
+                <div class="fg" style="margin-top: 12px">
+                  <label>Mot de passe</label
+                  ><input
+                    type="password"
+                    id="password"
+                    autocomplete="current-password"
+                    required
+                  />
+                </div>
+                <div id="login-error" class="login-error hidden"></div>
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-full btn-lg"
+                  style="margin-top: 18px"
+                  id="login-btn"
+                >
+                  Se connecter
+                </button>
+                <p
+                  style="
+                    text-align: center;
+                    font-size: 0.78rem;
+                    margin-top: 10px;
+                  "
+                >
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm"
+                    style="color: var(--text-muted); padding: 0"
+                    onclick="event.preventDefault();event.stopPropagation();lpTab('forgot')"
+                  >
+                    Mot de passe oublié ?
+                  </button>
+                </p>
               </form>
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                  margin: 18px 0;
+                "
+              >
+                <div
+                  style="flex: 1; height: 1px; background: var(--border)"
+                ></div>
+                <span style="font-size: 0.75rem; color: var(--text-muted)"
+                  >ou</span
+                >
+                <div
+                  style="flex: 1; height: 1px; background: var(--border)"
+                ></div>
+              </div>
+              <a
+                href="/api/auth/google"
+                class="btn btn-secondary btn-full"
+                style="gap: 10px"
+              >
+                <svg width="18" height="18" viewBox="0 0 48 48">
+                  <path
+                    fill="#EA4335"
+                    d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.8 6C12.4 13.2 17.8 9.5 24 9.5z"
+                  />
+                  <path
+                    fill="#4285F4"
+                    d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.7 10.7l7.8-6z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.3-7.7 2.3-6.2 0-11.5-4.2-13.4-9.8l-7.8 6C6.6 42.6 14.6 48 24 48z"
+                  />
+                </svg>
+                Continuer avec Google
+              </a>
+              <p
+                style="
+                  text-align: center;
+                  font-size: 0.78rem;
+                  color: var(--text-muted);
+                  margin-top: 14px;
+                "
+              >
+                Pas encore de compte ?
+                <button
+                  class="btn btn-ghost btn-sm"
+                  id="show-register"
+                  style="color: var(--gold-dark); font-weight: 700; padding: 0"
+                  onclick="lpTab('register')"
+                >
+                  Créer un compte gratuit
+                </button>
+              </p>
+            </div>
+            <div id="forgot-view" class="hidden">
+              <h3 style="margin-bottom: 16px">Mot de passe oublié</h3>
+              <div class="fg">
+                <label>Email</label
+                ><input type="email" id="forgot-email" required />
+              </div>
+              <div
+                id="forgot-msg"
+                class="hidden"
+                style="
+                  font-size: 0.82rem;
+                  margin-top: 8px;
+                  padding: 10px 14px;
+                  border-radius: 8px;
+                  border: 1px solid;
+                "
+              ></div>
+              <button
+                class="btn btn-primary btn-full btn-lg"
+                style="margin-top: 18px"
+                id="forgot-btn"
+                onclick="submitForgot()"
+              >
+                Envoyer le lien
+              </button>
+              <p
+                style="
+                  text-align: center;
+                  font-size: 0.78rem;
+                  color: var(--text-muted);
+                  margin-top: 14px;
+                "
+              >
+                <button
+                  class="btn btn-ghost btn-sm"
+                  style="color: var(--gold-dark); font-weight: 700; padding: 0"
+                  onclick="lpTab('login')"
+                >
+                  Retour à la connexion
+                </button>
+              </p>
+            </div>
+            <div id="reset-view" class="hidden">
+              <h3 style="margin-bottom: 16px">Nouveau mot de passe</h3>
+              <div class="fg">
+                <label>Nouveau mot de passe</label
+                ><input
+                  type="password"
+                  id="reset-password"
+                  required
+                  autocomplete="new-password"
+                />
+              </div>
+              <div class="fg" style="margin-top: 12px">
+                <label>Confirmer</label
+                ><input
+                  type="password"
+                  id="reset-confirm"
+                  required
+                  autocomplete="new-password"
+                />
+              </div>
+              <div
+                id="reset-msg"
+                class="hidden"
+                style="
+                  font-size: 0.82rem;
+                  margin-top: 8px;
+                  padding: 10px 14px;
+                  border-radius: 8px;
+                  border: 1px solid;
+                "
+              ></div>
+              <button
+                class="btn btn-primary btn-full btn-lg"
+                style="margin-top: 18px"
+                id="reset-btn"
+                onclick="submitReset()"
+              >
+                Réinitialiser
+              </button>
+            </div>
+            <div id="register-view" class="hidden">
+              <form id="register-form">
+                <div
+                  style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 10px;
+                  "
+                >
+                  <div class="fg">
+                    <label>Prénom</label
+                    ><input type="text" id="reg-firstname" required />
+                  </div>
+                  <div class="fg">
+                    <label>Nom</label
+                    ><input type="text" id="reg-lastname" required />
+                  </div>
+                </div>
+                <div class="fg" style="margin-top: 12px">
+                  <label>Email</label
+                  ><input type="email" id="reg-email" required />
+                </div>
+                <div class="fg" style="margin-top: 12px">
+                  <label>Mot de passe</label
+                  ><input type="password" id="reg-password" required />
+                </div>
+                <div class="fg" style="margin-top: 12px">
+                  <label>Confirmer le mot de passe</label
+                  ><input type="password" id="reg-confirm" required />
+                </div>
+                <div
+                  id="register-error"
+                  class="hidden"
+                  style="
+                    font-size: 0.82rem;
+                    margin-top: 8px;
+                    padding: 10px 14px;
+                    border-radius: 8px;
+                    border: 1px solid;
+                  "
+                ></div>
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-full btn-lg"
+                  style="margin-top: 18px"
+                  id="register-btn"
+                >
+                  Créer mon compte
+                </button>
+              </form>
+              <p
+                style="
+                  text-align: center;
+                  font-size: 0.78rem;
+                  color: var(--text-muted);
+                  margin-top: 14px;
+                "
+              >
+                Déjà un compte ?
+                <button
+                  class="btn btn-ghost btn-sm"
+                  id="show-login"
+                  style="color: var(--gold-dark); font-weight: 700; padding: 0"
+                  onclick="lpTab('login')"
+                >
+                  Se connecter
+                </button>
+              </p>
             </div>
           </div>
         </div>
-      </section>
-
+      </div>
     </div>
-  </div>
-</div>
+    <script>
+      // Afficher message si email vérifié
+      if (new URLSearchParams(window.location.search).get("verified") === "1") {
+        document.addEventListener("DOMContentLoaded", () => {
+          const err = document.getElementById("login-error");
+          if (err) {
+            err.style.color = "#10b981";
+            err.style.borderColor = "#10b981";
+            err.style.background = "rgba(16,185,129,0.1)";
+            err.textContent =
+              "✓ Email confirmé ! Tu peux maintenant te connecter.";
+            err.classList.remove("hidden");
+          }
+        });
+      }
+      function lpTab(t) {
+        var isLogin = t === "login";
+        var isRegister = t === "register";
+        var isForgot = t === "forgot";
+        var isReset = t === "reset";
+        document
+          .getElementById("login-view")
+          .classList.toggle("hidden", !isLogin);
+        document
+          .getElementById("register-view")
+          .classList.toggle("hidden", !isRegister);
+        var fv = document.getElementById("forgot-view");
+        if (fv) fv.classList.toggle("hidden", !isForgot);
+        var rv = document.getElementById("reset-view");
+        if (rv) rv.classList.toggle("hidden", !isReset);
+        document
+          .getElementById("lp-tab-login")
+          .classList.toggle("active", isLogin);
+        document
+          .getElementById("lp-tab-register")
+          .classList.toggle("active", isRegister);
+      }
+    </script>
 
-<!-- MODAL NOUVEAU TRADE -->
-<div class="overlay hidden" id="trade-modal">
-  <div class="modal modal-lg">
-    <div class="mh"><h3>Nouveau trade</h3><button class="mclose" id="tm-close"><i class="ti ti-x"></i></button></div>
-    <form id="trade-form">
-      <div class="grid3">
-        <div class="fg"><label>Paire *</label>
-          <input type="text" id="pair-search-input" placeholder="Ex: EURUSD, BTCUSD..." autocomplete="off" style="width:100%"/>
-          <input type="hidden" id="pair-search-hidden" name="pair"/></div>
-        <div class="fg"><label>Direction *</label>
-          <select name="direction"><option value="LONG">BUY</option><option value="SHORT">SELL</option></select></div>
-        <div class="fg"><label>Résultat *</label>
-          <select name="result"><option value="WIN">WIN</option><option value="LOSS">LOSS</option><option value="BE">Break Even</option></select></div>
-      </div>
-      <div class="grid3" style="margin-top:12px">
-        <div class="fg"><label>RR *</label><input type="number" name="rr" step="0.1" placeholder="2.5" autocomplete="off"/></div>
-        <div class="fg"><label>P&L ($)</label><input type="number" name="pnl" step="0.01" placeholder="150"/></div>
-        <div class="fg"><label>Lot size</label><input type="number" name="lot_size" step="0.01" placeholder="0.10"/></div>
-      </div>
+    <!-- APP -->
+    <div id="app" class="hidden">
+      <div class="sb-ov" id="sb-ov"></div>
 
-      <div class="grid3" style="margin-top:12px">
-        <div class="fg"><label>Date *</label><input type="date" name="trade_date" id="trade-date-input"/></div>
-        <div class="fg"><label>Session</label>
-          <select name="session"><option value="">—</option><option>London</option><option>New York</option><option>Asia</option></select></div>
-        <div class="fg"><label>Timeframe</label>
-          <select name="timeframe"><option value="">—</option><option>M1</option><option>M2</option><option>M3</option><option>M5</option><option>M15</option><option>M30</option><option>H1</option><option>H4</option><option>D1</option></select></div>
-      </div>
-      <div class="grid3" style="margin-top:12px">
-        <div class="fg" style="position:relative"><label>Setup</label>
-          <input type="text" name="setup" id="setup-input" placeholder="OTE, FVG, BOS..." autocomplete="off" style="position:relative"/>
-          <div id="setup-suggestions" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:9999;background:#1a1a27;border:1px solid rgba(255,255,255,0.12);border-radius:8px;max-height:180px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.5)"></div>
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sb-logo">
+          <img src="/logo.jpg" alt="" />
+          <div class="sb-logo-text">
+            <div class="name">
+              Esprit Trading
+              <span
+                style="
+                  font-size: 0.55rem;
+                  font-weight: 700;
+                  background: var(--gold);
+                  color: #000;
+                  padding: 2px 6px;
+                  border-radius: 4px;
+                  vertical-align: middle;
+                  letter-spacing: 0.05em;
+                "
+                >BÊTA</span
+              >
+            </div>
+            <div class="sub">OTE 705</div>
+          </div>
+        </div>
+        <div
+          id="sb-accounts"
+          style="padding: 10px; border-bottom: 1px solid #ede9e2"
+        >
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 6px;
+            "
+          >
+            <span
+              style="
+                font-size: 0.63rem;
+                font-weight: 700;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: #9ca3af;
+              "
+              >Comptes</span
+            ><button
+              id="sb-add-acc"
+              style="
+                background: none;
+                border: none;
+                cursor: pointer;
+                color: #6b7280;
+                font-size: 0.72rem;
+                padding: 2px 6px;
+                border-radius: 5px;
+                display: flex;
+                align-items: center;
+                gap: 3px;
+              "
+            >
+              <i class="ti ti-plus"></i> Ajouter
+            </button>
+          </div>
+          <div id="sb-acc-list"></div>
+        </div>
+        <nav class="sb-nav">
+          <div class="sb-section">Principal</div>
+          <button class="nav-item" data-tab="dashboard">
+            <span class="ni"><i class="ti ti-layout-dashboard"></i></span
+            >Dashboard
+          </button>
+          <button class="nav-item" data-tab="journal">
+            <span class="ni"><i class="ti ti-list-details"></i></span>Journal
+          </button>
+          <button class="nav-item" data-tab="calendar">
+            <span class="ni"><i class="ti ti-calendar-month"></i></span
+            >Calendrier
+          </button>
+          <button class="nav-item" data-tab="analytics">
+            <span class="ni"><i class="ti ti-chart-dots-3"></i></span>Analytics
+          </button>
+          <div class="sb-section" style="margin-top: 8px">Ressources</div>
+          <button class="nav-item" data-tab="eco-cal">
+            <span class="ni"><i class="ti ti-news"></i></span>Calendrier éco
+          </button>
+          <button class="nav-item" data-tab="outils">
+            <span class="ni"><i class="ti ti-tool"></i></span>Outils
+          </button>
+          <button class="nav-item" data-tab="formation">
+            <span class="ni"><i class="ti ti-video"></i></span>Formation
+          </button>
+          <div class="sb-section admin-only hidden" style="margin-top: 8px">
+            Admin
+          </div>
+          <button class="nav-item admin-only hidden" data-tab="admin">
+            <span class="ni"><i class="ti ti-settings-2"></i></span>Admin
+          </button>
+        </nav>
+        <div class="sb-bottom">
+          <div class="sb-user">
+            <div class="sb-avatar" id="user-initials">?</div>
+            <div class="sb-uname" id="nav-username"></div>
+            <div class="sb-actions" style="display: flex; gap: 2px">
+              <button id="edit-profile-btn" title="Mon profil">
+                <i class="ti ti-user-edit"></i>
+              </button>
+              <button id="logout-btn" title="Déconnexion">
+                <i class="ti ti-logout"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <div class="main-wrap">
+        <div class="mob-header">
+          <button class="hbg" id="hbg">
+            <span></span><span></span><span></span>
+          </button>
+          <div style="display: flex; align-items: center; gap: 7px">
+            <img
+              src="/logo.jpg"
+              style="
+                width: 26px;
+                height: 26px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid var(--gold);
+              "
+            />
+            <span
+              style="
+                font-weight: 700;
+                font-size: 0.88rem;
+                font-family: 'DM Sans', sans-serif;
+              "
+              >Esprit Trading</span
+            >
+          </div>
+          <button class="btn btn-primary btn-sm" id="mob-add">+ Trade</button>
+        </div>
+
+        <div class="page">
+          <!-- DASHBOARD -->
+          <section id="tab-dashboard" class="tab-section hidden">
+            <div class="ph">
+              <div>
+                <h2>Dashboard</h2>
+                <p>Vue d'ensemble de vos performances</p>
+              </div>
+              <button class="btn btn-primary" id="dash-add-btn">
+                <i class="ti ti-plus"></i> Nouveau trade
+              </button>
+            </div>
+            <div class="acc-bar" id="acc-bar"></div>
+            <div class="kpi-grid" id="dash-kpis"></div>
+            <div class="chart-row chart-row-1">
+              <div class="ccard ch-260">
+                <div class="ccard-title">Courbe d'équité</div>
+                <div class="ccard-body"><canvas id="c-equity"></canvas></div>
+              </div>
+            </div>
+            <div id="dash-week-cal" style="margin-top: 16px"></div>
+          </section>
+
+          <!-- JOURNAL -->
+          <section id="tab-journal" class="tab-section hidden">
+            <div class="ph">
+              <div>
+                <h2>Journal</h2>
+                <p>Historique détaillé de tous vos trades</p>
+              </div>
+              <button class="btn btn-primary" id="add-trade-btn">
+                <i class="ti ti-plus"></i> Nouveau trade
+              </button>
+            </div>
+            <div class="filters">
+              <select class="filter-select" id="f-pair">
+                <option value="">Toutes les paires</option>
+                <option>EURUSD</option>
+                <option>GBPUSD</option>
+                <option>USDJPY</option>
+                <option>GOLD</option>
+                <option>XAUUSD</option>
+                <option>NASDAQ</option>
+                <option>US30</option>
+                <option>SP500</option>
+                <option>BTCUSD</option>
+                <option>ETHUSD</option>
+                <option>GBPJPY</option>
+                <option>EURJPY</option>
+              </select>
+              <select class="filter-select" id="f-result">
+                <option value="">Tous résultats</option>
+                <option value="WIN">WIN</option>
+                <option value="LOSS">LOSS</option>
+                <option value="BE">Break Even</option>
+              </select>
+              <select class="filter-select" id="f-dir">
+                <option value="">BUY & SELL</option>
+                <option value="LONG">BUY</option>
+                <option value="SHORT">SELL</option>
+              </select>
+              <select class="filter-select" id="f-sess">
+                <option value="">Toutes sessions</option>
+                <option>London</option>
+                <option>New York</option>
+                <option>Asia</option>
+              </select>
+              <input type="date" class="filter-input" id="f-from" />
+              <input type="date" class="filter-input" id="f-to" />
+              <button class="btn btn-secondary btn-sm" id="f-reset">
+                <i class="ti ti-x"></i> Reset
+              </button>
+              <span class="filters-count" id="f-count"></span>
+            </div>
+            <div class="tbl-wrap">
+              <table class="tbl" id="trades-tbl">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Paire</th>
+                    <th>Direction</th>
+                    <th>Résultat</th>
+                    <th>RR</th>
+                    <th>P&L</th>
+                    <th>Session</th>
+                    <th>Setup</th>
+                    <th>LTF</th>
+                    <th>HTF</th>
+                  </tr>
+                </thead>
+                <tbody id="trades-body"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- CALENDAR -->
+          <section id="tab-calendar" class="tab-section hidden">
+            <div class="ph">
+              <div>
+                <h2>Calendrier</h2>
+                <p>Vue mensuelle de votre activité</p>
+              </div>
+              <div class="cal-nav">
+                <button class="btn btn-secondary btn-sm" id="cal-prev">
+                  <i class="ti ti-chevron-left"></i>
+                </button>
+                <span class="cal-nav-label" id="cal-label"></span>
+                <button class="btn btn-secondary btn-sm" id="cal-next">
+                  <i class="ti ti-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+            <div class="cal-grid-head" id="cal-heads"></div>
+            <div class="cal-grid" id="cal-grid"></div>
+          </section>
+
+          <!-- ANALYTICS -->
+          <section id="tab-analytics" class="tab-section hidden">
+            <div class="ph">
+              <div>
+                <h2>Analytics</h2>
+                <p>Analyse approfondie de vos performances</p>
+              </div>
+            </div>
+            <div class="kpi-grid" id="an-kpis"></div>
+            <div style="display: none">
+              <canvas id="c-day"></canvas><canvas id="c-rrdist"></canvas
+              ><canvas id="c-setup"></canvas><canvas id="c-monthly"></canvas>
+            </div>
+            <div
+              id="winners-losers"
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                margin-bottom: 28px;
+              "
+            ></div>
+            <div class="an-section-title">
+              Performances par type d’opération
+              <i class="ti ti-info-circle an-info-icon"></i>
+            </div>
+            <div class="an-donut-grid">
+              <div class="an-card">
+                <div class="an-card-title">Total des opérations</div>
+                <div class="an-legend" id="leg-dir-total"></div>
+                <div class="an-donut-wrap">
+                  <canvas id="c-dir-total"></canvas>
+                </div>
+              </div>
+              <div class="an-card">
+                <div class="an-card-title">Taux de gain</div>
+                <div class="an-legend" id="leg-dir-wr"></div>
+                <div
+                  class="an-donut-wrap an-donut-multi"
+                  id="wrap-dir-wr"
+                ></div>
+              </div>
+            </div>
+            <div class="an-section-title">
+              Performances par session
+              <i class="ti ti-info-circle an-info-icon"></i>
+            </div>
+            <div class="an-donut-grid">
+              <div class="an-card">
+                <div class="an-card-title">Total des opérations</div>
+                <div class="an-legend" id="leg-sess-total"></div>
+                <div class="an-donut-wrap">
+                  <canvas id="c-sess-total"></canvas>
+                </div>
+              </div>
+              <div class="an-card">
+                <div class="an-card-title">Taux de gain</div>
+                <div class="an-legend" id="leg-sess-wr"></div>
+                <div
+                  class="an-donut-wrap an-donut-multi"
+                  id="wrap-sess-wr"
+                ></div>
+              </div>
+            </div>
+            <div class="an-section-title">
+              Performances par setup
+              <i class="ti ti-info-circle an-info-icon"></i>
+            </div>
+            <div class="an-donut-grid">
+              <div class="an-card">
+                <div class="an-card-title">Total des opérations</div>
+                <div class="an-legend" id="leg-setup-total"></div>
+                <div class="an-donut-wrap">
+                  <canvas id="c-setup-total"></canvas>
+                </div>
+              </div>
+              <div class="an-card">
+                <div class="an-card-title">Taux de gain</div>
+                <div class="an-legend" id="leg-setup-wr"></div>
+                <div
+                  class="an-donut-wrap an-donut-multi"
+                  id="wrap-setup-wr"
+                ></div>
+              </div>
+            </div>
+            <div class="an-section-title" style="margin-top: 8px">
+              Performance par paire
+            </div>
+            <div class="an-card" style="margin-bottom: 28px">
+              <table class="perf-table" id="pair-tbl"></table>
+            </div>
+            <div class="an-section-title" style="margin-top: 8px">
+              Performances par jour
+              <i class="ti ti-info-circle an-info-icon"></i>
+            </div>
+            <div class="an-card" style="margin-bottom: 28px">
+              <div
+                id="perf-jour-wrap"
+                style="position: relative; height: 280px; width: 100%"
+              >
+                <canvas
+                  id="c-perf-jour"
+                  style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                  "
+                ></canvas>
+              </div>
+            </div>
+            <div class="an-section-title" style="margin-top: 8px">
+              Fréquence moyenne des trades
+              <i class="ti ti-info-circle an-info-icon"></i>
+            </div>
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 14px;
+                margin-bottom: 28px;
+              "
+            >
+              <div class="an-card">
+                <div class="an-freq-title">
+                  Trades / jour
+                  <span class="an-freq-avg" id="freq-day-avg"></span>
+                </div>
+                <div style="position: relative; height: 200px">
+                  <canvas id="c-freq-day"></canvas>
+                </div>
+              </div>
+              <div class="an-card">
+                <div class="an-freq-title">
+                  Trades / semaine
+                  <span class="an-freq-avg" id="freq-week-avg"></span>
+                </div>
+                <div style="position: relative; height: 200px">
+                  <canvas id="c-freq-week"></canvas>
+                </div>
+              </div>
+              <div class="an-card">
+                <div class="an-freq-title">
+                  Trades / mois
+                  <span class="an-freq-avg" id="freq-month-avg"></span>
+                </div>
+                <div style="position: relative; height: 200px">
+                  <canvas id="c-freq-month"></canvas>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ECO CALENDAR -->
+          <section id="tab-eco-cal" class="tab-section hidden">
+            <div class="ph">
+              <div>
+                <h2>Calendrier économique</h2>
+                <p>Annonces et événements de la semaine</p>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  flex-wrap: wrap;
+                "
+              >
+                <button
+                  class="btn btn-secondary btn-sm eco-filter-btn active"
+                  onclick="setEcoFilter('all')"
+                  id="ef-all"
+                >
+                  Tous
+                </button>
+                <button
+                  class="btn btn-secondary btn-sm eco-filter-btn"
+                  onclick="setEcoFilter('high')"
+                  id="ef-high"
+                >
+                  <span style="color: var(--red)">●●●</span> High
+                </button>
+                <button
+                  class="btn btn-secondary btn-sm eco-filter-btn"
+                  onclick="setEcoFilter('medium')"
+                  id="ef-medium"
+                >
+                  <span style="color: #f97316">●●</span> Medium
+                </button>
+                <button
+                  class="btn btn-secondary btn-sm eco-filter-btn"
+                  onclick="setEcoFilter('low')"
+                  id="ef-low"
+                >
+                  <span style="color: #9ca3af">●</span> Low
+                </button>
+                <button
+                  class="btn btn-secondary btn-sm"
+                  onclick="loadEcoCalendar()"
+                >
+                  <i class="ti ti-refresh"></i> Actualiser
+                </button>
+              </div>
+            </div>
+            <div id="eco-cal-content"></div>
+          </section>
+
+          <!-- OUTILS -->
+          <section id="tab-outils" class="tab-section hidden">
+            <div class="ph">
+              <div>
+                <h2>Outils</h2>
+                <p>Calculateurs et aide à la décision</p>
+              </div>
+            </div>
+            <div class="tools-grid">
+              <div class="tool">
+                <div class="tool-head">
+                  <div class="tool-ico"><i class="ti ti-calculator"></i></div>
+                  <div>
+                    <h3>Calculateur de lot</h3>
+                    <p>Taille de position optimale</p>
+                  </div>
+                </div>
+                <div class="fg">
+                  <label>Instrument</label>
+                  <select id="l-inst">
+                    <option value="EURUSD">EURUSD</option>
+                    <option value="GBPUSD">GBPUSD</option>
+                    <option value="USDJPY">USDJPY</option>
+                    <option value="GOLD">GOLD / XAUUSD</option>
+                    <option value="NASDAQ">NASDAQ</option>
+                    <option value="US30">US30</option>
+                    <option value="BTCUSD">BTCUSD</option>
+                    <option value="GBPJPY">GBPJPY</option>
+                  </select>
+                </div>
+                <div class="grid2" style="margin-top: 10px">
+                  <div class="fg">
+                    <label>Capital ($)</label
+                    ><input type="number" id="l-bal" placeholder="10000" />
+                  </div>
+                  <div class="fg">
+                    <label>Risque (%)</label
+                    ><input
+                      type="number"
+                      id="l-risk"
+                      placeholder="1"
+                      step="0.1"
+                    />
+                  </div>
+                </div>
+                <div class="fg" style="margin-top: 10px">
+                  <label>Stop Loss (pips)</label
+                  ><input type="number" id="l-sl" placeholder="20" />
+                </div>
+                <div class="tool-result hidden" id="l-res">
+                  <div class="tr-row">
+                    <span class="l">Taille de lot</span
+                    ><span class="v o" id="l-out-sz">—</span>
+                  </div>
+                  <div class="tr-row">
+                    <span class="l">Unités</span
+                    ><span class="v" id="l-out-un">—</span>
+                  </div>
+                  <div class="tr-row">
+                    <span class="l">Montant risqué</span
+                    ><span class="v" id="l-out-ri">—</span>
+                  </div>
+                </div>
+              </div>
+              <div class="tool">
+                <div class="tool-head">
+                  <div class="tool-ico">
+                    <i class="ti ti-arrows-up-down"></i>
+                  </div>
+                  <div>
+                    <h3>Calculateur RR</h3>
+                    <p>Risk/Reward & objectifs</p>
+                  </div>
+                </div>
+                <div class="grid2">
+                  <div class="fg">
+                    <label>Entrée</label
+                    ><input
+                      type="number"
+                      id="r-entry"
+                      step="0.00001"
+                      placeholder="1.10000"
+                    />
+                  </div>
+                  <div class="fg">
+                    <label>Stop Loss</label
+                    ><input
+                      type="number"
+                      id="r-sl"
+                      step="0.00001"
+                      placeholder="1.09800"
+                    />
+                  </div>
+                </div>
+                <div class="fg" style="margin-top: 10px">
+                  <label>Take Profit</label
+                  ><input
+                    type="number"
+                    id="r-tp"
+                    step="0.00001"
+                    placeholder="1.10400"
+                  />
+                </div>
+                <div class="tool-result hidden" id="r-res">
+                  <div class="tr-row">
+                    <span class="l">Risk (pips)</span
+                    ><span class="v" id="r-risk">—</span>
+                  </div>
+                  <div class="tr-row">
+                    <span class="l">Reward (pips)</span
+                    ><span class="v" id="r-rew">—</span>
+                  </div>
+                  <div class="tr-row">
+                    <span class="l">Ratio R/R</span
+                    ><span class="v o" id="r-rat">—</span>
+                  </div>
+                </div>
+              </div>
+              <div class="tool">
+                <div class="tool-head">
+                  <div class="tool-ico">
+                    <i class="ti ti-currency-dollar"></i>
+                  </div>
+                  <div>
+                    <h3>Valeur du pip</h3>
+                    <p>P&L estimé par trade</p>
+                  </div>
+                </div>
+                <div class="fg">
+                  <label>Instrument</label>
+                  <select id="p-inst">
+                    <option value="EURUSD">EURUSD</option>
+                    <option value="GBPUSD">GBPUSD</option>
+                    <option value="USDJPY">USDJPY</option>
+                    <option value="GOLD">GOLD</option>
+                    <option value="NASDAQ">NASDAQ</option>
+                    <option value="US30">US30</option>
+                  </select>
+                </div>
+                <div class="grid2" style="margin-top: 10px">
+                  <div class="fg">
+                    <label>Lots</label
+                    ><input
+                      type="number"
+                      id="p-lots"
+                      placeholder="0.10"
+                      step="0.01"
+                    />
+                  </div>
+                  <div class="fg">
+                    <label>Nb pips</label
+                    ><input type="number" id="p-pips" placeholder="20" />
+                  </div>
+                </div>
+                <div class="tool-result hidden" id="p-res">
+                  <div class="tr-row">
+                    <span class="l">Valeur / pip</span
+                    ><span class="v" id="p-val">—</span>
+                  </div>
+                  <div class="tr-row">
+                    <span class="l">P&L estimé</span
+                    ><span class="v o" id="p-pnl">—</span>
+                  </div>
+                </div>
+              </div>
+              <div class="tool">
+                <div class="tool-head">
+                  <div class="tool-ico"><i class="ti ti-target"></i></div>
+                  <div>
+                    <h3>Objectif de compte</h3>
+                    <p>Projection de croissance</p>
+                  </div>
+                </div>
+                <div class="grid2">
+                  <div class="fg">
+                    <label>Capital initial ($)</label
+                    ><input type="number" id="o-cap" placeholder="10000" />
+                  </div>
+                  <div class="fg">
+                    <label>Objectif ($)</label
+                    ><input type="number" id="o-tgt" placeholder="20000" />
+                  </div>
+                </div>
+                <div class="grid2" style="margin-top: 10px">
+                  <div class="fg">
+                    <label>% / mois</label
+                    ><input
+                      type="number"
+                      id="o-pct"
+                      placeholder="5"
+                      step="0.1"
+                    />
+                  </div>
+                  <div class="fg">
+                    <label>Trades / mois</label
+                    ><input type="number" id="o-tr" placeholder="20" />
+                  </div>
+                </div>
+                <div class="tool-result hidden" id="o-res">
+                  <div class="tr-row">
+                    <span class="l">Mois nécessaires</span
+                    ><span class="v o" id="o-mo">—</span>
+                  </div>
+                  <div class="tr-row">
+                    <span class="l">Gain total</span
+                    ><span class="v" id="o-gain">—</span>
+                  </div>
+                  <div class="tr-row">
+                    <span class="l">Trades totaux</span
+                    ><span class="v" id="o-tot">—</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- FORMATION -->
+          <section id="tab-formation" class="tab-section hidden">
+            <div class="ph">
+              <div>
+                <h2>Formation</h2>
+                <p>Modules et vidéos de cours</p>
+              </div>
+            </div>
+            <div id="formation-student" class="mod-list"></div>
+            <div id="formation-community" class="hidden">
+              <div style="margin-bottom: 28px">
+                <div
+                  style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    background: rgba(244, 199, 15, 0.1);
+                    border: 1px solid rgba(244, 199, 15, 0.2);
+                    border-radius: 99px;
+                    padding: 4px 14px;
+                    font-size: 0.65rem;
+                    font-weight: 800;
+                    color: #d4a800;
+                    text-transform: uppercase;
+                    letter-spacing: 0.08em;
+                    margin-bottom: 10px;
+                  "
+                >
+                  <i class="ti ti-lock"></i> Contenu exclusif membres
+                </div>
+                <h2
+                  style="
+                    font-size: 1.8rem;
+                    font-weight: 900;
+                    color: var(--gold);
+                    letter-spacing: -0.03em;
+                    margin-bottom: 6px;
+                  "
+                >
+                  Formation OTE 705
+                </h2>
+                <p
+                  style="
+                    font-size: 0.85rem;
+                    color: var(--text-muted);
+                    max-width: 600px;
+                    line-height: 1.7;
+                  "
+                >
+                  Maîtrise un process clair, répétable et discipliné — le même
+                  que Nathan applique chaque jour.
+                </p>
+              </div>
+
+              <div class="fm-stitle" style="margin-bottom: 16px">
+                Le problème
+              </div>
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr 1fr 1fr 1fr;
+                  gap: 12px;
+                  margin-bottom: 16px;
+                "
+              >
+                <div
+                  style="
+                    background: var(--bg-card);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 16px;
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 0.65rem;
+                      font-weight: 700;
+                      color: var(--gold);
+                      margin-bottom: 8px;
+                    "
+                  >
+                    01
+                  </div>
+                  <h3
+                    style="
+                      font-size: 0.88rem;
+                      font-weight: 800;
+                      color: #fff;
+                      margin-bottom: 6px;
+                    "
+                  >
+                    Tu changes de stratégie en permanence
+                  </h3>
+                  <p
+                    style="
+                      font-size: 0.78rem;
+                      color: var(--text-muted);
+                      line-height: 1.5;
+                    "
+                  >
+                    ICT, SMC, Wyckoff... tu testes tout sans jamais rien
+                    maîtriser vraiment.
+                  </p>
+                </div>
+                <div
+                  style="
+                    background: var(--bg-card);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 16px;
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 0.65rem;
+                      font-weight: 700;
+                      color: var(--gold);
+                      margin-bottom: 8px;
+                    "
+                  >
+                    02
+                  </div>
+                  <h3
+                    style="
+                      font-size: 0.88rem;
+                      font-weight: 800;
+                      color: #fff;
+                      margin-bottom: 6px;
+                    "
+                  >
+                    Tu connais la théorie mais tu n'exécutes pas
+                  </h3>
+                  <p
+                    style="
+                      font-size: 0.78rem;
+                      color: var(--text-muted);
+                      line-height: 1.5;
+                    "
+                  >
+                    Tu hésites, tu over-trades ou tu sors trop tôt. La
+                    discipline te fait défaut.
+                  </p>
+                </div>
+                <div
+                  style="
+                    background: var(--bg-card);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 16px;
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 0.65rem;
+                      font-weight: 700;
+                      color: var(--gold);
+                      margin-bottom: 8px;
+                    "
+                  >
+                    03
+                  </div>
+                  <h3
+                    style="
+                      font-size: 0.88rem;
+                      font-weight: 800;
+                      color: #fff;
+                      margin-bottom: 6px;
+                    "
+                  >
+                    Tu avances seul, sans correction
+                  </h3>
+                  <p
+                    style="
+                      font-size: 0.78rem;
+                      color: var(--text-muted);
+                      line-height: 1.5;
+                    "
+                  >
+                    Pas de mentor, pas de feedback. Tu répètes les mêmes
+                    erreurs.
+                  </p>
+                </div>
+                <div
+                  style="
+                    background: var(--bg-card);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 16px;
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 0.65rem;
+                      font-weight: 700;
+                      color: var(--gold);
+                      margin-bottom: 8px;
+                    "
+                  >
+                    04
+                  </div>
+                  <h3
+                    style="
+                      font-size: 0.88rem;
+                      font-weight: 800;
+                      color: #fff;
+                      margin-bottom: 6px;
+                    "
+                  >
+                    Les prop firms te semblent inaccessibles
+                  </h3>
+                  <p
+                    style="
+                      font-size: 0.78rem;
+                      color: var(--text-muted);
+                      line-height: 1.5;
+                    "
+                  >
+                    Il te manque un process testé et répétable.
+                  </p>
+                </div>
+              </div>
+              <div class="fm-stitle">La méthode OTE 705</div>
+              <div class="fm-steps">
+                <div class="fm-step">
+                  <div class="fm-step-num">01</div>
+                  <div class="fm-step-icon"><i class="ti ti-book"></i></div>
+                  <div class="fm-step-title">Bases ICT / SMC</div>
+                  <div class="fm-step-desc">
+                    FVG, Order Block, structure de marché. Les concepts
+                    essentiels sans blabla.
+                  </div>
+                </div>
+                <div class="fm-step">
+                  <div class="fm-step-num">02</div>
+                  <div class="fm-step-icon"><i class="ti ti-target"></i></div>
+                  <div class="fm-step-title">Stratégie OTE 705</div>
+                  <div class="fm-step-desc">
+                    Entrée, exécution, sortie — un plan clair. Quand entrer, où
+                    poser le stop, quand ne pas trader.
+                  </div>
+                </div>
+                <div class="fm-step">
+                  <div class="fm-step-num">03</div>
+                  <div class="fm-step-icon">
+                    <i class="ti ti-chart-line"></i>
+                  </div>
+                  <div class="fm-step-title">Backtest sur cas réels</div>
+                  <div class="fm-step-desc">
+                    La stratégie appliquée sur de vrais cas pour ancrer les bons
+                    réflexes.
+                  </div>
+                </div>
+                <div class="fm-step">
+                  <div class="fm-step-num">04</div>
+                  <div class="fm-step-icon"><i class="ti ti-brain"></i></div>
+                  <div class="fm-step-title">Psychologie & discipline</div>
+                  <div class="fm-step-desc">
+                    90% des traders ne sont pas rentables parce qu'ils cassent
+                    leur plan. On règle ça.
+                  </div>
+                </div>
+              </div>
+
+              <div class="fm-stitle">Ce que disent les membres</div>
+              <div class="fm-reviews">
+                <div class="fm-review">
+                  <div class="fm-review-stars">★★★★★</div>
+                  <div class="fm-review-text">
+                    "Process clair, suivi au top. J'ai passé ma première prop
+                    firm en 3 semaines."
+                  </div>
+                  <div class="fm-review-author">— Thomas R. · Telegram</div>
+                </div>
+                <div class="fm-review">
+                  <div class="fm-review-stars">★★★★★</div>
+                  <div class="fm-review-text">
+                    "J'avais essayé 4 formations avant. C'est la seule où j'ai
+                    vraiment progressé."
+                  </div>
+                  <div class="fm-review-author">— Karim B. · Instagram</div>
+                </div>
+                <div class="fm-review">
+                  <div class="fm-review-stars">★★★★★</div>
+                  <div class="fm-review-text">
+                    "Le coaching 2x par semaine change tout. Nathan corrige en
+                    live, pas en théorie."
+                  </div>
+                  <div class="fm-review-author">— Sarah M. · Trustpilot</div>
+                </div>
+              </div>
+
+              <div class="fm-stitle">Nos engagements</div>
+              <div class="fm-guarantees">
+                <div class="fm-guarantee">
+                  <div
+                    class="fm-guarantee-icon"
+                    style="color: #10b981; background: rgba(16, 185, 129, 0.1)"
+                  >
+                    <i class="ti ti-shield-check"></i>
+                  </div>
+                  <div class="fm-guarantee-title">Rentable ou remboursé</div>
+                  <div class="fm-guarantee-desc">
+                    Si après 6 mois tu n'es pas rentable en appliquant la
+                    méthode : remboursement intégral.
+                  </div>
+                </div>
+                <div class="fm-guarantee">
+                  <div
+                    class="fm-guarantee-icon"
+                    style="color: #f4c70f; background: rgba(244, 199, 15, 0.1)"
+                  >
+                    <i class="ti ti-infinity"></i>
+                  </div>
+                  <div class="fm-guarantee-title">Accès à vie</div>
+                  <div class="fm-guarantee-desc">
+                    Tout le contenu actuel et futur reste accessible à vie. Zéro
+                    pression.
+                  </div>
+                </div>
+                <div class="fm-guarantee">
+                  <div
+                    class="fm-guarantee-icon"
+                    style="color: #3b82f6; background: rgba(59, 130, 246, 0.1)"
+                  >
+                    <i class="ti ti-message-circle"></i>
+                  </div>
+                  <div class="fm-guarantee-title">Réponse garantie</div>
+                  <div class="fm-guarantee-desc">
+                    Questions, blocages, psychologie — chaque message reçoit une
+                    réponse.
+                  </div>
+                </div>
+                <div class="fm-guarantee">
+                  <div
+                    class="fm-guarantee-icon"
+                    style="color: #a855f7; background: rgba(168, 85, 247, 0.1)"
+                  >
+                    <i class="ti ti-gift"></i>
+                  </div>
+                  <div class="fm-guarantee-title">Compte 10K offert</div>
+                  <div class="fm-guarantee-desc">
+                    Un compte Whales Capital 10K (valeur 250€) offert au
+                    paiement.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="formation-upsell"
+              style="
+                background: linear-gradient(
+                  135deg,
+                  rgba(244, 199, 15, 0.06),
+                  rgba(244, 199, 15, 0.02)
+                );
+                border: 1px solid rgba(244, 199, 15, 0.2);
+                border-radius: 16px;
+                padding: 40px;
+                text-align: center;
+                margin-top: 28px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+              "
+            >
+              <div
+                style="
+                  background: rgba(239, 68, 68, 0.15);
+                  border: 1px solid rgba(239, 68, 68, 0.3);
+                  border-radius: 99px;
+                  padding: 4px 14px;
+                  font-size: 0.65rem;
+                  font-weight: 800;
+                  color: #ef4444;
+                  text-transform: uppercase;
+                  letter-spacing: 0.08em;
+                "
+              >
+                Sélection requise · Places limitées
+              </div>
+              <h3
+                style="
+                  font-size: 1.6rem;
+                  font-weight: 900;
+                  color: #fff;
+                  letter-spacing: -0.03em;
+                  margin: 0;
+                "
+              >
+                Passe au niveau supérieur
+              </h3>
+              <p
+                style="
+                  font-size: 0.85rem;
+                  color: rgba(255, 255, 255, 0.55);
+                  max-width: 480px;
+                  line-height: 1.7;
+                  margin: 0;
+                "
+              >
+                Réserve ton appel gratuit de 30 min. Nathan évalue ta situation
+                et t'explique comment il peut t'aider.
+              </p>
+              <a
+                href="https://esprittrading.fr"
+                target="_blank"
+                class="btn btn-primary btn-lg"
+                >Réserver mon appel gratuit →</a
+              >
+              <div style="font-size: 0.7rem; color: rgba(255, 255, 255, 0.3)">
+                Gratuit · 30 min · Sans engagement
+              </div>
+            </div>
+          </section>
+
+          <!-- ADMIN -->
+          <section id="tab-admin" class="tab-section hidden admin-only">
+            <div class="ph">
+              <div><h2>Administration</h2></div>
+            </div>
+            <div class="atabs">
+              <button class="atab on" data-atab="modules">
+                Modules & Vidéos
+              </button>
+              <button class="atab" data-atab="users">Élèves</button>
+            </div>
+            <div id="atab-modules">
+              <div class="adm-grid">
+                <div>
+                  <h3 style="font-size: 0.88rem; margin-bottom: 12px">
+                    Modules
+                  </h3>
+                  <div id="adm-mods"></div>
+                </div>
+                <div>
+                  <div class="card" style="margin-bottom: 14px">
+                    <h3 style="font-size: 0.85rem; margin-bottom: 14px">
+                      Nouveau module
+                    </h3>
+                    <form id="mod-form">
+                      <div class="fg">
+                        <label>Titre</label
+                        ><input type="text" id="mod-title" required />
+                      </div>
+                      <button
+                        type="submit"
+                        class="btn btn-primary btn-full"
+                        style="margin-top: 10px"
+                      >
+                        Créer
+                      </button>
+                    </form>
+                  </div>
+                  <div class="card">
+                    <h3 style="font-size: 0.85rem; margin-bottom: 14px">
+                      Ajouter une vidéo
+                    </h3>
+                    <form id="vid-form">
+                      <div class="fg">
+                        <label>Module</label
+                        ><select id="vid-mod" required></select>
+                      </div>
+                      <div class="fg" style="margin-top: 10px">
+                        <label>Titre</label
+                        ><input type="text" id="vid-title" required />
+                      </div>
+                      <div class="fg" style="margin-top: 10px">
+                        <label>Description</label
+                        ><textarea
+                          id="vid-desc"
+                          style="min-height: 50px"
+                        ></textarea>
+                      </div>
+                      <div style="margin-top: 10px">
+                        <label
+                          class="flabel"
+                          style="display: block; margin-bottom: 6px"
+                          >Source</label
+                        >
+                        <div
+                          style="display: flex; gap: 14px; margin-bottom: 10px"
+                        >
+                          <label
+                            style="
+                              display: flex;
+                              align-items: center;
+                              gap: 5px;
+                              font-size: 0.8rem;
+                              cursor: pointer;
+                            "
+                            ><input
+                              type="radio"
+                              name="vsrc"
+                              id="vsrc-url"
+                              value="url"
+                              checked
+                            />
+                            URL</label
+                          >
+                          <label
+                            style="
+                              display: flex;
+                              align-items: center;
+                              gap: 5px;
+                              font-size: 0.8rem;
+                              cursor: pointer;
+                            "
+                            ><input
+                              type="radio"
+                              name="vsrc"
+                              id="vsrc-file"
+                              value="file"
+                            />
+                            Fichier</label
+                          >
+                        </div>
+                        <div id="vurl-wrap">
+                          <div class="fg">
+                            <label>URL YouTube / Lien</label
+                            ><input type="url" id="vid-url" />
+                          </div>
+                        </div>
+                        <div id="vfile-wrap" class="hidden">
+                          <div class="fg">
+                            <label>Fichier vidéo</label
+                            ><input
+                              type="file"
+                              id="vid-file"
+                              accept="video/*"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="fg" style="margin-top: 10px">
+                        <label>Miniature (optionnel)</label
+                        ><input type="file" id="vid-cover" accept="image/*" />
+                      </div>
+                      <div class="prog-wrap hidden" id="uprog-wrap">
+                        <div class="prog-bg">
+                          <div
+                            class="prog-fill"
+                            id="uprog"
+                            style="width: 0%"
+                          ></div>
+                        </div>
+                        <div class="prog-lbl" id="uprog-lbl">0%</div>
+                      </div>
+                      <button
+                        type="submit"
+                        class="btn btn-primary btn-full"
+                        style="margin-top: 10px"
+                        id="vid-btn"
+                      >
+                        Ajouter
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="atab-users" class="hidden">
+              <div class="adm-grid">
+                <div class="card">
+                  <h3 style="font-size: 0.88rem; margin-bottom: 14px">
+                    Élèves inscrits
+                  </h3>
+                  <div id="users-list"></div>
+                </div>
+                <div class="card">
+                  <h3 style="font-size: 0.88rem; margin-bottom: 14px">
+                    Ajouter un élève
+                  </h3>
+                  <form id="user-form">
+                    <div class="fg">
+                      <label>Identifiant</label
+                      ><input type="text" id="new-uname" required />
+                    </div>
+                    <div class="fg" style="margin-top: 10px">
+                      <label>Mot de passe</label
+                      ><input type="password" id="new-upwd" required />
+                    </div>
+                    <button
+                      type="submit"
+                      class="btn btn-primary btn-full"
+                      style="margin-top: 14px"
+                    >
+                      Créer l'élève
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
-      <div class="fg" style="margin-top:12px"><label>État émotionnel</label>
-        <select name="emotions"><option value="">—</option><option>Serein</option><option>Stressé</option><option>Anxieux</option><option>Confiant</option><option>Neutre</option><option>Euphorique</option><option>Découragé</option></select></div>
-      <div class="fg" style="margin-top:12px"><label>Notes / Analyse</label>
-        <textarea name="notes" placeholder="Contexte, analyse, ce à améliorer..."></textarea></div>
-      <div class="grid2" style="margin-top:12px">
-        <div class="fg"><label>Lower Timeframe (LTF)</label><input type="file" name="screenshot" accept="image/*"/></div>
-        <div class="fg"><label>Higher Timeframe (HTF)</label><input type="file" name="screenshot2" accept="image/*"/></div>
-      </div>
-      <div class="fg" style="margin-top:12px"><label>Compte *</label>
-        <select name="account_id" id="trade-acc-sel"><option value="">Choisir son compte</option></select></div>
-      <div class="mfoot">
-        <button type="button" class="btn btn-secondary" id="tm-cancel">Annuler</button>
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
-      </div>
-    </form>
-  </div>
-</div>
+    </div>
 
-<!-- MODAL DETAIL TRADE -->
-<div class="overlay hidden" id="detail-modal">
-  <div class="modal modal-lg">
-    <div class="mh">
-      <div style="display:flex;align-items:center;gap:10px">
-        <h3 id="d-pair" style="font-size:1.1rem"></h3>
-        <span id="d-badge"></span>
-      </div>
-      <button class="mclose" id="dm-close"><i class="ti ti-x"></i></button>
-    </div>
-    <div class="detail-grid">
-      <div class="df"><span class="dl">Date</span><span class="dv" id="d-date"></span></div>
-      <div class="df"><span class="dl">Direction</span><span class="dv" id="d-dir"></span></div>
-      <div class="df"><span class="dl">RR</span><span class="dv big" id="d-rr"></span></div>
-      <div class="df"><span class="dl">P&L</span><span class="dv big" id="d-pnl"></span></div>
-      <div class="df"><span class="dl">Lot size</span><span class="dv" id="d-lot"></span></div>
-      <div class="df"><span class="dl">Session</span><span class="dv" id="d-sess"></span></div>
-      <div class="df"><span class="dl">Setup</span><span class="dv" id="d-setup"></span></div>
-      <div class="df"><span class="dl">Timeframe</span><span class="dv" id="d-tf"></span></div>
-      <div class="df"><span class="dl">Entrée</span><span class="dv" id="d-entry"></span></div>
-      <div class="df"><span class="dl">Stop Loss</span><span class="dv" id="d-sl"></span></div>
-      <div class="df"><span class="dl">Take Profit</span><span class="dv" id="d-tp"></span></div>
-      <div class="df"><span class="dl">État mental</span><span class="dv" id="d-emo"></span></div>
-    </div>
-    <div id="d-notes-wrap" style="display:none"><div class="notes-box" id="d-notes"></div></div>
-    <div class="ss-grid" id="d-ss"></div>
-    <div class="mfoot">
-      <button class="btn btn-danger btn-sm" id="d-del"><i class="ti ti-trash"></i> Supprimer</button>
-      <button class="btn btn-secondary btn-sm" id="d-edit"><i class="ti ti-pencil"></i> Modifier</button>
-      <button class="btn btn-secondary" id="dm-close2">Fermer</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL MODIFIER TRADE -->
-<div class="overlay hidden" id="edit-modal">
-  <div class="modal modal-lg">
-    <div class="mh"><h3>Modifier le trade</h3><button class="mclose" id="em-close"><i class="ti ti-x"></i></button></div>
-    <form id="edit-form">
-      <input type="hidden" id="e-id"/>
-      <div class="grid3">
-        <div class="fg"><label>Paire</label><select id="e-pair" name="pair"><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>GOLD</option><option>XAUUSD</option><option>NASDAQ</option><option>US30</option><option>BTCUSD</option><option>ETHUSD</option><option>GBPJPY</option><option>EURJPY</option></select></div>
-        <div class="fg"><label>Direction</label><select id="e-dir" name="direction"><option value="LONG">BUY</option><option value="SHORT">SELL</option></select></div>
-        <div class="fg"><label>Résultat</label><select id="e-res" name="result"><option value="WIN">WIN</option><option value="LOSS">LOSS</option><option value="BE">Break Even</option></select></div>
-      </div>
-      <div class="grid3" style="margin-top:12px">
-        <div class="fg"><label>RR</label><input type="number" id="e-rr" name="rr" step="0.1" autocomplete="off"/></div>
-        <div class="fg"><label>P&L ($)</label><input type="number" id="e-pnl" name="pnl" step="0.01"/></div>
-        <div class="fg"><label>Date</label><input type="date" id="e-date" name="trade_date"/></div>
-      </div>
-      <div class="grid3" style="margin-top:12px">
-        <div class="fg"><label>Session</label><select id="e-sess" name="session"><option value="">—</option><option>London</option><option>New York</option><option>Asia</option></select></div>
-        <div class="fg" style="position:relative"><label>Setup</label>
-          <input type="text" id="e-setup" name="setup" placeholder="OTE, FVG, BOS..." autocomplete="off"/>
-          <div id="e-setup-suggestions" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:9999;background:#1a1a27;border:1px solid rgba(255,255,255,0.12);border-radius:8px;max-height:180px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.5)"></div>
+    <!-- MODAL NOUVEAU TRADE -->
+    <div class="overlay hidden" id="trade-modal">
+      <div class="modal modal-lg">
+        <div class="mh">
+          <h3>Nouveau trade</h3>
+          <button class="mclose" id="tm-close"><i class="ti ti-x"></i></button>
         </div>
-        <div class="fg"><label>État mental</label><select id="e-emo" name="emotions"><option value="">—</option><option>Serein</option><option>Stressé</option><option>Anxieux</option><option>Confiant</option><option>Neutre</option><option>Euphorique</option><option>Découragé</option></select></div>
-      </div>
-      <div class="fg" style="margin-top:12px"><label>Notes</label><textarea id="e-notes" name="notes"></textarea></div>
-      <div class="grid2" style="margin-top:12px">
-        <div class="fg"><label>Screenshot 1</label><input type="file" id="e-ss1" name="screenshot" accept="image/*"/></div>
-        <div class="fg"><label>Screenshot 2</label><input type="file" id="e-ss2" name="screenshot2" accept="image/*"/></div>
-      </div>
-      <div class="mfoot">
-        <button type="button" class="btn btn-secondary" id="em-cancel">Annuler</button>
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
-      </div>
-    </form>
-  </div>
-</div>
+        <form id="trade-form">
+          <div class="grid3">
+            <div class="fg">
+              <label>Paire *</label>
+              <input
+                type="text"
+                id="pair-search-input"
+                placeholder="Ex: EURUSD, BTCUSD..."
+                autocomplete="off"
+                style="width: 100%"
+              />
+              <input type="hidden" id="pair-search-hidden" name="pair" />
+            </div>
+            <div class="fg">
+              <label>Direction *</label>
+              <select name="direction">
+                <option value="LONG">BUY</option>
+                <option value="SHORT">SELL</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Résultat *</label>
+              <select name="result">
+                <option value="WIN">WIN</option>
+                <option value="LOSS">LOSS</option>
+                <option value="BE">Break Even</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid3" style="margin-top: 12px">
+            <div class="fg">
+              <label>RR *</label
+              ><input
+                type="number"
+                name="rr"
+                step="0.1"
+                placeholder="2.5"
+                autocomplete="off"
+              />
+            </div>
+            <div class="fg">
+              <label>P&L ($)</label
+              ><input type="number" name="pnl" step="0.01" placeholder="150" />
+            </div>
+            <div class="fg">
+              <label>Lot size</label
+              ><input
+                type="number"
+                name="lot_size"
+                step="0.01"
+                placeholder="0.10"
+              />
+            </div>
+          </div>
 
-<!-- MODAL COMPTE -->
-<div class="overlay hidden" id="acc-modal">
-  <div class="modal">
-    <div class="mh"><h3>Nouveau compte</h3><button class="mclose" id="acm-close"><i class="ti ti-x"></i></button></div>
-    <form id="acc-form">
-      <div class="fg"><label>Nom du compte *</label><input type="text" name="name" placeholder="Compte réel" required/></div>
-      <div class="grid2" style="margin-top:12px">
-        <div class="fg"><label>Type</label><select name="type"><option value="live">Live</option><option value="demo">Demo</option><option value="backtest">Backtest</option></select></div>
-        <div class="fg"><label>Devise</label><select name="currency"><option value="USD">USD $</option><option value="EUR">EUR €</option><option value="GBP">GBP £</option></select></div>
+          <div class="grid3" style="margin-top: 12px">
+            <div class="fg">
+              <label>Date *</label
+              ><input type="date" name="trade_date" id="trade-date-input" />
+            </div>
+            <div class="fg">
+              <label>Session</label>
+              <select name="session">
+                <option value="">—</option>
+                <option>London</option>
+                <option>New York</option>
+                <option>Asia</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Timeframe</label>
+              <select name="timeframe">
+                <option value="">—</option>
+                <option>M1</option>
+                <option>M2</option>
+                <option>M3</option>
+                <option>M5</option>
+                <option>M15</option>
+                <option>M30</option>
+                <option>H1</option>
+                <option>H4</option>
+                <option>D1</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid3" style="margin-top: 12px">
+            <div class="fg" style="position: relative">
+              <label>Setup</label>
+              <input
+                type="text"
+                name="setup"
+                id="setup-input"
+                placeholder="OTE, FVG, BOS..."
+                autocomplete="off"
+                style="position: relative"
+              />
+              <div
+                id="setup-suggestions"
+                style="
+                  display: none;
+                  position: absolute;
+                  left: 0;
+                  right: 0;
+                  top: calc(100% + 4px);
+                  z-index: 9999;
+                  background: #1a1a27;
+                  border: 1px solid rgba(255, 255, 255, 0.12);
+                  border-radius: 8px;
+                  max-height: 180px;
+                  overflow-y: auto;
+                  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+                "
+              ></div>
+            </div>
+          </div>
+          <div class="fg" style="margin-top: 12px">
+            <label>État émotionnel</label>
+            <select name="emotions">
+              <option value="">—</option>
+              <option>Serein</option>
+              <option>Stressé</option>
+              <option>Anxieux</option>
+              <option>Confiant</option>
+              <option>Neutre</option>
+              <option>Euphorique</option>
+              <option>Découragé</option>
+            </select>
+          </div>
+          <div class="fg" style="margin-top: 12px">
+            <label>Notes / Analyse</label>
+            <textarea
+              name="notes"
+              placeholder="Contexte, analyse, ce à améliorer..."
+            ></textarea>
+          </div>
+          <div class="grid2" style="margin-top: 12px">
+            <div class="fg">
+              <label>Lower Timeframe (LTF)</label
+              ><input type="file" name="screenshot" accept="image/*" />
+            </div>
+            <div class="fg">
+              <label>Higher Timeframe (HTF)</label
+              ><input type="file" name="screenshot2" accept="image/*" />
+            </div>
+          </div>
+          <div class="fg" style="margin-top: 12px">
+            <label>Compte *</label>
+            <select name="account_id" id="trade-acc-sel">
+              <option value="">Choisir son compte</option>
+            </select>
+          </div>
+          <div class="mfoot">
+            <button type="button" class="btn btn-secondary" id="tm-cancel">
+              Annuler
+            </button>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+          </div>
+        </form>
       </div>
-      <div class="grid2" style="margin-top:12px">
-        <div class="fg"><label>Capital initial</label><input type="number" name="initial_balance" placeholder="10000"/></div>
-        <div class="fg"><label>Broker / Prop Firm</label><input type="text" name="broker" placeholder="ICMarkets..."/></div>
-      </div>
-      <div class="mfoot">
-        <button type="button" class="btn btn-secondary" id="acm-cancel">Annuler</button>
-        <button type="submit" class="btn btn-primary">Créer</button>
-      </div>
-    </form>
-  </div>
-</div>
+    </div>
 
-<!-- MODAL MDP -->
-<div class="overlay hidden" id="pwd-modal">
-  <div class="modal">
-    <div class="mh"><h3>Mon profil</h3><button class="mclose" id="pm-close"><i class="ti ti-x"></i></button></div>
-    <form id="pwd-form">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div class="fg"><label>Prénom</label><input type="text" id="profile-firstname"/></div>
-        <div class="fg"><label>Nom</label><input type="text" id="profile-lastname"/></div>
-      </div>
-      <div class="fg" style="margin-top:12px"><label>Email</label><input type="email" id="profile-email"/></div>
-      <div style="border-top:1px solid var(--border);margin:16px 0;padding-top:16px">
-        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px">Changer le mot de passe (laisser vide pour ne pas modifier)</p>
-        <div class="fg"><label>Mot de passe actuel</label><input type="password" id="pwd-cur"/></div>
-        <div class="fg" style="margin-top:12px"><label>Nouveau mot de passe</label><input type="password" id="pwd-new"/></div>
-        <div class="fg" style="margin-top:12px"><label>Confirmer</label><input type="password" id="pwd-cf"/></div>
-      </div>
-      <div class="mfoot">
-        <button type="button" class="btn btn-secondary" id="pm-cancel">Annuler</button>
-        <button type="submit" class="btn btn-primary">Mettre à jour</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- MODAL EDIT VIDEO -->
-<div class="overlay hidden" id="evid-modal">
-  <div class="modal">
-    <div class="mh"><h3>Modifier la vidéo</h3><button class="mclose" id="evm-close"><i class="ti ti-x"></i></button></div>
-    <form id="evid-form">
-      <input type="hidden" id="ev-id"/>
-      <div class="fg"><label>Titre</label><input type="text" id="ev-title" required/></div>
-      <div class="fg" style="margin-top:10px"><label>Description</label><textarea id="ev-desc" style="min-height:55px"></textarea></div>
-      <div id="ev-cover-prev" style="display:none;margin-top:8px"><img id="ev-cover-img" style="width:100%;max-height:100px;object-fit:cover;border-radius:7px;border:1px solid var(--border)"/></div>
-      <div style="margin-top:12px">
-        <label class="flabel" style="display:block;margin-bottom:6px">Source</label>
-        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px">
-          <label style="display:flex;align-items:center;gap:5px;font-size:.78rem;cursor:pointer"><input type="radio" name="evsrc" id="evsrc-keep" value="keep" checked/> Garder</label>
-          <label style="display:flex;align-items:center;gap:5px;font-size:.78rem;cursor:pointer"><input type="radio" name="evsrc" id="evsrc-url" value="url"/> URL</label>
-          <label style="display:flex;align-items:center;gap:5px;font-size:.78rem;cursor:pointer"><input type="radio" name="evsrc" id="evsrc-file" value="file"/> Fichier</label>
+    <!-- MODAL DETAIL TRADE -->
+    <div class="overlay hidden" id="detail-modal">
+      <div class="modal modal-lg">
+        <div class="mh">
+          <div style="display: flex; align-items: center; gap: 10px">
+            <h3 id="d-pair" style="font-size: 1.1rem"></h3>
+            <span id="d-badge"></span>
+          </div>
+          <button class="mclose" id="dm-close"><i class="ti ti-x"></i></button>
         </div>
-        <div id="ev-url-wrap" class="hidden"><div class="fg"><label>URL</label><input type="url" id="ev-url"/></div></div>
-        <div id="ev-file-wrap" class="hidden"><div class="fg"><label>Fichier</label><input type="file" id="ev-file" accept="video/*"/></div></div>
-      </div>
-      <div class="fg" style="margin-top:10px"><label>Nouvelle miniature</label><input type="file" id="ev-cover" accept="image/*"/></div>
-      <div class="prog-wrap hidden" id="eprog-wrap"><div class="prog-bg"><div class="prog-fill" id="eprog" style="width:0%"></div></div><div class="prog-lbl" id="eprog-lbl">0%</div></div>
-      <div class="mfoot">
-        <button type="button" class="btn btn-secondary" id="evm-cancel">Annuler</button>
-        <button type="submit" class="btn btn-primary" id="ev-btn">Enregistrer</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- IMAGE VIEWER -->
-<div id="img-modal" class="hidden"><img id="img-src" src="" alt=""/></div>
-
-<!-- VIDEO MODAL -->
-<div id="vid-modal" class="hidden">
-  <div id="vid-modal-hd"><span id="vid-modal-title"></span><button id="vid-close" style="background:rgba(255,255,255,.1);border:none;color:#fff;width:30px;height:30px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="ti ti-x"></i></button></div>
-  <video id="vid-player" controls></video>
-</div>
-
-<div id="toasts"></div>
-<div class="overlay hidden" id="edit-user-modal" style="z-index:10000">
-  <div class="modal" style="max-width:380px">
-    <div class="mh"><h3>Modifier l'élève</h3><button class="mclose" id="edit-user-close"><i class="ti ti-x"></i></button></div>
-    <input type="hidden" id="edit-user-id"/>
-    <div class="fg" style="margin-top:4px"><label>Identifiant</label><input type="text" id="edit-user-username"/></div>
-    <div class="fg" style="margin-top:12px"><label>Nouveau mot de passe (laisser vide pour ne pas modifier)</label><input type="password" id="edit-user-pwd"/></div>
-    <div id="edit-user-msg" class="hidden" style="font-size:.82rem;margin-top:8px;padding:10px 14px;border-radius:8px;border:1px solid"></div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
-      <button class="btn btn-secondary" id="edit-user-cancel">Annuler</button>
-      <button class="btn btn-primary" id="edit-user-save">Enregistrer</button>
-    </div>
-  </div>
-</div>
-<div class="overlay hidden" id="user-view-modal" style="z-index:10000;align-items:flex-start;padding:20px">
-  <div class="modal modal-lg" style="max-width:900px;width:100%;margin-top:20px">
-    <div class="mh">
-      <h3>Journal de <span id="uv-name"></span></h3>
-      <button class="mclose" onclick="document.getElementById('user-view-modal').classList.add('hidden')"><i class="ti ti-x"></i></button>
-    </div>
-    <div style="padding:4px 0" id="uv-body"></div>
-  </div>
-</div>
-<div class="overlay hidden" id="rename-modal" style="z-index:10000">
-  <div class="modal" style="max-width:400px">
-    <div class="mh"><h3 id="rename-title">Renommer</h3><button class="mclose" id="rename-close"><i class="ti ti-x"></i></button></div>
-    <div style="padding:20px">
-      <input type="text" id="rename-input" class="input" style="width:100%;margin-bottom:16px"/>
-      <div style="display:flex;gap:10px;justify-content:flex-end">
-        <button class="btn btn-secondary" id="rename-cancel">Annuler</button>
-        <button class="btn btn-primary" id="rename-ok">Renommer</button>
-      </div>
-    </div>
-  </div>
-</div>
-<a href="https://t.me/EspritTradingSupport" target="_blank" style="position:fixed;bottom:24px;right:24px;z-index:9998;display:flex;align-items:center;gap:8px;background:#229ED9;color:#fff;font-size:.8rem;font-weight:700;padding:10px 16px;border-radius:100px;box-shadow:0 4px 20px rgba(0,0,0,0.4);text-decoration:none;transition:transform .2s" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-  <i class="ti ti-brand-telegram" style="font-size:1.1rem"></i> Feedback
-</a>
-<div class="overlay hidden" id="confirm-modal" style="z-index:10000">
-  <div class="modal" style="max-width:400px;text-align:center">
-    <div style="font-size:2rem;margin-bottom:12px">⚠️</div>
-    <h3 id="confirm-title" style="font-size:1.1rem;margin-bottom:8px"></h3>
-    <p id="confirm-msg" style="font-size:.85rem;color:var(--text-muted);margin-bottom:24px"></p>
-    <div style="display:flex;gap:10px;justify-content:center">
-      <button class="btn btn-secondary" id="confirm-cancel">Annuler</button>
-      <button class="btn btn-danger" id="confirm-ok">Supprimer</button>
-    </div>
-  </div>
-</div>
-<script src="/js/app.js"></script>
-<div id="edit-acc-modal" class="modal-overlay hidden" onclick="if(event.target===this)this.classList.add('hidden')">
-  <div class="modal-box" style="max-width:420px;width:100%">
-    <div class="modal-hd"><span>Modifier le compte</span><button onclick="document.getElementById('edit-acc-modal').classList.add('hidden')" class="modal-cls"><i class="ti ti-x"></i></button></div>
-    <div class="modal-bd" style="display:flex;flex-direction:column;gap:14px;padding:20px">
-      <input type="hidden" id="eacc-id"/>
-      <div class="fg"><label>Nom du compte *</label><input type="text" id="eacc-name" placeholder="Compte réel"/></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div class="fg"><label>Type</label>
-          <select id="eacc-type">
-            <option value="live">Live</option>
-            <option value="prop">Prop Firm</option>
-            <option value="demo">Démo</option>
-          </select>
+        <div class="detail-grid">
+          <div class="df">
+            <span class="dl">Date</span><span class="dv" id="d-date"></span>
+          </div>
+          <div class="df">
+            <span class="dl">Direction</span><span class="dv" id="d-dir"></span>
+          </div>
+          <div class="df">
+            <span class="dl">RR</span><span class="dv big" id="d-rr"></span>
+          </div>
+          <div class="df">
+            <span class="dl">P&L</span><span class="dv big" id="d-pnl"></span>
+          </div>
+          <div class="df">
+            <span class="dl">Lot size</span><span class="dv" id="d-lot"></span>
+          </div>
+          <div class="df">
+            <span class="dl">Session</span><span class="dv" id="d-sess"></span>
+          </div>
+          <div class="df">
+            <span class="dl">Setup</span><span class="dv" id="d-setup"></span>
+          </div>
+          <div class="df">
+            <span class="dl">Timeframe</span><span class="dv" id="d-tf"></span>
+          </div>
+          <div class="df">
+            <span class="dl">Entrée</span><span class="dv" id="d-entry"></span>
+          </div>
+          <div class="df">
+            <span class="dl">Stop Loss</span><span class="dv" id="d-sl"></span>
+          </div>
+          <div class="df">
+            <span class="dl">Take Profit</span
+            ><span class="dv" id="d-tp"></span>
+          </div>
+          <div class="df">
+            <span class="dl">État mental</span
+            ><span class="dv" id="d-emo"></span>
+          </div>
         </div>
-        <div class="fg"><label>Capital initial</label><input type="number" id="eacc-balance" placeholder="10000"/></div>
-      </div>
-      <div class="fg"><label>Broker / Prop Firm</label><input type="text" id="eacc-broker" placeholder="ICMarkets, FTMO..."/></div>
-      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
-        <button class="btn btn-ghost" onclick="document.getElementById('edit-acc-modal').classList.add('hidden')">Annuler</button>
-        <button class="btn btn-primary" onclick="saveEditAcc()">Enregistrer</button>
+        <div id="d-notes-wrap" style="display: none">
+          <div class="notes-box" id="d-notes"></div>
+        </div>
+        <div class="ss-grid" id="d-ss"></div>
+        <div class="mfoot">
+          <button class="btn btn-danger btn-sm" id="d-del">
+            <i class="ti ti-trash"></i> Supprimer
+          </button>
+          <button class="btn btn-secondary btn-sm" id="d-edit">
+            <i class="ti ti-pencil"></i> Modifier
+          </button>
+          <button class="btn btn-secondary" id="dm-close2">Fermer</button>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-</body>
+
+    <!-- MODAL MODIFIER TRADE -->
+    <div class="overlay hidden" id="edit-modal">
+      <div class="modal modal-lg">
+        <div class="mh">
+          <h3>Modifier le trade</h3>
+          <button class="mclose" id="em-close"><i class="ti ti-x"></i></button>
+        </div>
+        <form id="edit-form">
+          <input type="hidden" id="e-id" />
+          <div class="grid3">
+            <div class="fg">
+              <label>Paire</label
+              ><select id="e-pair" name="pair">
+                <option>EURUSD</option>
+                <option>GBPUSD</option>
+                <option>USDJPY</option>
+                <option>GOLD</option>
+                <option>XAUUSD</option>
+                <option>NASDAQ</option>
+                <option>US30</option>
+                <option>BTCUSD</option>
+                <option>ETHUSD</option>
+                <option>GBPJPY</option>
+                <option>EURJPY</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Direction</label
+              ><select id="e-dir" name="direction">
+                <option value="LONG">BUY</option>
+                <option value="SHORT">SELL</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Résultat</label
+              ><select id="e-res" name="result">
+                <option value="WIN">WIN</option>
+                <option value="LOSS">LOSS</option>
+                <option value="BE">Break Even</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid3" style="margin-top: 12px">
+            <div class="fg">
+              <label>RR</label
+              ><input
+                type="number"
+                id="e-rr"
+                name="rr"
+                step="0.1"
+                autocomplete="off"
+              />
+            </div>
+            <div class="fg">
+              <label>P&L ($)</label
+              ><input type="number" id="e-pnl" name="pnl" step="0.01" />
+            </div>
+            <div class="fg">
+              <label>Date</label
+              ><input type="date" id="e-date" name="trade_date" />
+            </div>
+          </div>
+          <div class="grid3" style="margin-top: 12px">
+            <div class="fg">
+              <label>Session</label
+              ><select id="e-sess" name="session">
+                <option value="">—</option>
+                <option>London</option>
+                <option>New York</option>
+                <option>Asia</option>
+              </select>
+            </div>
+            <div class="fg" style="position: relative">
+              <label>Setup</label>
+              <input
+                type="text"
+                id="e-setup"
+                name="setup"
+                placeholder="OTE, FVG, BOS..."
+                autocomplete="off"
+              />
+              <div
+                id="e-setup-suggestions"
+                style="
+                  display: none;
+                  position: absolute;
+                  left: 0;
+                  right: 0;
+                  top: calc(100% + 4px);
+                  z-index: 9999;
+                  background: #1a1a27;
+                  border: 1px solid rgba(255, 255, 255, 0.12);
+                  border-radius: 8px;
+                  max-height: 180px;
+                  overflow-y: auto;
+                  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+                "
+              ></div>
+            </div>
+            <div class="fg">
+              <label>État mental</label
+              ><select id="e-emo" name="emotions">
+                <option value="">—</option>
+                <option>Serein</option>
+                <option>Stressé</option>
+                <option>Anxieux</option>
+                <option>Confiant</option>
+                <option>Neutre</option>
+                <option>Euphorique</option>
+                <option>Découragé</option>
+              </select>
+            </div>
+          </div>
+          <div class="fg" style="margin-top: 12px">
+            <label>Notes</label><textarea id="e-notes" name="notes"></textarea>
+          </div>
+          <div class="grid2" style="margin-top: 12px">
+            <div class="fg">
+              <label>Screenshot 1</label
+              ><input
+                type="file"
+                id="e-ss1"
+                name="screenshot"
+                accept="image/*"
+              />
+            </div>
+            <div class="fg">
+              <label>Screenshot 2</label
+              ><input
+                type="file"
+                id="e-ss2"
+                name="screenshot2"
+                accept="image/*"
+              />
+            </div>
+          </div>
+          <div class="mfoot">
+            <button type="button" class="btn btn-secondary" id="em-cancel">
+              Annuler
+            </button>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL COMPTE -->
+    <div class="overlay hidden" id="acc-modal">
+      <div class="modal">
+        <div class="mh">
+          <h3>Nouveau compte</h3>
+          <button class="mclose" id="acm-close"><i class="ti ti-x"></i></button>
+        </div>
+        <form id="acc-form">
+          <div class="fg">
+            <label>Nom du compte *</label
+            ><input
+              type="text"
+              name="name"
+              placeholder="Compte réel"
+              required
+            />
+          </div>
+          <div class="grid2" style="margin-top: 12px">
+            <div class="fg">
+              <label>Type</label
+              ><select name="type">
+                <option value="live">Live</option>
+                <option value="demo">Demo</option>
+                <option value="backtest">Backtest</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Devise</label
+              ><select name="currency">
+                <option value="USD">USD $</option>
+                <option value="EUR">EUR €</option>
+                <option value="GBP">GBP £</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid2" style="margin-top: 12px">
+            <div class="fg">
+              <label>Capital initial</label
+              ><input
+                type="number"
+                name="initial_balance"
+                placeholder="10000"
+              />
+            </div>
+            <div class="fg">
+              <label>Broker / Prop Firm</label
+              ><input type="text" name="broker" placeholder="ICMarkets..." />
+            </div>
+          </div>
+          <div class="mfoot">
+            <button type="button" class="btn btn-secondary" id="acm-cancel">
+              Annuler
+            </button>
+            <button type="submit" class="btn btn-primary">Créer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL MDP -->
+    <div class="overlay hidden" id="pwd-modal">
+      <div class="modal">
+        <div class="mh">
+          <h3>Mon profil</h3>
+          <button class="mclose" id="pm-close"><i class="ti ti-x"></i></button>
+        </div>
+        <form id="pwd-form">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px">
+            <div class="fg">
+              <label>Prénom</label><input type="text" id="profile-firstname" />
+            </div>
+            <div class="fg">
+              <label>Nom</label><input type="text" id="profile-lastname" />
+            </div>
+          </div>
+          <div class="fg" style="margin-top: 12px">
+            <label>Email</label><input type="email" id="profile-email" />
+          </div>
+          <div
+            style="
+              border-top: 1px solid var(--border);
+              margin: 16px 0;
+              padding-top: 16px;
+            "
+          >
+            <p
+              style="
+                font-size: 0.78rem;
+                color: var(--text-muted);
+                margin-bottom: 12px;
+              "
+            >
+              Changer le mot de passe (laisser vide pour ne pas modifier)
+            </p>
+            <div class="fg">
+              <label>Mot de passe actuel</label
+              ><input type="password" id="pwd-cur" />
+            </div>
+            <div class="fg" style="margin-top: 12px">
+              <label>Nouveau mot de passe</label
+              ><input type="password" id="pwd-new" />
+            </div>
+            <div class="fg" style="margin-top: 12px">
+              <label>Confirmer</label><input type="password" id="pwd-cf" />
+            </div>
+          </div>
+          <div class="mfoot">
+            <button type="button" class="btn btn-secondary" id="pm-cancel">
+              Annuler
+            </button>
+            <button type="submit" class="btn btn-primary">Mettre à jour</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL EDIT VIDEO -->
+    <div class="overlay hidden" id="evid-modal">
+      <div class="modal">
+        <div class="mh">
+          <h3>Modifier la vidéo</h3>
+          <button class="mclose" id="evm-close"><i class="ti ti-x"></i></button>
+        </div>
+        <form id="evid-form">
+          <input type="hidden" id="ev-id" />
+          <div class="fg">
+            <label>Titre</label><input type="text" id="ev-title" required />
+          </div>
+          <div class="fg" style="margin-top: 10px">
+            <label>Description</label
+            ><textarea id="ev-desc" style="min-height: 55px"></textarea>
+          </div>
+          <div id="ev-cover-prev" style="display: none; margin-top: 8px">
+            <img
+              id="ev-cover-img"
+              style="
+                width: 100%;
+                max-height: 100px;
+                object-fit: cover;
+                border-radius: 7px;
+                border: 1px solid var(--border);
+              "
+            />
+          </div>
+          <div style="margin-top: 12px">
+            <label class="flabel" style="display: block; margin-bottom: 6px"
+              >Source</label
+            >
+            <div
+              style="
+                display: flex;
+                gap: 14px;
+                flex-wrap: wrap;
+                margin-bottom: 10px;
+              "
+            >
+              <label
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 5px;
+                  font-size: 0.78rem;
+                  cursor: pointer;
+                "
+                ><input
+                  type="radio"
+                  name="evsrc"
+                  id="evsrc-keep"
+                  value="keep"
+                  checked
+                />
+                Garder</label
+              >
+              <label
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 5px;
+                  font-size: 0.78rem;
+                  cursor: pointer;
+                "
+                ><input type="radio" name="evsrc" id="evsrc-url" value="url" />
+                URL</label
+              >
+              <label
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 5px;
+                  font-size: 0.78rem;
+                  cursor: pointer;
+                "
+                ><input
+                  type="radio"
+                  name="evsrc"
+                  id="evsrc-file"
+                  value="file"
+                />
+                Fichier</label
+              >
+            </div>
+            <div id="ev-url-wrap" class="hidden">
+              <div class="fg">
+                <label>URL</label><input type="url" id="ev-url" />
+              </div>
+            </div>
+            <div id="ev-file-wrap" class="hidden">
+              <div class="fg">
+                <label>Fichier</label
+                ><input type="file" id="ev-file" accept="video/*" />
+              </div>
+            </div>
+          </div>
+          <div class="fg" style="margin-top: 10px">
+            <label>Nouvelle miniature</label
+            ><input type="file" id="ev-cover" accept="image/*" />
+          </div>
+          <div class="prog-wrap hidden" id="eprog-wrap">
+            <div class="prog-bg">
+              <div class="prog-fill" id="eprog" style="width: 0%"></div>
+            </div>
+            <div class="prog-lbl" id="eprog-lbl">0%</div>
+          </div>
+          <div class="mfoot">
+            <button type="button" class="btn btn-secondary" id="evm-cancel">
+              Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" id="ev-btn">
+              Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- IMAGE VIEWER -->
+    <div id="img-modal" class="hidden"><img id="img-src" src="" alt="" /></div>
+
+    <!-- VIDEO MODAL -->
+    <div id="vid-modal" class="hidden">
+      <div id="vid-modal-hd">
+        <span id="vid-modal-title"></span
+        ><button
+          id="vid-close"
+          style="
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+      <video id="vid-player" controls></video>
+    </div>
+
+    <div id="toasts"></div>
+    <div class="overlay hidden" id="edit-user-modal" style="z-index: 10000">
+      <div class="modal" style="max-width: 380px">
+        <div class="mh">
+          <h3>Modifier l'élève</h3>
+          <button class="mclose" id="edit-user-close">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+        <input type="hidden" id="edit-user-id" />
+        <div class="fg" style="margin-top: 4px">
+          <label>Identifiant</label
+          ><input type="text" id="edit-user-username" />
+        </div>
+        <div class="fg" style="margin-top: 12px">
+          <label>Nouveau mot de passe (laisser vide pour ne pas modifier)</label
+          ><input type="password" id="edit-user-pwd" />
+        </div>
+        <div
+          id="edit-user-msg"
+          class="hidden"
+          style="
+            font-size: 0.82rem;
+            margin-top: 8px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid;
+          "
+        ></div>
+        <div
+          style="
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 16px;
+          "
+        >
+          <button class="btn btn-secondary" id="edit-user-cancel">
+            Annuler
+          </button>
+          <button class="btn btn-primary" id="edit-user-save">
+            Enregistrer
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="overlay hidden"
+      id="user-view-modal"
+      style="z-index: 10000; align-items: flex-start; padding: 20px"
+    >
+      <div
+        class="modal modal-lg"
+        style="max-width: 900px; width: 100%; margin-top: 20px"
+      >
+        <div class="mh">
+          <h3>Journal de <span id="uv-name"></span></h3>
+          <button
+            class="mclose"
+            onclick="document.getElementById('user-view-modal').classList.add('hidden')"
+          >
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+        <div style="padding: 4px 0" id="uv-body"></div>
+      </div>
+    </div>
+    <div class="overlay hidden" id="rename-modal" style="z-index: 10000">
+      <div class="modal" style="max-width: 400px">
+        <div class="mh">
+          <h3 id="rename-title">Renommer</h3>
+          <button class="mclose" id="rename-close">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+        <div style="padding: 20px">
+          <input
+            type="text"
+            id="rename-input"
+            class="input"
+            style="width: 100%; margin-bottom: 16px"
+          />
+          <div style="display: flex; gap: 10px; justify-content: flex-end">
+            <button class="btn btn-secondary" id="rename-cancel">
+              Annuler
+            </button>
+            <button class="btn btn-primary" id="rename-ok">Renommer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a
+      href="https://t.me/EspritTradingSupport"
+      target="_blank"
+      style="
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 9998;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #229ed9;
+        color: #fff;
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 10px 16px;
+        border-radius: 100px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        text-decoration: none;
+        transition: transform 0.2s;
+      "
+      onmouseover="this.style.transform='scale(1.05)'"
+      onmouseout="this.style.transform='scale(1)'"
+    >
+      <i class="ti ti-brand-telegram" style="font-size: 1.1rem"></i> Feedback
+    </a>
+    <div class="overlay hidden" id="confirm-modal" style="z-index: 10000">
+      <div class="modal" style="max-width: 400px; text-align: center">
+        <div style="font-size: 2rem; margin-bottom: 12px">⚠️</div>
+        <h3
+          id="confirm-title"
+          style="font-size: 1.1rem; margin-bottom: 8px"
+        ></h3>
+        <p
+          id="confirm-msg"
+          style="
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+          "
+        ></p>
+        <div style="display: flex; gap: 10px; justify-content: center">
+          <button class="btn btn-secondary" id="confirm-cancel">Annuler</button>
+          <button class="btn btn-danger" id="confirm-ok">Supprimer</button>
+        </div>
+      </div>
+    </div>
+    <script src="/js/app.js"></script>
+    <div
+      id="edit-acc-modal"
+      class="modal-overlay hidden"
+      onclick="if(event.target===this)this.classList.add('hidden')"
+    >
+      <div class="modal-box" style="max-width: 420px; width: 100%">
+        <div class="modal-hd">
+          <span>Modifier le compte</span
+          ><button
+            onclick="document.getElementById('edit-acc-modal').classList.add('hidden')"
+            class="modal-cls"
+          >
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+        <div
+          class="modal-bd"
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding: 20px;
+          "
+        >
+          <input type="hidden" id="eacc-id" />
+          <div class="fg">
+            <label>Nom du compte *</label
+            ><input type="text" id="eacc-name" placeholder="Compte réel" />
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+            <div class="fg">
+              <label>Type</label>
+              <select id="eacc-type">
+                <option value="live">Live</option>
+                <option value="prop">Prop Firm</option>
+                <option value="demo">Démo</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Capital initial</label
+              ><input type="number" id="eacc-balance" placeholder="10000" />
+            </div>
+          </div>
+          <div class="fg">
+            <label>Broker / Prop Firm</label
+            ><input
+              type="text"
+              id="eacc-broker"
+              placeholder="ICMarkets, FTMO..."
+            />
+          </div>
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              justify-content: flex-end;
+              margin-top: 4px;
+            "
+          >
+            <button
+              class="btn btn-ghost"
+              onclick="document.getElementById('edit-acc-modal').classList.add('hidden')"
+            >
+              Annuler
+            </button>
+            <button class="btn btn-primary" onclick="saveEditAcc()">
+              Enregistrer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
