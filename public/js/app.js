@@ -94,7 +94,7 @@ function showApp(me) {
   if (me.role === 'admin') document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
   if (me.role === 'student' || me.role === 'admin') { $('formation-student').classList.remove('hidden'); $('formation-community').classList.add('hidden'); const up = document.getElementById('formation-upsell'); if(up) up.style.display='none'; }
   else { $('formation-student').classList.add('hidden'); $('formation-community').classList.remove('hidden'); }
-  loadAccounts().then(() => { switchTab('dashboard'); loadDashboard(); });
+  loadAccounts().then(() => { if(accounts.length && !selAcc){ selAcc=accounts[0].id; renderAccBar(); } switchTab('dashboard'); loadDashboard(); });
 }
 
 /* ── LOGIN ── */
@@ -109,7 +109,7 @@ $('login-form').addEventListener('submit', async e => {
 
 $('logout-btn').addEventListener('click', async () => {
   await api('POST','/auth/logout');
-  role=''; user=null; trades=[]; accounts=[]; stats=null;
+  role=''; user=null; trades=[]; accounts=[]; stats=null; selAcc=null;
   $('login-form').reset(); showLogin();
 });
 
@@ -135,7 +135,7 @@ function switchTab(t) {
 
 /* ── ACCOUNTS ── */
 async function loadAccounts() {
-  try { accounts = await api('GET','/trades/accounts'); renderAccBar(); updateAccSel(); } catch {}
+  try { accounts = await api('GET','/trades/accounts'); if(accounts.length && !selAcc) selAcc = accounts[0].id; renderAccBar(); updateAccSel(); } catch {}
 }
 function renderAccBar() {
   const list = document.getElementById('sb-acc-list');
