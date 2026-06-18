@@ -5,6 +5,36 @@ const path = require('path');
 const dbPath = process.env.RENDER ? '/data/data.db' : path.join(__dirname, '../data.db');
 const db = new Database(dbPath);
 
+// Auto-migration
+const existingCols = db.prepare("PRAGMA table_info(users)").all().map(c=>c.name);
+const addCol = (col, type) => { if(!existingCols.includes(col)) db.exec('ALTER TABLE users ADD COLUMN '+col+' '+type); };
+addCol('firstname', 'TEXT');
+addCol('lastname', 'TEXT');
+addCol('email', 'TEXT');
+addCol('google_id', 'TEXT');
+addCol('verification_token', 'TEXT');
+addCol('email_verified', 'INTEGER DEFAULT 1');
+addCol('reset_token', 'TEXT');
+addCol('reset_token_expiry', 'INTEGER');
+
+// Migration trades
+const tradesCols = db.prepare("PRAGMA table_info(trades)").all().map(c=>c.name);
+const addTradeCol = (col, type) => { if(!tradesCols.includes(col)) db.exec('ALTER TABLE trades ADD COLUMN '+col+' '+type); };
+addTradeCol('direction', 'TEXT');
+addTradeCol('pnl', 'REAL');
+addTradeCol('lot_size', 'REAL');
+addTradeCol('entry_price', 'REAL');
+addTradeCol('exit_price', 'REAL');
+addTradeCol('stop_loss', 'REAL');
+addTradeCol('take_profit', 'REAL');
+addTradeCol('session', 'TEXT');
+addTradeCol('setup', 'TEXT');
+addTradeCol('timeframe', 'TEXT');
+addTradeCol('emotions', 'TEXT');
+addTradeCol('screenshot2', 'TEXT');
+addTradeCol('entry_time', 'TEXT');
+addTradeCol('exit_time', 'TEXT');
+
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
