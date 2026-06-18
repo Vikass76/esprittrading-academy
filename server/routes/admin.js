@@ -57,6 +57,14 @@ router.delete('/users/:id', requireAdmin, (req, res) => {
   res.json({ success: true });
 });
 
+router.patch('/users/:id/username', requireAdmin, (req, res) => {
+  const { username } = req.body;
+  if (!username) return res.status(400).json({ error: 'Identifiant requis' });
+  const existing = db.prepare('SELECT id FROM users WHERE username = ? AND id != ?').get(username, req.params.id);
+  if (existing) return res.status(400).json({ error: 'Identifiant déjà utilisé' });
+  db.prepare('UPDATE users SET username = ? WHERE id = ?').run(username, req.params.id);
+  res.json({ ok: true });
+});
 router.patch('/users/:id/password', requireAdmin, (req, res) => {
   const { password } = req.body;
   if (!password || password.length < 6) return res.status(400).json({ error: 'Mot de passe invalide (minimum 6 caractères)' });

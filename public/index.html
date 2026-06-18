@@ -900,6 +900,19 @@ function lpTab(t){
 </div>
 
 <div id="toasts"></div>
+<div class="overlay hidden" id="edit-user-modal" style="z-index:10000">
+  <div class="modal" style="max-width:380px">
+    <div class="mh"><h3>Modifier l'élève</h3><button class="mclose" id="edit-user-close"><i class="ti ti-x"></i></button></div>
+    <input type="hidden" id="edit-user-id"/>
+    <div class="fg" style="margin-top:4px"><label>Identifiant</label><input type="text" id="edit-user-username"/></div>
+    <div class="fg" style="margin-top:12px"><label>Nouveau mot de passe (laisser vide pour ne pas modifier)</label><input type="password" id="edit-user-pwd"/></div>
+    <div id="edit-user-msg" class="hidden" style="font-size:.82rem;margin-top:8px;padding:10px 14px;border-radius:8px;border:1px solid"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-secondary" id="edit-user-cancel">Annuler</button>
+      <button class="btn btn-primary" id="edit-user-save">Enregistrer</button>
+    </div>
+  </div>
+</div>
 <div class="overlay hidden" id="user-view-modal" style="z-index:10000;align-items:flex-start;padding:20px">
   <div class="modal modal-lg" style="max-width:900px;width:100%;margin-top:20px">
     <div class="mh">

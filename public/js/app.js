@@ -1092,12 +1092,36 @@ async function loadAdminUsers(){
     el.innerHTML=users.map(u=>`<div class="user-row">
       <div><div class="u-name">${u.username}</div><div class="u-date">Créé le ${fmtDate(u.created_at?.split('T')[0])}</div></div>
       <div style="display:flex;gap:5px">
-        <button class="btn btn-secondary btn-sm vw" data-id="${u.id}" data-n="${u.firstname||u.username}">Voir</button><button class="btn btn-secondary btn-sm rst" data-id="${u.id}" data-n="${u.username}">Réinit.</button>
+        <button class="btn btn-secondary btn-sm vw" data-id="${u.id}" data-n="${u.firstname||u.username}">Voir</button><button class="btn btn-secondary btn-sm rst" data-id="${u.id}" data-n="${u.username}">Modifier</button>
         <button class="btn btn-danger btn-sm del" data-id="${u.id}">Suppr.</button>
       </div></div>`).join('');
     el.querySelectorAll('.vw').forEach(b=>b.addEventListener('click',()=>openUserView(b.dataset.id,b.dataset.n)));
     el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',async()=>{if(!await confirmAction('Supprimer cet élève ?', ''))return;await api('DELETE',`/admin/users/${b.dataset.id}`);toast('Élève supprimé','success');loadAdminUsers();}));
-    el.querySelectorAll('.rst').forEach(b=>b.addEventListener('click',async()=>{const p=prompt(`Nouveau MDP pour ${b.dataset.n} :`);if(!p)return;await api('PATCH',`/admin/users/${b.dataset.id}/password`,{password:p});toast('MDP réinitialisé','success');}));
+    el.querySelectorAll('.rst').forEach(b=>b.addEventListener('click',()=>{
+      document.getElementById('edit-user-id').value = b.dataset.id;
+      document.getElementById('edit-user-username').value = b.dataset.n;
+      document.getElementById('edit-user-pwd').value = '';
+      document.getElementById('edit-user-msg').classList.add('hidden');
+      document.getElementById('edit-user-modal').classList.remove('hidden');
+    }));
+    document.getElementById('edit-user-close').onclick = ()=>document.getElementById('edit-user-modal').classList.add('hidden');
+    document.getElementById('edit-user-cancel').onclick = ()=>document.getElementById('edit-user-modal').classList.add('hidden');
+    document.getElementById('edit-user-save').onclick = async()=>{
+      const id = document.getElementById('edit-user-id').value;
+      const username = document.getElementById('edit-user-username').value.trim();
+      const pwd = document.getElementById('edit-user-pwd').value;
+      const msg = document.getElementById('edit-user-msg');
+      try {
+        if(username) await api('PATCH', '/admin/users/'+id+'/username', {username});
+        if(pwd) await api('PATCH', '/admin/users/'+id+'/password', {password:pwd});
+        msg.style.color='#10b981';msg.style.borderColor='#10b981';msg.style.background='rgba(16,185,129,0.1)';
+        msg.textContent='Modifications enregistrées !';msg.classList.remove('hidden');
+        setTimeout(()=>{document.getElementById('edit-user-modal').classList.add('hidden');loadAdminUsers();},1000);
+      } catch(e){
+        msg.style.color='#ef4444';msg.style.borderColor='#ef4444';msg.style.background='rgba(239,68,68,0.1)';
+        msg.textContent=e.message;msg.classList.remove('hidden');
+      }
+    };
   }catch{toast('Erreur élèves','error');}
 }
 async function openUserView(userId, name) {
@@ -1633,9 +1657,10 @@ function renderPerfBlocks(trades) {
 }
 
 // ── SETUP SUGGESTIONS ─────────────────────────
-function getSetups(){try{return JSON.parse(localStorage.getItem('et_setups')||'[]');}catch(e){return[];}}
-function saveSetupTag(s){if(!s.trim())return;const arr=getSetups();if(!arr.includes(s.trim())){arr.push(s.trim());localStorage.setItem('et_setups',JSON.stringify(arr));}}
-function delSetupTag(s){localStorage.setItem('et_setups',JSON.stringify(getSetups().filter(x=>x!==s)));renderSetupSuggestions();}
+function getSetupsKey(){return 'et_setups_'+(user&&user.id?user.id:'default');}
+function getSetups(){try{return JSON.parse(localStorage.getItem(getSetupsKey())||'[]');}catch(e){return[];}}
+function saveSetupTag(s){if(!s.trim())return;const arr=getSetups();if(!arr.includes(s.trim())){arr.push(s.trim());localStorage.setItem(getSetupsKey(),JSON.stringify(arr));}}
+function delSetupTag(s){localStorage.setItem(getSetupsKey(),JSON.stringify(getSetups().filter(x=>x!==s)));renderSetupSuggestions();}
 function renderSetupSuggestions(){
   const input=document.getElementById('setup-input');
   if(input){input.addEventListener('input',()=>{input.classList.remove('field-error-input');const fg=input.closest('.fg');if(fg)fg.querySelectorAll('.field-error').forEach(e=>e.remove());});}
