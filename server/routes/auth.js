@@ -45,7 +45,8 @@ passport.deserializeUser((id, done) => {
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ error: 'Champs requis' });
-  const user = db.prepare('SELECT * FROM users WHERE username = ? OR email = ?').get(username, username);
+  const usernameLower = username.toLowerCase().trim();
+  const user = db.prepare('SELECT * FROM users WHERE LOWER(username) = ? OR LOWER(email) = ?').get(usernameLower, usernameLower);
   if (!user) return res.status(401).json({ error: 'Identifiant ou mot de passe incorrect' });
   if (!user.password) return res.status(401).json({ error: 'Connectez-vous avec Google' });
   const ok = await bcrypt.compare(password, user.password);
