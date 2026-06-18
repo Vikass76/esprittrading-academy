@@ -36,6 +36,7 @@
           <p class="lp-desc">
             Journal de trades, analytics en temps réel et suivi de performance —
             tout ce qu'il te faut pour passer au niveau supérieur.
+          <button class="mob-cta-btn btn btn-primary" style="display:none;margin-top:24px;width:100%;padding:16px;font-size:1rem;font-weight:800" onclick="document.querySelector('.lp-right').classList.add('show')">Se connecter →</button>
           </p>
           <div class="lp-feat">
             <div class="lp-feat-text">
@@ -688,8 +689,11 @@
           <p class="login-footer" style="padding-bottom: 48px">
             Esprit Trading &copy; 2025 · Gratuit pour tous
           </p>
+          <button class="mob-cta-btn btn btn-primary" style="display:none;position:fixed;bottom:20px;left:20px;right:20px;padding:16px;font-size:1rem;font-weight:800;z-index:500" onclick="document.querySelector('.lp-right').classList.add('show')">Se connecter →</button>
         </div>
         <div class="lp-right">
+
+          <button class="mob-close-btn btn btn-secondary" style="display:none;width:100%;margin-bottom:16px" onclick="document.querySelector('.lp-right').classList.remove('show')">RETOUR</button>
           <div class="lp-form-wrap">
             <div class="lp-tabs">
               <button
