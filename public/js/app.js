@@ -87,6 +87,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 function showLogin() { $('login-page').classList.remove('hidden'); $('app').classList.add('hidden'); }
 
 function showApp(me) {
+  const fb = document.getElementById('feedback-link');
+  if (fb) fb.style.display = 'flex';
   role = me.role; user = me;
   $('login-page').classList.add('hidden'); $('app').classList.remove('hidden');
   $('nav-username').textContent = me.username;

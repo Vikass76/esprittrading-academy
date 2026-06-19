@@ -740,3 +740,6 @@ select option {
 @media(max-width:768px){
   .lp-right.show .mob-close-btn{background:#1a1a2e !important;color:#fff !important;font-weight:800 !important;font-size:1rem !important;border:1px solid rgba(255,255,255,0.15) !important;border-radius:12px !important;padding:16px !important;letter-spacing:.05em !important;box-sizing:border-box !important;width:calc(100% - 40px) !important;left:20px !important;right:20px !important;box-shadow:0 4px 20px rgba(0,0,0,0.5) !important}
 }
+
+#login-page:not(.hidden) ~ #feedback-link,
+body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
