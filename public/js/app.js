@@ -667,6 +667,7 @@ async function loadAnalytics() {
       renderDonutSection('setup',{'':{ total:0,wins:0}},['rgba(255,255,255,0.08)'],['']);
       renderPerfJour([]);
       renderFrequency([]);
+      renderWinnersLosers([]);
       return;
     }
     const p='?account_id='+selAcc;
