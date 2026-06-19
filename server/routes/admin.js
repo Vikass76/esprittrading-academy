@@ -37,6 +37,25 @@ router.get('/users', requireAdmin, (req, res) => {
   res.json(users);
 });
 
+router.get('/users/search', requireAdmin, (req, res) => {
+  const { email } = req.query;
+  if (!email) return res.status(400).json({ error: 'Email requis' });
+  const user = db.prepare("SELECT id, username, role, email, firstname, lastname FROM users WHERE LOWER(email) = ?").get(email.toLowerCase().trim());
+  if (!user) return res.status(404).json({ error: 'Aucun compte trouvé avec cet email' });
+  res.json(user);
+});
+router.patch('/users/:id/demote', requireAdmin, (req, res) => {
+  const user = db.prepare("SELECT * FROM users WHERE id = ?").get(req.params.id);
+  if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+  db.prepare("UPDATE users SET role = 'community' WHERE id = ?").run(req.params.id);
+  res.json({ ok: true, message: 'Acces formation retire' });
+});
+router.patch('/users/:id/promote', requireAdmin, (req, res) => {
+  const user = db.prepare("SELECT * FROM users WHERE id = ?").get(req.params.id);
+  if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+  db.prepare("UPDATE users SET role = 'student' WHERE id = ?").run(req.params.id);
+  res.json({ ok: true, message: 'Accès formation débloqué' });
+});
 router.post('/users', requireAdmin, (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ error: 'Identifiant et mot de passe requis' });

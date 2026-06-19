@@ -31,11 +31,12 @@ function renameAction(title, currentValue) {
     input.addEventListener('keydown', e => { if(e.key==='Enter') cleanup(input.value.trim() || null); });
   });
 }
-function confirmAction(title, msg) {
+function confirmAction(title, msg, okLabel) {
   return new Promise(resolve => {
     const modal = document.getElementById('confirm-modal');
     document.getElementById('confirm-title').textContent = title;
     document.getElementById('confirm-msg').textContent = msg || '';
+    document.getElementById('confirm-ok').textContent = okLabel || 'Supprimer';
     modal.classList.remove('hidden');
     const ok = document.getElementById('confirm-ok');
     const cancel = document.getElementById('confirm-cancel');
@@ -1081,9 +1082,36 @@ $('hbg').addEventListener('click',()=>{const on=$('sidebar').classList.toggle('o
 $('sb-ov').addEventListener('click',closeSb);
 
 /* ── ADMIN ── */
+document.getElementById('access-search-btn')?.addEventListener('click', async () => {
+  const email = document.getElementById('access-search-email').value.trim();
+  const resultEl = document.getElementById('access-result');
+  resultEl.innerHTML = '';
+  if (!email) { toast('Entre un email', 'error'); return; }
+  try {
+    const u = await api('GET', '/admin/users/search?email=' + encodeURIComponent(email));
+    const roleLabel = u.role === 'student' ? 'Déjà élève' : u.role === 'admin' ? 'Administrateur' : 'Compte gratuit';
+    resultEl.innerHTML = '<div class="card" style="padding:14px"><div style="font-weight:700;margin-bottom:4px">' + (u.firstname||'') + ' ' + (u.lastname||u.username) + '</div><div style="font-size:.78rem;color:var(--text-muted);margin-bottom:12px">' + (u.email||'—') + ' · ' + roleLabel + '</div></div>';
+    if (u.role !== 'student' && u.role !== 'admin') {
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-primary';
+      btn.textContent = 'Donner accès à la formation';
+      btn.style.marginTop = '8px';
+      btn.onclick = async () => {
+        if (!await confirmAction('Débloquer la formation pour ' + (u.firstname||u.username) + ' ?', '', 'Confirmer')) return;
+        await api('PATCH', '/admin/users/' + u.id + '/promote', {});
+        toast('Accès formation débloqué !', 'success');
+        resultEl.innerHTML = '';
+        document.getElementById('access-search-email').value = '';
+      };
+      resultEl.appendChild(btn);
+    }
+  } catch (e) {
+    resultEl.innerHTML = '<p style="font-size:.82rem;color:var(--red)">' + e.message + '</p>';
+  }
+});
 document.querySelectorAll('.atab').forEach(btn=>btn.addEventListener('click',()=>{
   document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));
-  document.querySelectorAll('#atab-modules,#atab-users').forEach(s=>s.classList.add('hidden'));
+  document.querySelectorAll('#atab-modules,#atab-users,#atab-access').forEach(s=>s.classList.add('hidden'));
   btn.classList.add('on'); $(`atab-${btn.dataset.atab}`).classList.remove('hidden');
   if(btn.dataset.atab==='users') loadAdminUsers();
 }));
@@ -1096,36 +1124,11 @@ async function loadAdminUsers(){
     el.innerHTML=users.map(u=>`<div class="user-row">
       <div><div class="u-name">${u.username}</div><div class="u-date">Créé le ${fmtDate(u.created_at?.split('T')[0])}</div></div>
       <div style="display:flex;gap:5px">
-        <button class="btn btn-secondary btn-sm vw" data-id="${u.id}" data-n="${u.firstname||u.username}">Voir</button><button class="btn btn-secondary btn-sm rst" data-id="${u.id}" data-n="${u.username}">Modifier</button>
-        <button class="btn btn-danger btn-sm del" data-id="${u.id}">Suppr.</button>
+        <button class="btn btn-secondary btn-sm vw" data-id="${u.id}" data-n="${u.firstname||u.username}">Voir</button>
+        <button class="btn btn-secondary btn-sm dem" data-id="${u.id}" data-n="${u.firstname||u.username}">Retirer accès</button>
       </div></div>`).join('');
     el.querySelectorAll('.vw').forEach(b=>b.addEventListener('click',()=>openUserView(b.dataset.id,b.dataset.n)));
-    el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',async()=>{if(!await confirmAction('Supprimer cet élève ?', ''))return;await api('DELETE',`/admin/users/${b.dataset.id}`);toast('Élève supprimé','success');loadAdminUsers();}));
-    el.querySelectorAll('.rst').forEach(b=>b.addEventListener('click',()=>{
-      document.getElementById('edit-user-id').value = b.dataset.id;
-      document.getElementById('edit-user-username').value = b.dataset.n;
-      document.getElementById('edit-user-pwd').value = '';
-      document.getElementById('edit-user-msg').classList.add('hidden');
-      document.getElementById('edit-user-modal').classList.remove('hidden');
-    }));
-    document.getElementById('edit-user-close').onclick = ()=>document.getElementById('edit-user-modal').classList.add('hidden');
-    document.getElementById('edit-user-cancel').onclick = ()=>document.getElementById('edit-user-modal').classList.add('hidden');
-    document.getElementById('edit-user-save').onclick = async()=>{
-      const id = document.getElementById('edit-user-id').value;
-      const username = document.getElementById('edit-user-username').value.trim();
-      const pwd = document.getElementById('edit-user-pwd').value;
-      const msg = document.getElementById('edit-user-msg');
-      try {
-        if(username) await api('PATCH', '/admin/users/'+id+'/username', {username});
-        if(pwd) await api('PATCH', '/admin/users/'+id+'/password', {password:pwd});
-        msg.style.color='#10b981';msg.style.borderColor='#10b981';msg.style.background='rgba(16,185,129,0.1)';
-        msg.textContent='Modifications enregistrées !';msg.classList.remove('hidden');
-        setTimeout(()=>{document.getElementById('edit-user-modal').classList.add('hidden');loadAdminUsers();},1000);
-      } catch(e){
-        msg.style.color='#ef4444';msg.style.borderColor='#ef4444';msg.style.background='rgba(239,68,68,0.1)';
-        msg.textContent=e.message;msg.classList.remove('hidden');
-      }
-    };
+    el.querySelectorAll('.dem').forEach(b=>b.addEventListener('click',async()=>{if(!await confirmAction('Retirer l\'accès formation pour '+b.dataset.n+' ?', '', 'Confirmer'))return;await api('PATCH',`/admin/users/${b.dataset.id}/demote`,{});toast('Accès formation retiré','success');loadAdminUsers();}));
   }catch{toast('Erreur élèves','error');}
 }
 async function openUserView(userId, name) {
