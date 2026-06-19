@@ -112,6 +112,7 @@ $('login-form').addEventListener('submit', async e => {
 $('logout-btn').addEventListener('click', async () => {
   await api('POST','/auth/logout');
   role=''; user=null; trades=[]; accounts=[]; stats=null; selAcc=null;
+  document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
   $('login-form').reset(); showLogin();
 });
 
