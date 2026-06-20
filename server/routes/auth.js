@@ -12,7 +12,7 @@ const router = express.Router();
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: '/api/auth/google/callback'
+  callbackURL: (process.env.APP_URL || 'http://localhost:3000') + '/api/auth/google/callback'
 }, (accessToken, refreshToken, profile, done) => {
   const email = profile.emails[0].value;
   const name = profile.displayName;
