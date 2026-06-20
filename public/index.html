@@ -1672,7 +1672,7 @@
                 <div class="grid2">
                   <div class="fg">
                     <label>Capital initial ($)</label
-                    ><input type="number" id="o-cap" placeholder="10000" />
+                    ><input type="number" id="o-cap" placeholder="10000" onkeydown="if(['e','E','+','-','^'].includes(event.key))event.preventDefault()" />
                   </div>
                   <div class="fg">
                     <label>Objectif ($)</label
@@ -2739,6 +2739,7 @@
               ><input
                 type="number"
                 name="initial_balance"
+                onkeydown="if(['e','E','+','-','^'].includes(event.key))event.preventDefault()"
                 placeholder="10000"
               />
             </div>
@@ -3140,7 +3141,7 @@
             </div>
             <div class="fg">
               <label>Capital initial</label
-              ><input type="number" id="eacc-balance" placeholder="10000" />
+              ><input type="number" id="eacc-balance" placeholder="10000" onkeydown="if(['e','E','+','-','^'].includes(event.key))event.preventDefault()" />
             </div>
           </div>
           <div class="fg">
