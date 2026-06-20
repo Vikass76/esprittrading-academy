@@ -1424,6 +1424,7 @@ async function loadEcoCalendar() {
   container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)">Chargement...</div>';
   try {
     const today = new Date();
+    const td = today.toISOString().split("T")[0];
     const from = new Date(today.getTime() + ecoWeekOffset*7*24*60*60*1000).toISOString().split('T')[0];
     const to = new Date(today.getTime() + (ecoWeekOffset+1)*7*24*60*60*1000).toISOString().split('T')[0];
     const label = ecoWeekOffset === 0 ? 'Cette semaine' : ecoWeekOffset === 1 ? 'Semaine prochaine' : ecoWeekOffset === -1 ? 'Semaine dernière' : (ecoWeekOffset > 0 ? '+'+ecoWeekOffset+' semaines' : ecoWeekOffset+' semaines');
@@ -1438,11 +1439,11 @@ async function loadEcoCalendar() {
       const c = (e.country||'').toUpperCase();
       const imp = (e.impact||'').toLowerCase();
       // Garder si pays trader OU impact high
-      const d=(e.time||"").substring(0,10); const td=new Date().toISOString().split("T")[0];
+      const d=(e.time||"").substring(0,10);
       const impactOk = ecoImpactFilter === 'all' || (e.impact||'').toLowerCase() === ecoImpactFilter;
-      return d.length===10 && (ecoWeekOffset>0 || d>=td) && TRADER_COUNTRIES.includes(c) && impactOk;
+      return d.length===10 && d>=td && TRADER_COUNTRIES.includes(c) && impactOk;
     });
-    if (!data.length) { container.innerHTML = '<div class="empty"><p>Aucun événement.</p></div>'; return; }
+
     const MONTHS = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
     const DAYS = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
     const FLAGS = {USD:'🇺🇸',EUR:'🇪🇺',GBP:'🇬🇧',JPY:'🇯🇵',CAD:'🇨🇦',AUD:'🇦🇺',NZD:'🇳🇿',CHF:'🇨🇭',CNY:'🇨🇳',US:'🇺🇸',EU:'🇪🇺',GB:'🇬🇧',JP:'🇯🇵',CA:'🇨🇦',AU:'🇦🇺',NZ:'🇳🇿',CH:'🇨🇭',CN:'🇨🇳',DE:'🇩🇪',FR:'🇫🇷',IT:'🇮🇹',ES:'🇪🇸',KR:'🇰🇷',IN:'🇮🇳',BR:'🇧🇷',MX:'🇲🇽',RU:'🇷🇺',ZA:'🇿🇦',SG:'🇸🇬',HK:'🇭🇰',SE:'🇸🇪',NO:'🇳🇴',DK:'🇩🇰',PL:'🇵🇱',CZ:'🇨🇿',HU:'🇭🇺',TR:'🇹🇷',ID:'🇮🇩',TH:'🇹🇭',MY:'🇲🇾',PH:'🇵🇭',VN:'🇻🇳',SA:'🇸🇦',AE:'🇦🇪',EG:'🇪🇬',NG:'🇳🇬',AR:'🇦🇷',CL:'🇨🇱',CO:'🇨🇴',PT:'🇵🇹',GR:'🇬🇷',AT:'🇦🇹',BE:'🇧🇪',NL:'🇳🇱',FI:'🇫🇮',IE:'🇮🇪',IL:'🇮🇱',BD:'🇧🇩',LT:'🇱🇹',LV:'🇱🇻',EE:'🇪🇪',RO:'🇷🇴',HR:'🇭🇷',BG:'🇧🇬',SK:'🇸🇰',SI:'🇸🇮',IS:'🇮🇸',AO:'🇦🇴',MN:'🇲🇳',SC:'🇸🇨',LK:'🇱🇰',PK:'🇵🇰',UA:'🇺🇦',RS:'🇷🇸',BA:'🇧🇦',MK:'🇲🇰',AL:'🇦🇱',GE:'🇬🇪',AM:'🇦🇲',AZ:'🇦🇿',KZ:'🇰🇿',UZ:'🇺🇿',BY:'🇧🇾',MD:'🇲🇩',KE:'🇰🇪',GH:'🇬🇭',TZ:'🇹🇿',ET:'🇪🇹',CI:'🇨🇮',SN:'🇸🇳',MA:'🇲🇦',TN:'🇹🇳',DZ:'🇩🇿',LY:'🇱🇾',SD:'🇸🇩',IQ:'🇮🇶',IR:'🇮🇷',KW:'🇰🇼',QA:'🇶🇦',BH:'🇧🇭',OM:'🇴🇲',JO:'🇯🇴',LB:'🇱🇧',SY:'🇸🇾',YE:'🇾🇪',UY:'🇺🇾',PY:'🇵🇾',BO:'🇧🇴',PE:'🇵🇪',EC:'🇪🇨',VE:'🇻🇪',CR:'🇨🇷',PA:'🇵🇦',GT:'🇬🇹',HN:'🇭🇳',SV:'🇸🇻',NI:'🇳🇮',DO:'🇩🇴',CU:'🇨🇺',TT:'🇹🇹',JM:'🇯🇲',BB:'🇧🇧',BS:'🇧🇸',HT:'🇭🇹',LU:'🇱🇺',MT:'🇲🇹',CY:'🇨🇾',LI:'🇱🇮',AD:'🇦🇩',MC:'🇲🇨',SM:'🇸🇲',VA:'🇻🇦',MZ:'🇲🇿',UG:'🇺🇬',TW:'🇹🇼',CG:'🇨🇬',RW:'🇷🇼',XK:'🇽🇰',NA:'🇳🇦',ME:'🇲🇪',BW:'🇧🇼',PS:'🇵🇸'};
@@ -1453,6 +1454,15 @@ async function loadEcoCalendar() {
       if (!grouped[d]) grouped[d] = [];
       grouped[d].push(e);
     });
+    const todayParts = td.split('-');
+    const fDay = new Date(parseInt(todayParts[0]), parseInt(todayParts[1])-1, parseInt(todayParts[2]));
+    let lDay = new Date(fDay);
+    const fDow = fDay.getDay();
+    lDay.setDate(fDay.getDate() + (fDow === 0 ? 0 : (7 - fDow)));
+    for (let dd = new Date(fDay); dd <= lDay; dd.setDate(dd.getDate()+1)) {
+      const key = dd.getFullYear() + '-' + String(dd.getMonth()+1).padStart(2,'0') + '-' + String(dd.getDate()).padStart(2,'0');
+      if (!grouped[key]) grouped[key] = [];
+    }
     const sortedDates = Object.keys(grouped).sort();
     const tableRows = sortedDates.map(date => {
       const p = date.split('-');
@@ -1460,6 +1470,9 @@ async function loadEcoCalendar() {
       const isToday = date === from;
       const label = DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
       const dayHeader = '<tr><td colspan="7" style="padding:0;height:20px;background:transparent"></td></tr><tr><td colspan="7" style="padding:12px 16px;font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;background:' + (isToday?'var(--gold)':'#2a2a3a') + ';color:' + (isToday?'#000':'#fff') + ';border-radius:8px 8px 0 0">' + label + (isToday?' — Aujourd\'hui':'') + '</td></tr>';
+      if (!grouped[date].length) {
+        return dayHeader + '<tr><td colspan="7" style="padding:24px 16px;text-align:center;color:var(--text-muted);font-size:.85rem;font-style:italic">Aucun événement prévu</td></tr>';
+      }
       return dayHeader + grouped[date].map((e,i) => {
           const impact = (e.impact||'').toLowerCase();
           const ic = impact==='high'?'var(--red)':impact==='medium'?'#f97316':'#9ca3af';
