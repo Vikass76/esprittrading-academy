@@ -678,14 +678,15 @@ async function loadAnalytics() {
     trades=await api('GET','/trades'+p);
     const gW=trades.filter(t=>parseFloat(t.pnl)>0).reduce((a,t)=>a+parseFloat(t.pnl),0);
     const gL=Math.abs(trades.filter(t=>parseFloat(t.pnl)<0).reduce((a,t)=>a+parseFloat(t.pnl),0));
-    const pf=gL>0?(gW/gL).toFixed(2):gW>0?'inf':'—';
+    const pf=gL>0?(gW/gL).toFixed(2):gW>0?'∞':'—';
     const pfC=parseFloat(pf)>=1.5?'var(--green)':parseFloat(pf)>=1?'var(--gold-dark)':'var(--red)';
     [{label:'Total Trades',val:s.total||'—',sub:s.total?s.wins+'W · '+s.losses+'L · '+s.be+'BE':'Aucun trade',cls:'',icon:'ti-chart-bar'},
      {label:'Win Rate',val:s.total?s.winRate+'%':'—',sub:s.total?s.wins+' gagnant'+(s.wins>1?'s':''):'—',cls:s.total?(s.winRate>=50?'g':'r'):'',icon:'ti-percentage'},
      {label:'RR cumulé',val:s.total?(s.totalRR>=0?'+':'')+s.totalRR+'R':'—',sub:s.total?'Moy: '+(s.avgRR>=0?'+':'')+s.avgRR+'R':'—',cls:s.total?(s.totalRR>=0?'o':'r'):'',icon:'ti-trending-up'}
     ].forEach(k=>{const d=document.createElement('div');d.className='kpi';d.innerHTML='<div class="kpi-label"><i class="ti '+k.icon+'"></i>'+k.label+'</div><div class="kpi-val '+k.cls+'">'+k.val+'</div><div class="kpi-sub">'+k.sub+'</div>';anEl.appendChild(d);});
     const pfDiv=document.createElement('div');pfDiv.className='kpi';
-    pfDiv.innerHTML='<div class="kpi-label"><i class="ti ti-math-function"></i>Profit Factor</div><div class="kpi-val" style="color:'+pfC+'">'+pf+'</div><div class="kpi-sub">'+(gL>0?'G:'+gW.toFixed(0)+' P:'+gL.toFixed(0):'—')+'</div>';
+    const pfFontSize = pf==='∞' ? 'font-size:2.7em' : '';
+    pfDiv.innerHTML='<div class="kpi-label"><i class="ti ti-math-function"></i>Profit Factor</div><div class="kpi-val" style="color:'+pfC+';'+pfFontSize+'">'+pf+'</div><div class="kpi-sub">'+(gL>0?'G:'+gW.toFixed(0)+' P:'+gL.toFixed(0):'—')+'</div>';
     anEl.appendChild(pfDiv);
     renderWinnersLosers(trades);
 
