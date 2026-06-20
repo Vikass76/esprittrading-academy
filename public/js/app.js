@@ -84,6 +84,7 @@ function mkChart(id, type, data, opts={}) {
 document.addEventListener('DOMContentLoaded', async () => {
   try { const me = await api('GET','/auth/me'); showApp(me); }
   catch { showLogin(); }
+  finally { const ld = document.getElementById('app-loading'); if (ld) ld.remove(); }
 });
 
 function showLogin() { $('login-page').classList.remove('hidden'); $('app').classList.add('hidden'); }

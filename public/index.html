@@ -13,6 +13,16 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   </head>
   <body>
+    <!-- LOADING SCREEN -->
+    <div id="app-loading" style="position:fixed;inset:0;background:#0a0a0f;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:99999">
+      <img src="/logo.jpg" alt="Esprit Trading" style="width:64px;height:64px;border-radius:50%;border:2px solid #F4C70F"/>
+      <div style="width:40px;height:3px;background:rgba(244,199,15,0.15);border-radius:99px;overflow:hidden">
+        <div style="height:100%;width:40%;background:#F4C70F;border-radius:99px;animation:loadbar 1.2s ease-in-out infinite"></div>
+      </div>
+    </div>
+    <style>
+      @keyframes loadbar { 0% { transform:translateX(-100%); } 100% { transform:translateX(250%); } }
+    </style>
     <!-- LOGIN -->
     <div id="login-page">
       <nav class="lp-nav">
