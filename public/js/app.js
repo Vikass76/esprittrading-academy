@@ -1,3 +1,4 @@
+let ecoWeekOffset = 0;
 /* ═══════════════════════════════════
    ESPRIT TRADING — app.js v3.0
 ═══════════════════════════════════ */
@@ -1161,7 +1162,7 @@ async function openUserView(userId, name) {
     document.getElementById('uv-body').innerHTML = h;
   } catch(e) { document.getElementById('uv-body').innerHTML = '<p>Erreur.</p>'; }
 }
-$('user-form').addEventListener('submit',async e=>{e.preventDefault();await api('POST','/admin/users',{username:$('new-uname').value,password:$('new-upwd').value});$('user-form').reset();toast('Élève créé !','success');loadAdminUsers();});
+
 
 function getThumb(v){const yt=ytId(v.url),th=v.cover||(yt?`https://img.youtube.com/vi/${yt}/mqdefault.jpg`:null);return th?`<img class="adm-thumb" src="${th}"/>`:`<div class="adm-thumb-ph"><i class="ti ti-video"></i></div>`;}
 
@@ -1409,7 +1410,6 @@ document.getElementById('register-form')?.addEventListener('submit', async e => 
 });
 
 // ═══ CALENDRIER ÉCONOMIQUE ═══
-let ecoWeekOffset = 0;
 let ecoImpactFilter = 'all';
 function setEcoFilter(f) {
   ecoImpactFilter = f;
