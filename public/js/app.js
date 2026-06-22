@@ -1006,8 +1006,7 @@ async function loadFormation() {
           ${m.videos.map(v=>{
             const yt=ytId(v.url), th=v.cover||(yt?`https://img.youtube.com/vi/${yt}/mqdefault.jpg`:null);
             const thumbHtml=th?`<div class="vid-thumb"><img src="${th}" alt=""/></div>`:`<div class="vid-thumb"><i class="ti ti-player-play"></i></div>`;
-            if(isLocal(v.url)) return `<div class="vid-item lv" data-src="${v.url}" data-title="${v.title}">${thumbHtml}<div class="vid-info"><div class="vt">${v.title}</div>${v.description?`<div class="vd">${v.description}</div>`:''}</div><i class="ti ti-player-play" style="color:var(--text-muted);flex-shrink:0"></i></div>`;
-            return `<a class="vid-item" href="${v.url}" target="_blank" rel="noopener">${thumbHtml}<div class="vid-info"><div class="vt">${v.title}</div>${v.description?`<div class="vd">${v.description}</div>`:''}</div><i class="ti ti-external-link" style="color:var(--text-muted);flex-shrink:0"></i></a>`;
+            return `<div class="vid-item lv" data-src="${v.url}" data-title="${v.title}">${thumbHtml}<div class="vid-info"><div class="vt">${v.title}</div>${v.description?`<div class="vd">${v.description}</div>`:''}</div><i class="ti ti-player-play" style="color:var(--text-muted);flex-shrink:0"></i></div>`;
           }).join('')}
         </div>
       </div>`).join('');
@@ -1016,9 +1015,24 @@ async function loadFormation() {
   } catch{toast('Erreur formation','error');}
 }
 
-function openVid(src,title) { $('vid-player').src=src; $('vid-modal-title').textContent=title; $('vid-modal').classList.remove('hidden'); $('vid-player').play().catch(()=>{}); }
-$('vid-close').addEventListener('click',()=>{ $('vid-player').pause(); $('vid-player').src=''; $('vid-modal').classList.add('hidden'); });
-$('vid-modal').addEventListener('click',e=>{ if(e.target===$('vid-modal')){ $('vid-player').pause(); $('vid-player').src=''; $('vid-modal').classList.add('hidden'); } });
+function openVid(src,title) {
+  const yt = ytId(src);
+  if (yt) {
+    $('vid-player').classList.add('hidden');
+    $('vid-player-yt').style.display = 'block';
+    $('vid-player-yt').src = 'https://www.youtube-nocookie.com/embed/' + yt + '?autoplay=1&modestbranding=1&rel=0&controls=1';
+  } else {
+    $('vid-player-yt').style.display = 'none';
+    $('vid-player-yt').src = '';
+    $('vid-player').classList.remove('hidden');
+    $('vid-player').src = src;
+    $('vid-player').play().catch(()=>{});
+  }
+  $('vid-modal-title').textContent = title;
+  $('vid-modal').classList.remove('hidden');
+}
+$('vid-close').addEventListener('click',()=>{ $('vid-player').pause(); $('vid-player').src=''; $('vid-player-yt').src=''; $('vid-player-yt').style.display='none'; $('vid-player').classList.remove('hidden'); $('vid-modal').classList.add('hidden'); });
+$('vid-modal').addEventListener('click',e=>{ if(e.target===$('vid-modal')){ $('vid-player').pause(); $('vid-player').src=''; $('vid-player-yt').src=''; $('vid-player-yt').style.display='none'; $('vid-player').classList.remove('hidden'); $('vid-modal').classList.add('hidden'); } });
 
 /* ── OUTILS ── */
 const PV={EURUSD:10,GBPUSD:10,USDJPY:9,GOLD:1,NASDAQ:1,US30:1,BTCUSD:1,GBPJPY:9};

@@ -792,3 +792,5 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
     min-width:600px;
   }
 }
+
+#vid-modal iframe{max-width:900px;width:100%;border-radius:10px}
