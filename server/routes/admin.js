@@ -10,12 +10,17 @@ const fs = require('fs');
 const coversDir = path.join(__dirname, '../../uploads/covers');
 if (!fs.existsSync(coversDir)) fs.mkdirSync(coversDir, { recursive: true });
 
+const UPLOAD_BASE = process.env.RENDER ? '/data/uploads' : path.join(__dirname, '../../uploads');
+const fsExtra = require('fs');
+[UPLOAD_BASE + '/videos', UPLOAD_BASE + '/covers'].forEach(d => {
+  if (!fsExtra.existsSync(d)) fsExtra.mkdirSync(d, { recursive: true });
+});
 const uploadMedia = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
       const dir = file.fieldname === 'cover'
-        ? path.join(__dirname, '../../uploads/covers')
-        : path.join(__dirname, '../../uploads/videos');
+        ? UPLOAD_BASE + '/covers'
+        : UPLOAD_BASE + '/videos';
       cb(null, dir);
     },
     filename: (req, file, cb) => {

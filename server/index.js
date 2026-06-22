@@ -26,7 +26,7 @@ app.use(passport.session());
 
 app.use(express.static(path.join(__dirname, '../public')));
 
-const uploadsDir = path.join(__dirname, '../uploads');
+const uploadsDir = process.env.RENDER ? '/data/uploads' : path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 app.use('/uploads', express.static(uploadsDir));
 
