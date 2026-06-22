@@ -1006,7 +1006,7 @@ async function loadFormation() {
           ${m.videos.map(v=>{
             const th=v.cover||null;
             const thumbHtml=th?`<div class="vid-thumb"><img src="${th}" alt=""/></div>`:`<div class="vid-thumb"><i class="ti ti-player-play"></i></div>`;
-            return `<div class="vid-item lv" data-src="${v.url}" data-title="${v.title}">${thumbHtml}<div class="vid-info"><div class="vt">${v.title}</div>${v.description?`<div class="vd">${v.description}</div>`:''}</div><i class="ti ti-player-play" style="color:var(--text-muted);flex-shrink:0"></i></div>`;
+            return `<div class="vid-item lv" data-src="${v.url}" data-title="${v.title}">${thumbHtml}<div class="vid-info"><div class="vt">${v.title}</div>${v.description?`<div class="vd">${v.description}</div>`:''}</div></div>`;
           }).join('')}
         </div>
       </div>`).join('');
