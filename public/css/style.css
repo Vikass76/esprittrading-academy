@@ -757,3 +757,15 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
     scroll-snap-align:start;
   }
 }
+
+@media(max-width:768px){
+  input[type="date"]#f-from:invalid::before,
+  input[type="date"]#f-to:invalid::before{
+    content: "jj/mm/aaaa";
+    color: var(--text-muted);
+  }
+  input[type="date"]#f-from:not([value=""])::before,
+  input[type="date"]#f-to:not([value=""])::before{
+    content: "";
+  }
+}
