@@ -1004,7 +1004,7 @@ async function loadFormation() {
         </div>
         <div class="vid-list">
           ${m.videos.map(v=>{
-            const yt=ytId(v.url), th=v.cover||(yt?`https://img.youtube.com/vi/${yt}/mqdefault.jpg`:null);
+            const th=v.cover||null;
             const thumbHtml=th?`<div class="vid-thumb"><img src="${th}" alt=""/></div>`:`<div class="vid-thumb"><i class="ti ti-player-play"></i></div>`;
             return `<div class="vid-item lv" data-src="${v.url}" data-title="${v.title}">${thumbHtml}<div class="vid-info"><div class="vt">${v.title}</div>${v.description?`<div class="vd">${v.description}</div>`:''}</div><i class="ti ti-player-play" style="color:var(--text-muted);flex-shrink:0"></i></div>`;
           }).join('')}
@@ -1181,7 +1181,7 @@ async function openUserView(userId, name) {
 }
 
 
-function getThumb(v){const yt=ytId(v.url),th=v.cover||(yt?`https://img.youtube.com/vi/${yt}/mqdefault.jpg`:null);return th?`<img class="adm-thumb" src="${th}"/>`:`<div class="adm-thumb-ph"><i class="ti ti-video"></i></div>`;}
+function getThumb(v){const th=v.cover;return th?`<img class="adm-thumb" src="${th}"/>`:`<div class="adm-thumb-ph"><i class="ti ti-video"></i></div>`;}
 
 async function loadAdminMods(){
   try{
