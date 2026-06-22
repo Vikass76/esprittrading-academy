@@ -769,3 +769,26 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
     content: "";
   }
 }
+
+@media(max-width:768px){
+  #winners-losers{
+    grid-template-columns:1fr !important;
+  }
+}
+
+@media(max-width:768px){
+  .an-freq-grid{
+    grid-template-columns:1fr !important;
+  }
+}
+
+@media(max-width:768px){
+  #eco-cal-content{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    padding-right:8px;
+  }
+  #eco-cal-content table{
+    min-width:600px;
+  }
+}

@@ -1377,7 +1377,9 @@
               Performance par paire
             </div>
             <div class="an-card" style="margin-bottom: 28px">
-              <table class="perf-table" id="pair-tbl"></table>
+              <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+                <table class="perf-table" id="pair-tbl"></table>
+              </div>
             </div>
             <div class="an-section-title" style="margin-top: 8px">
               Performances par jour
@@ -1405,6 +1407,7 @@
               <i class="ti ti-info-circle an-info-icon"></i>
             </div>
             <div
+              class="an-freq-grid"
               style="
                 display: grid;
                 grid-template-columns: 1fr 1fr 1fr;
