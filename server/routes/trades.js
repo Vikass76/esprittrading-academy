@@ -6,8 +6,10 @@ const db = require('../db');
 const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 
+const SCREENSHOT_BASE = process.env.RENDER ? '/data/uploads' : path.join(__dirname, '../../uploads');
+if (!fs.existsSync(SCREENSHOT_BASE)) fs.mkdirSync(SCREENSHOT_BASE, { recursive: true });
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, '../../uploads')),
+  destination: (req, file, cb) => cb(null, SCREENSHOT_BASE),
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
     cb(null, `trade_${req.session.userId}_${Date.now()}_${Math.random().toString(36).substr(2,5)}${ext}`);
