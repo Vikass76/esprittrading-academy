@@ -743,3 +743,17 @@ select option {
 
 #login-page:not(.hidden) ~ #feedback-link,
 body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
+
+@media(max-width:768px){
+  .dash-week-grid{
+    display:flex !important;
+    overflow-x:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+    scroll-snap-type:x mandatory;
+    gap:8px !important;
+  }
+  .dash-week-grid > div{
+    flex:0 0 calc(33.333% - 6px);
+    scroll-snap-align:start;
+  }
+}

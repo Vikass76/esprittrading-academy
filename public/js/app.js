@@ -1537,7 +1537,7 @@ function renderWeekCal(trades) {
     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'
     + '<div style="font-size:.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-muted)">Semaine du ' + monday.getDate() + ' ' + MONTHS[monday.getMonth()] + '</div>'
     + '</div>'
-    + '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px">'
+    + '<div class="dash-week-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px">'
     + week.map(d => {
       const ds = d.toISOString().split('T')[0];
       const data = byDate[ds];
