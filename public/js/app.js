@@ -94,6 +94,7 @@ function showApp(me) {
   if (fb) fb.style.display = 'flex';
   role = me.role; user = me;
   $('login-page').classList.add('hidden'); $('app').classList.remove('hidden');
+  window.scrollTo(0, 0);
   $('nav-username').textContent = me.username;
   $('user-initials').textContent = me.username.slice(0,2).toUpperCase();
   if (me.role === 'admin') document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
