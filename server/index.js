@@ -70,5 +70,6 @@ app.get('/api/eco-calendar', (req, res) => {
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../public/index.html')));
 
 require('./db');
+require('./cronPayments').startPaymentCron();
 
 app.listen(PORT, () => console.log('Serveur démarré sur http://localhost:' + PORT));
