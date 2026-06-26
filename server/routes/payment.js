@@ -3,6 +3,7 @@ const express = require('express');
 const Stripe = require('stripe');
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const router = express.Router();
+const db = require('../db');
 
 const PRICES = {
   full: 99000,   // 990,00 EUR en centimes
@@ -48,6 +49,37 @@ router.post('/create-intent', async (req, res) => {
   } catch (err) {
     console.error('Erreur create-intent:', err);
     res.status(500).json({ error: 'Erreur lors de la creation du paiement' });
+  }
+});
+
+router.post('/create-retry-intent', async (req, res) => {
+  const { paymentId } = req.body;
+  if (!paymentId) {
+    return res.status(400).json({ error: 'paymentId requis' });
+  }
+
+  try {
+    const payment = db.prepare("SELECT * FROM payments WHERE id = ? AND status = 'failed'").get(paymentId);
+    if (!payment) {
+      return res.status(404).json({ error: 'Paiement introuvable ou deja regle' });
+    }
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: payment.amount_due,
+      currency: 'eur',
+      customer: payment.stripe_customer_id,
+      metadata: {
+        plan: 'split-retry',
+        email: payment.email,
+        payment_id: String(payment.id),
+      },
+      automatic_payment_methods: { enabled: true, allow_redirects: 'never' },
+    });
+
+    res.json({ clientSecret: paymentIntent.client_secret, amount: payment.amount_due, email: payment.email });
+  } catch (err) {
+    console.error('Erreur create-retry-intent:', err);
+    res.status(500).json({ error: 'Erreur lors de la creation du paiement de relance' });
   }
 });
 

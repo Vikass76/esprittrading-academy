@@ -30,6 +30,19 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
       return res.json({ received: true });
     }
 
+    if (plan === 'split-retry') {
+      try {
+        const paymentId = paymentIntent.metadata.payment_id;
+        db.prepare("UPDATE payments SET status = 'paid', last_attempt_at = ? WHERE id = ?")
+          .run(Date.now(), paymentId);
+        db.prepare("UPDATE users SET role = 'student' WHERE LOWER(email) = ?").run(email.toLowerCase());
+        console.log(`Relance de paiement reussie pour ${email}, acces reactive`);
+      } catch (err) {
+        console.error('Erreur traitement relance paiement:', err);
+      }
+      return res.json({ received: true });
+    }
+
     try {
       await handleSuccessfulPayment({
         email,
