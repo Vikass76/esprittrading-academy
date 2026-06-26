@@ -7,6 +7,7 @@ const { Resend } = require('resend');
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const MAX_RETRIES = 3;
+const RETRY_DELAYS_DAYS = [3, 7, 14]; // delai avant chaque retry: J+3, puis J+7, puis J+14
 const appUrl = process.env.APP_URL || 'http://localhost:3000';
 
 async function processPendingPayments() {
@@ -45,7 +46,7 @@ async function attemptCharge(payment) {
     console.error(`[cron-payments] Echec prelevement pour ${payment.email}:`, err.message);
     const newRetryCount = payment.retry_count + 1;
 
-    if (newRetryCount >= MAX_RETRIES) {
+    if (newRetryCount > MAX_RETRIES) {
       // Echec definitif -> bloquer l'acces formation + email de relance
       db.prepare("UPDATE payments SET status = 'failed', retry_count = ?, last_attempt_at = ? WHERE id = ?")
         .run(newRetryCount, Date.now(), payment.id);
@@ -57,9 +58,11 @@ async function attemptCharge(payment) {
          <a href="${appUrl}/checkout.html?retry=${payment.id}" style="display:inline-block;background:#F4C70F;color:#000;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;margin:16px 0">Relancer mon paiement</a>`);
       console.log(`[cron-payments] Acces bloque pour ${payment.email} apres ${newRetryCount} echecs`);
     } else {
-      db.prepare("UPDATE payments SET retry_count = ?, last_attempt_at = ? WHERE id = ?")
-        .run(newRetryCount, Date.now(), payment.id);
-      console.log(`[cron-payments] Retry ${newRetryCount}/${MAX_RETRIES} programme pour ${payment.email}`);
+      const delayDays = RETRY_DELAYS_DAYS[newRetryCount - 1] || 14;
+      const nextDueDate = Date.now() + delayDays * 24 * 60 * 60 * 1000;
+      db.prepare("UPDATE payments SET retry_count = ?, last_attempt_at = ?, due_date = ? WHERE id = ?")
+        .run(newRetryCount, Date.now(), nextDueDate, payment.id);
+      console.log(`[cron-payments] Retry ${newRetryCount}/${MAX_RETRIES} programme pour ${payment.email} dans ${delayDays} jour(s)`);
     }
   }
 }
