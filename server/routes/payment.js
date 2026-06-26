@@ -16,17 +16,15 @@ router.post('/create-intent', async (req, res) => {
   if (!plan || !PRICES[plan]) {
     return res.status(400).json({ error: 'Offre invalide' });
   }
-  if (!email) {
-    return res.status(400).json({ error: 'Email requis' });
-  }
+  const safeEmail = email || 'pending@esprittrading.fr';
 
   try {
     // Chercher ou creer un Customer Stripe pour cet email
-    const existingCustomers = await stripe.customers.list({ email, limit: 1 });
+    const existingCustomers = await stripe.customers.list({ email: safeEmail, limit: 1 });
     let customer = existingCustomers.data[0];
     if (!customer) {
       customer = await stripe.customers.create({
-        email,
+        email: safeEmail,
         name: [firstname, lastname].filter(Boolean).join(' ') || undefined,
       });
     }
@@ -38,7 +36,7 @@ router.post('/create-intent', async (req, res) => {
       setup_future_usage: plan === 'split' ? 'off_session' : undefined,
       metadata: {
         plan,
-        email,
+        email: safeEmail,
         firstname: firstname || '',
         lastname: lastname || '',
       },
@@ -80,6 +78,22 @@ router.post('/create-retry-intent', async (req, res) => {
   } catch (err) {
     console.error('Erreur create-retry-intent:', err);
     res.status(500).json({ error: 'Erreur lors de la creation du paiement de relance' });
+  }
+});
+
+router.post('/update-intent-metadata', async (req, res) => {
+  const { paymentIntentId, email, firstname, lastname } = req.body;
+  if (!paymentIntentId || !email) {
+    return res.status(400).json({ error: 'paymentIntentId et email requis' });
+  }
+  try {
+    await stripe.paymentIntents.update(paymentIntentId, {
+      metadata: { email, firstname: firstname || '', lastname: lastname || '' },
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Erreur update-intent-metadata:', err);
+    res.status(500).json({ error: 'Erreur mise a jour' });
   }
 });
 
