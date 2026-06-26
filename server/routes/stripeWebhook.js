@@ -97,28 +97,28 @@ async function handleSuccessfulPayment({ email, firstname, lastname, plan, custo
       await resend.emails.send({
         from: 'Esprit Trading <noreply@mail.esprittrading.fr>',
         to: emailLower,
-        subject: 'Bienvenue dans OTE 705 - Tes acces',
+        subject: 'Bienvenue dans OTE 705 - Tes accès',
         html: `<div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:32px">
           <h2 style="color:#F4C70F">Esprit Trading</h2>
           <p>Bonjour ${firstname || ''},</p>
-          <p>Ton paiement a ete confirme et ta formation OTE 705 est maintenant debloquee !</p>
+          <p>Ton paiement a été confirmé et ta formation OTE 705 est maintenant débloquée !</p>
           <p>Voici tes identifiants de connexion :</p>
           <p><strong>Identifiant :</strong> ${user.username}<br/>
           <strong>Mot de passe temporaire :</strong> ${tempPassword}</p>
-          <a href="${appUrl}" style="display:inline-block;background:#F4C70F;color:#000;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;margin:16px 0">Acceder a la plateforme</a>
-          <p style="color:#666;font-size:.85rem">Pense a changer ton mot de passe une fois connecte.</p>
+          <a href="${appUrl}" style="display:inline-block;background:#F4C70F;color:#000;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;margin:16px 0">Accéder à la plateforme</a>
+          <p style="color:#666;font-size:.85rem">Pense à changer ton mot de passe une fois connecté.</p>
         </div>`
       });
     } else {
       await resend.emails.send({
         from: 'Esprit Trading <noreply@mail.esprittrading.fr>',
         to: emailLower,
-        subject: 'Ta formation OTE 705 est debloquee !',
+        subject: 'Ta formation OTE 705 est débloquée !',
         html: `<div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:32px">
           <h2 style="color:#F4C70F">Esprit Trading</h2>
           <p>Bonjour ${firstname || user.firstname || ''},</p>
-          <p>Ton paiement a ete confirme et ta formation OTE 705 est maintenant debloquee sur ton compte existant !</p>
-          <a href="${appUrl}" style="display:inline-block;background:#F4C70F;color:#000;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;margin:16px 0">Acceder a la plateforme</a>
+          <p>Ton paiement a été confirmé et ta formation OTE 705 est maintenant débloquée sur ton compte existant !</p>
+          <a href="${appUrl}" style="display:inline-block;background:#F4C70F;color:#000;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;margin:16px 0">Accéder à la plateforme</a>
         </div>`
       });
     }

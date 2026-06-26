@@ -40,7 +40,7 @@ async function attemptCharge(payment) {
         .run(Date.now(), payment.id);
       console.log(`[cron-payments] Paiement reussi pour ${payment.email}`);
       await sendEmail(payment.email, 'Confirmation de ton 2e versement - OTE 705',
-        `<p>Ton 2e versement de ${(payment.amount_due/100).toFixed(2)}€ a ete preleve avec succes. Merci !</p>`);
+        `<p>Ton 2e versement de ${(payment.amount_due/100).toFixed(2)}€ a été prélevé avec succès. Merci !</p>`);
     }
   } catch (err) {
     console.error(`[cron-payments] Echec prelevement pour ${payment.email}:`, err.message);
@@ -52,9 +52,9 @@ async function attemptCharge(payment) {
         .run(newRetryCount, Date.now(), payment.id);
       db.prepare("UPDATE users SET role = 'community' WHERE LOWER(email) = ?").run(payment.email.toLowerCase());
 
-      await sendEmail(payment.email, 'Action requise - ton acces a la formation OTE 705',
-        `<p>Nous n'avons pas pu preleve ton 2e versement de ${(payment.amount_due/100).toFixed(2)}€ apres plusieurs tentatives.</p>
-         <p>Ton acces a la formation a ete temporairement suspendu. Pour le reactiver, merci de relancer ton paiement :</p>
+      await sendEmail(payment.email, 'Action requise - ton accès à la formation OTE 705',
+        `<p>Nous n'avons pas pu prélever ton 2e versement de ${(payment.amount_due/100).toFixed(2)}€ après plusieurs tentatives.</p>
+         <p>Ton accès à la formation a été temporairement suspendu. Pour le réactiver, merci de relancer ton paiement :</p>
          <a href="${appUrl}/checkout.html?retry=${payment.id}" style="display:inline-block;background:#F4C70F;color:#000;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;margin:16px 0">Relancer mon paiement</a>`);
       console.log(`[cron-payments] Acces bloque pour ${payment.email} apres ${newRetryCount} echecs`);
     } else {
