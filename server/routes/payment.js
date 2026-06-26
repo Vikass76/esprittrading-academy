@@ -6,7 +6,7 @@ const router = express.Router();
 
 const PRICES = {
   full: 99000,   // 990,00 EUR en centimes
-  split: 45000,  // 450,00 EUR en centimes (1er versement)
+  split: 49500,  // 495,00 EUR en centimes (1er versement)
 };
 
 router.post('/create-intent', async (req, res) => {

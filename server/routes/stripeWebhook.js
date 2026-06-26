@@ -74,7 +74,7 @@ async function handleSuccessfulPayment({ email, firstname, lastname, plan, custo
     db.prepare(`
       INSERT INTO payments (email, stripe_customer_id, stripe_payment_method_id, plan, amount_due, due_date, status)
       VALUES (?, ?, ?, ?, ?, ?, 'pending')
-    `).run(emailLower, customerId, paymentMethodId, plan, 45000, dueDate);
+    `).run(emailLower, customerId, paymentMethodId, plan, 49500, dueDate);
   }
 
   // Email de bienvenue
