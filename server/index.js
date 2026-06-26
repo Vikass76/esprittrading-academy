@@ -35,7 +35,18 @@ app.use('/api/auth', authRouter);
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/videos', require('./routes/videos'));
 app.use('/api/trades', require('./routes/trades'));
-app.use('/api/payment', require('./routes/payment'));
+const cors = require('cors');
+const corsOptions = {
+  origin: [
+    'http://127.0.0.1:5500',
+    'http://localhost:5500',
+    'https://esprittrading.fr',
+    'https://www.esprittrading.fr',
+    'https://formation-ote-705.vercel.app'
+  ],
+  methods: ['GET', 'POST'],
+};
+app.use('/api/payment', cors(corsOptions), require('./routes/payment'));
 
 const { execFile } = require('child_process');
 let _ecoCache = null, _ecoCacheTime = 0;
