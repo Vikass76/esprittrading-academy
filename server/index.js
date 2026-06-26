@@ -34,6 +34,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/videos', require('./routes/videos'));
 app.use('/api/trades', require('./routes/trades'));
+app.use('/api/payment', require('./routes/payment'));
 
 const { execFile } = require('child_process');
 let _ecoCache = null, _ecoCacheTime = 0;
