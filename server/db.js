@@ -166,4 +166,22 @@ if (!adminExists) {
   console.log('Compte admin créé — admin / admin123');
 }
 
+
+// Table de suivi des paiements en plusieurs fois (Stripe)
+db.exec(`
+  CREATE TABLE IF NOT EXISTS payments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL,
+    stripe_customer_id TEXT NOT NULL,
+    stripe_payment_method_id TEXT NOT NULL,
+    plan TEXT NOT NULL DEFAULT 'split',
+    amount_due REAL NOT NULL,
+    due_date INTEGER NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    retry_count INTEGER NOT NULL DEFAULT 0,
+    last_attempt_at INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+`);
+
 module.exports = db;
