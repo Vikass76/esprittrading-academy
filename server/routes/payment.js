@@ -41,7 +41,7 @@ router.post('/create-intent', async (req, res) => {
         firstname: firstname || '',
         lastname: lastname || '',
       },
-      automatic_payment_methods: { enabled: true },
+      automatic_payment_methods: { enabled: true, allow_redirects: 'never' },
     });
 
     res.json({ clientSecret: paymentIntent.client_secret });
