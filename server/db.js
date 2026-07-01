@@ -184,4 +184,19 @@ db.exec(`
   );
 `);
 
+
+// Table de suivi des RDV mensuels
+db.exec(`
+  CREATE TABLE IF NOT EXISTS appointments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    calendly_event_id TEXT,
+    booked_at INTEGER NOT NULL,
+    unlocked_at INTEGER NOT NULL,
+    status TEXT NOT NULL DEFAULT 'confirmed',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  );
+`);
+
 module.exports = db;

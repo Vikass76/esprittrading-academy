@@ -47,6 +47,7 @@ const corsOptions = {
   methods: ['GET', 'POST'],
 };
 app.use('/api/payment', cors(corsOptions), require('./routes/payment'));
+app.use('/api/appointments', require('./routes/appointments'));
 
 const { execFile } = require('child_process');
 let _ecoCache = null, _ecoCacheTime = 0;
