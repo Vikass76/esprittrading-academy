@@ -32,7 +32,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) =>
       }
     }
 
-    const event = JSON.parse(req.body.toString());
+    const event = typeof req.body === 'string' ? JSON.parse(req.body) : (Buffer.isBuffer(req.body) ? JSON.parse(req.body.toString()) : req.body);
 
     if (event.event === 'invitee.created') {
       const email = event.payload?.email?.toLowerCase().trim();
