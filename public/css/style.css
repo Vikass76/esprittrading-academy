@@ -943,3 +943,20 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
   border-top: 1px solid var(--border);
   margin: 12px 0 16px;
 }
+
+.rdv-join-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold);
+  color: #000;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.rdv-join-btn:hover {
+  opacity: 0.85;
+}

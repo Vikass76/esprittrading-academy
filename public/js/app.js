@@ -1071,6 +1071,11 @@ async function loadRdvStatus() {
       $('rdv-available').classList.add('hidden');
       $('rdv-locked').classList.remove('hidden');
       $('rdv-unlock-date').textContent = status.unlocked_date;
+      if (status.booked_date) $('rdv-booked-date').textContent = status.booked_date;
+      if (status.meeting_link) {
+        $('rdv-meeting-link').href = status.meeting_link;
+        $('rdv-meeting-link-wrap').classList.remove('hidden');
+      }
     }
   } catch(e) {
     console.error('Erreur statut RDV:', e);

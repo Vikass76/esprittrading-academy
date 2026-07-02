@@ -193,10 +193,15 @@ db.exec(`
     calendly_event_id TEXT,
     booked_at INTEGER NOT NULL,
     unlocked_at INTEGER NOT NULL,
+    meeting_link TEXT,
     status TEXT NOT NULL DEFAULT 'confirmed',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   );
 `);
+
+// Migration meeting_link
+const apptCols = db.prepare('PRAGMA table_info(appointments)').all().map(c => c.name);
+if (apptCols.indexOf('meeting_link') < 0) db.exec('ALTER TABLE appointments ADD COLUMN meeting_link TEXT');
 
 module.exports = db;

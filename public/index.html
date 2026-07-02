@@ -1747,8 +1747,14 @@
                 <div id="rdv-locked" class="hidden">
                   <div class="rdv-locked-box">
                     <div class="rdv-locked-icon"><i class="ti ti-calendar-check"></i></div>
-                    <h3>RDV déjà pris ✅</h3>
-                    <p id="rdv-locked-msg">Ton prochain RDV sera disponible à partir du <strong id="rdv-unlock-date">--</strong></p>
+                    <h3>Session réservée ✅</h3>
+                    <p>Ton RDV est confirmé pour le <strong id="rdv-booked-date">--</strong></p>
+                    <div id="rdv-meeting-link-wrap" class="hidden" style="margin-top:16px">
+                      <a id="rdv-meeting-link" href="#" target="_blank" class="rdv-join-btn">
+                        <i class="ti ti-video"></i> Rejoindre l'appel
+                      </a>
+                    </div>
+                    <p style="margin-top:20px;font-size:0.82rem;">Prochain RDV disponible à partir du <strong id="rdv-unlock-date" style="color:var(--gold)">--</strong></p>
                   </div>
                 </div>
               </div>

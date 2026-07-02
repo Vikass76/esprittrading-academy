@@ -37,6 +37,10 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) =>
     if (event.event === 'invitee.created') {
       const email = event.payload?.email?.toLowerCase().trim();
       const eventId = event.payload?.event;
+      const meetingLink = event.payload?.location?.join_url
+        || event.payload?.location?.data?.join_url
+        || event.payload?.location?.location
+        || null;
 
       if (!email) return res.json({ received: true });
 
@@ -51,11 +55,22 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) =>
 
       // Enregistrer le nouveau RDV
       db.prepare(`
-        INSERT INTO appointments (user_id, calendly_event_id, booked_at, unlocked_at, status)
-        VALUES (?, ?, ?, ?, 'confirmed')
-      `).run(user.id, eventId || null, now, unlockedAt);
+        INSERT INTO appointments (user_id, calendly_event_id, booked_at, unlocked_at, meeting_link, status)
+        VALUES (?, ?, ?, ?, ?, 'confirmed')
+      `).run(user.id, eventId || null, now, unlockedAt, meetingLink);
 
       console.log(`[appointments] RDV enregistre pour ${email}, debloquage le ${new Date(unlockedAt).toLocaleDateString('fr-FR')}`);
+    }
+
+    if (event.event === 'invitee.canceled') {
+      const email = event.payload?.email?.toLowerCase().trim();
+      if (!email) return res.json({ received: true });
+
+      const user = db.prepare('SELECT id FROM users WHERE LOWER(email) = ?').get(email);
+      if (!user) return res.json({ received: true });
+
+      db.prepare("DELETE FROM appointments WHERE user_id = ?").run(user.id);
+      console.log(`[appointments] RDV annule pour ${email} - onglet RDV debloque`);
     }
 
     res.json({ received: true });
@@ -82,12 +97,18 @@ router.get('/status', (req, res) => {
     return res.json({ available: true });
   }
 
+  const bookedDate = new Date(appointment.booked_at).toLocaleDateString('fr-FR', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+  });
+
   return res.json({
     available: false,
     unlocked_at: appointment.unlocked_at,
     unlocked_date: new Date(appointment.unlocked_at).toLocaleDateString('fr-FR', {
       day: 'numeric', month: 'long', year: 'numeric'
-    })
+    }),
+    booked_date: bookedDate,
+    meeting_link: appointment.meeting_link
   });
 });
 
