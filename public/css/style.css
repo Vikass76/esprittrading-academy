@@ -899,3 +899,47 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
   background: var(--bg-active);
   color: var(--gold);
 }
+
+/* === RDV Card === */
+.rdv-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 24px 0;
+  box-shadow: var(--shadow-sm);
+}
+.rdv-intro {
+  text-align: center;
+  margin-bottom: 4px;
+}
+.rdv-intro h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.rdv-intro p {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.rdv-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--gold-light);
+  border: 1px solid var(--gold-glow);
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 99px;
+  padding: 5px 12px;
+  margin-bottom: 10px;
+}
+.rdv-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 12px 0 16px;
+}
