@@ -1061,6 +1061,12 @@ async function loadFormation() {
   } catch{toast('Erreur formation','error');}
 }
 
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.event === 'calendly.event_scheduled') {
+    setTimeout(() => loadRdvStatus(), 3000);
+  }
+});
+
 async function loadRdvStatus() {
   try {
     const status = await api('GET', '/appointments/status');
