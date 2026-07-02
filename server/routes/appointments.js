@@ -51,7 +51,12 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) =>
       if (!user) return res.json({ received: true });
 
       const now = Date.now();
-      const unlockedAt = now + LOCK_DURATION_MS;
+      // Recuperer la vraie date du RDV depuis le payload Calendly
+      const rdvStartTime = event.payload?.scheduled_event?.start_time
+        || event.payload?.event_start_time
+        || null;
+      const rdvAt = rdvStartTime ? new Date(rdvStartTime).getTime() : now;
+      const unlockedAt = rdvAt + LOCK_DURATION_MS;
 
       // Supprimer l'ancien RDV si existant
       db.prepare('DELETE FROM appointments WHERE user_id = ?').run(user.id);
@@ -60,9 +65,9 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) =>
       db.prepare(`
         INSERT INTO appointments (user_id, calendly_event_id, booked_at, unlocked_at, meeting_link, status)
         VALUES (?, ?, ?, ?, ?, 'confirmed')
-      `).run(user.id, eventId || null, now, unlockedAt, meetingLink);
+      `).run(user.id, eventId || null, rdvAt, unlockedAt, meetingLink);
 
-      console.log(`[appointments] RDV enregistre pour ${email}, debloquage le ${new Date(unlockedAt).toLocaleDateString('fr-FR')}`);
+      console.log(`[appointments] RDV enregistre pour ${email}, RDV le ${new Date(rdvAt).toLocaleDateString('fr-FR')}, debloquage le ${new Date(unlockedAt).toLocaleDateString('fr-FR')}`);
     }
 
     if (event.event === 'invitee.canceled') {
@@ -122,7 +127,8 @@ router.get('/status', async (req, res) => {
   }
 
   const bookedDate = new Date(appointment.booked_at).toLocaleDateString('fr-FR', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
   });
 
   return res.json({
