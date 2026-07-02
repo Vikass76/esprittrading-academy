@@ -99,7 +99,18 @@ function showApp(me) {
   $('user-initials').textContent = me.username.slice(0,2).toUpperCase();
   if (me.role === 'admin') document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
   if (me.role === 'student' || me.role === 'admin') { $('formation-student').classList.remove('hidden'); $('formation-community').classList.add('hidden'); const up = document.getElementById('formation-upsell'); if(up) up.style.display='none'; }
-  else { $('formation-student').classList.add('hidden'); $('formation-community').classList.remove('hidden'); }
+  else { $('formation-student').classList.add('hidden'); $('formation-community').classList.remove('hidden');
+    // Afficher subnav bloque pour community
+    const subnavC = $('formation-subnav');
+    if (subnavC) {
+      subnavC.classList.remove('hidden');
+      subnavC.querySelectorAll('.nav-subitem').forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.4';
+        btn.style.cursor = 'not-allowed';
+      });
+    }
+  }
   loadAccounts().then(() => { if(accounts.length && !selAcc){ selAcc=accounts[0].id; renderAccBar(); } switchTab('dashboard'); loadDashboard(); });
 }
 
@@ -117,7 +128,7 @@ $('logout-btn').addEventListener('click', async () => {
   await api('POST','/auth/logout');
   role=''; user=null; trades=[]; accounts=[]; stats=null; selAcc=null;
   document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
-  $('login-form').reset(); showLogin();
+  $('login-form').reset(); showLogin(); window.location.reload();
 });
 
 /* ── TABS ── */
@@ -138,6 +149,16 @@ function switchTab(t) {
   document.querySelectorAll('.nav-item[data-tab]').forEach(b => b.classList.remove('active'));
   $(`tab-${t}`)?.classList.remove('hidden');
   document.querySelectorAll(`.nav-item[data-tab="${t}"]`).forEach(b => b.classList.add('active'));
+
+  // Fermer le subnav formation si on change d'onglet
+  const subnav = $('formation-subnav');
+  if (subnav) {
+    if (t === 'formation') {
+      subnav.classList.remove('hidden');
+    } else {
+      subnav.classList.add('hidden');
+    }
+  }
 }
 
 /* ── ACCOUNTS ── */
@@ -992,9 +1013,34 @@ function renderPairTable(byPair){
 /* ── FORMATION ── */
 async function loadFormation() {
   if(role!=='student'&&role!=='admin') return;
+
+  // Afficher les sous-onglets dans la sidebar et reset sur Videos
+  const subnav = $('formation-subnav');
+  if (subnav) subnav.classList.remove('hidden');
+
+  // Reset sur Videos a chaque ouverture
+  $('ftab-videos').classList.remove('hidden');
+  $('ftab-rdv').classList.add('hidden');
+  document.querySelectorAll('.nav-subitem').forEach(b => b.classList.remove('active'));
+  const firstSubitem = document.querySelector('.nav-subitem[data-ftab="videos"]');
+  if (firstSubitem) firstSubitem.classList.add('active');
+
+  // Gestion des sous-onglets sidebar
+  document.querySelectorAll('.nav-subitem').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.nav-subitem').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const ftab = btn.dataset.ftab;
+      $('ftab-videos').classList.toggle('hidden', ftab !== 'videos');
+      $('ftab-rdv').classList.toggle('hidden', ftab !== 'rdv');
+      if (ftab === 'rdv') loadRdvStatus();
+    });
+  });
+
+  // Charger les videos
   try {
     const mods=await api('GET','/videos');
-    const el=$('formation-student');
+    const el=$('ftab-videos');
     if(!mods.length){el.innerHTML=`<div class="empty"><div class="empty-ico"><i class="ti ti-books"></i></div><p>Aucun module disponible.</p></div>`;return;}
     el.innerHTML=mods.map((m,i)=>`
       <div class="mod${i===0?' open':''}" data-id="${m.id}">
@@ -1013,6 +1059,22 @@ async function loadFormation() {
     el.querySelectorAll('.mod-head').forEach(h=>h.addEventListener('click',()=>h.closest('.mod').classList.toggle('open')));
     el.querySelectorAll('.lv').forEach(el=>el.addEventListener('click',()=>openVid(el.dataset.src,el.dataset.title)));
   } catch{toast('Erreur formation','error');}
+}
+
+async function loadRdvStatus() {
+  try {
+    const status = await api('GET', '/appointments/status');
+    if (status.available) {
+      $('rdv-available').classList.remove('hidden');
+      $('rdv-locked').classList.add('hidden');
+    } else {
+      $('rdv-available').classList.add('hidden');
+      $('rdv-locked').classList.remove('hidden');
+      $('rdv-unlock-date').textContent = status.unlocked_date;
+    }
+  } catch(e) {
+    console.error('Erreur statut RDV:', e);
+  }
 }
 
 function openVid(src,title) {

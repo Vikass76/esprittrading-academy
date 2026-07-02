@@ -1118,8 +1118,16 @@
             <span class="ni"><i class="ti ti-tool"></i></span>Outils
           </button>
           <button class="nav-item" data-tab="formation">
-            <span class="ni"><i class="ti ti-video"></i></span>Formation
+            <span class="ni"><i class="ti ti-video"></i></span>Formation OTE 705
           </button>
+          <div id="formation-subnav" class="hidden">
+            <button class="nav-subitem active" data-ftab="videos">
+              <span class="ni"><i class="ti ti-player-play"></i></span>Vidéos
+            </button>
+            <button class="nav-subitem" data-ftab="rdv">
+              <span class="ni"><i class="ti ti-calendar"></i></span>RDV Nathan
+            </button>
+          </div>
           <div class="sb-section admin-only hidden" style="margin-top: 8px">
             Admin
           </div>
@@ -1723,7 +1731,26 @@
                 <p>Modules et vidéos de cours</p>
               </div>
             </div>
-            <div id="formation-student" class="mod-list"></div>
+            <div id="formation-student">
+              <div id="ftab-videos" class="mod-list"></div>
+              <div id="ftab-rdv" class="hidden">
+                <div id="rdv-available">
+                  <div class="rdv-intro">
+                    <h3>Réserve ta session mensuelle</h3>
+                    <p>1h avec Nathan pour faire le point sur ta progression et débloquer tes points faibles.</p>
+                  </div>
+                  <div class="calendly-inline-widget" data-url="https://calendly.com/esprittrading-contact/session-mensuelle-ote-705-1h-avec-nathan" style="min-width:320px;height:700px;"></div>
+                  <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+                </div>
+                <div id="rdv-locked" class="hidden">
+                  <div class="rdv-locked-box">
+                    <div class="rdv-locked-icon"><i class="ti ti-calendar-check"></i></div>
+                    <h3>RDV déjà pris ✅</h3>
+                    <p id="rdv-locked-msg">Ton prochain RDV sera disponible à partir du <strong id="rdv-unlock-date">--</strong></p>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div id="formation-community" class="hidden">
               <div style="margin-bottom: 28px">
                 <div
