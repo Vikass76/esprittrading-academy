@@ -9,6 +9,9 @@ const LOCK_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 jours
 
 // Webhook Calendly — reçoit les événements de réservation
 router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  // Repondre immediatement pour eviter les retries Calendly
+  res.json({ received: true });
+
   try {
     // Verification de la signature Calendly
     if (CALENDLY_WEBHOOK_SECRET) {
@@ -73,15 +76,13 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) =>
       console.log(`[appointments] RDV annule pour ${email} - onglet RDV debloque`);
     }
 
-    res.json({ received: true });
   } catch (err) {
     console.error('Erreur webhook Calendly:', err);
-    res.status(500).json({ error: 'Erreur serveur' });
   }
 });
 
 // Statut RDV pour l'eleve connecte
-router.get('/status', (req, res) => {
+router.get('/status', async (req, res) => {
   if (!req.session.userId) return res.status(401).json({ error: 'Non connecte' });
 
   const appointment = db.prepare(
@@ -97,6 +98,29 @@ router.get('/status', (req, res) => {
     return res.json({ available: true });
   }
 
+  // Si le lien n'est pas encore en base, on le recupere depuis Calendly
+  let meetingLink = appointment.meeting_link;
+  if (!meetingLink && appointment.calendly_event_id && process.env.CALENDLY_TOKEN) {
+    try {
+      const response = await fetch(appointment.calendly_event_id, {
+        headers: { 'Authorization': `Bearer ${process.env.CALENDLY_TOKEN}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        meetingLink = data.resource?.location?.join_url
+          || data.resource?.location?.data?.join_url
+          || data.resource?.location?.location
+          || null;
+        if (meetingLink) {
+          db.prepare('UPDATE appointments SET meeting_link = ? WHERE id = ?').run(meetingLink, appointment.id);
+          console.log(`[appointments] Lien recupere depuis Calendly pour user ${req.session.userId}`);
+        }
+      }
+    } catch (e) {
+      console.error('[appointments] Erreur recuperation lien Calendly:', e.message);
+    }
+  }
+
   const bookedDate = new Date(appointment.booked_at).toLocaleDateString('fr-FR', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
   });
@@ -108,7 +132,7 @@ router.get('/status', (req, res) => {
       day: 'numeric', month: 'long', year: 'numeric'
     }),
     booked_date: bookedDate,
-    meeting_link: appointment.meeting_link
+    meeting_link: meetingLink
   });
 });
 

@@ -1072,9 +1072,19 @@ async function loadRdvStatus() {
       $('rdv-locked').classList.remove('hidden');
       $('rdv-unlock-date').textContent = status.unlocked_date;
       if (status.booked_date) $('rdv-booked-date').textContent = status.booked_date;
+      const linkWrap = $('rdv-meeting-link-wrap');
+      const linkBtn = $('rdv-meeting-link');
+      linkWrap.classList.remove('hidden');
       if (status.meeting_link) {
-        $('rdv-meeting-link').href = status.meeting_link;
-        $('rdv-meeting-link-wrap').classList.remove('hidden');
+        linkBtn.href = status.meeting_link;
+        linkBtn.classList.remove('rdv-join-btn-disabled');
+        linkBtn.removeAttribute('disabled');
+        linkBtn.innerHTML = '<i class="ti ti-video"></i> Rejoindre l\'appel';
+      } else {
+        linkBtn.href = '#';
+        linkBtn.classList.add('rdv-join-btn-disabled');
+        linkBtn.setAttribute('disabled', 'true');
+        linkBtn.innerHTML = '<i class="ti ti-loader"></i> Lien en cours de génération...';
       }
     }
   } catch(e) {

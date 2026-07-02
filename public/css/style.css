@@ -960,3 +960,9 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
 .rdv-join-btn:hover {
   opacity: 0.85;
 }
+
+.rdv-join-btn-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
