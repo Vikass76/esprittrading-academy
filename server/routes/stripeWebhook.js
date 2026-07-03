@@ -23,7 +23,9 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
 
   if (event.type === 'payment_intent.succeeded') {
     const paymentIntent = event.data.object;
-    const { plan, email, firstname, lastname } = paymentIntent.metadata;
+    const { firstname, lastname } = paymentIntent.metadata;
+    const plan = paymentIntent.metadata.plan || 'full';
+    const email = paymentIntent.metadata.email || paymentIntent.receipt_email || null;
 
     if (!email) {
       console.log('Webhook payment_intent.succeeded ignore (pas de metadata email, probablement un test Stripe CLI generique)');
