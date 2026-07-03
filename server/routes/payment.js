@@ -40,7 +40,7 @@ router.post('/create-intent', async (req, res) => {
         firstname: firstname || '',
         lastname: lastname || '',
       },
-      automatic_payment_methods: { enabled: true, allow_redirects: 'never' },
+      automatic_payment_methods: { enabled: true },
     });
 
     res.json({ clientSecret: paymentIntent.client_secret });
@@ -71,7 +71,7 @@ router.post('/create-retry-intent', async (req, res) => {
         email: payment.email,
         payment_id: String(payment.id),
       },
-      automatic_payment_methods: { enabled: true, allow_redirects: 'never' },
+      automatic_payment_methods: { enabled: true },
     });
 
     res.json({ clientSecret: paymentIntent.client_secret, amount: payment.amount_due, email: payment.email });
