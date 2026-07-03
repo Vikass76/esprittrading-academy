@@ -25,7 +25,17 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
     const paymentIntent = event.data.object;
     const { firstname, lastname } = paymentIntent.metadata;
     const plan = paymentIntent.metadata.plan || 'full';
-    const email = paymentIntent.metadata.email || paymentIntent.receipt_email || null;
+    // Recuperer email depuis toutes les sources possibles
+    let email = paymentIntent.metadata.email || paymentIntent.receipt_email || null;
+    // Si toujours pas d'email, essayer de recuperer depuis le payment method
+    if (!email && paymentIntent.payment_method) {
+      try {
+        const pm = await stripe.paymentMethods.retrieve(paymentIntent.payment_method);
+        email = pm.billing_details?.email || null;
+      } catch(e) {
+        console.error('Erreur recuperation payment method:', e.message);
+      }
+    }
 
     if (!email) {
       console.log('Webhook payment_intent.succeeded ignore (pas de metadata email, probablement un test Stripe CLI generique)');
