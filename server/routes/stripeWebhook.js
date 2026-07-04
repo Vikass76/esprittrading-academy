@@ -85,7 +85,11 @@ async function handleSuccessfulPayment({ email, firstname, lastname, plan, custo
     // Nouveau compte -> creer avec mot de passe temporaire
     tempPassword = crypto.randomBytes(6).toString('hex');
     const hash = await bcrypt.hash(tempPassword, 10);
-    const baseUsername = (firstname || 'eleve').toLowerCase() + '.' + (lastname || '').toLowerCase();
+    // Generer username depuis prenom/nom ou depuis l'email si pas de prenom
+    const emailBase = emailLower.split('@')[0].replace(/[^a-z0-9.]/g, '.');
+    const baseUsername = (firstname && firstname.trim())
+      ? (firstname.toLowerCase() + '.' + (lastname || '').toLowerCase()).replace(/\s+/g, '.')
+      : emailBase;
     let username = baseUsername.replace(/\s+/g, '.') + '.' + Date.now().toString().slice(-4);
     const row = db.prepare(
       'INSERT INTO users (username, email, password, role, firstname, lastname, email_verified) VALUES (?,?,?,?,?,?,?)'
