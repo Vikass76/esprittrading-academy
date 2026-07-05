@@ -81,6 +81,21 @@ router.post('/create-retry-intent', async (req, res) => {
   }
 });
 
+router.post('/update-intent-amount', async (req, res) => {
+  const { paymentIntentId, plan } = req.body;
+  const amounts = { full: 99000, split: 49500 };
+  try {
+    await stripe.paymentIntents.update(paymentIntentId, {
+      amount: amounts[plan] || 99000,
+      metadata: { plan }
+    });
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Erreur update-intent-amount:', err);
+    res.status(500).json({ error: 'Erreur mise a jour montant' });
+  }
+});
+
 router.post('/update-intent-metadata', async (req, res) => {
   const { paymentIntentId, email, firstname, lastname } = req.body;
   if (!paymentIntentId || !email) {
