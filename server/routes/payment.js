@@ -16,27 +16,28 @@ router.post('/create-intent', async (req, res) => {
   if (!plan || !PRICES[plan]) {
     return res.status(400).json({ error: 'Offre invalide' });
   }
-  const safeEmail = email || 'pending@esprittrading.fr';
+  const safeEmail = email && email.includes('@') ? email : null;
 
   try {
-    // Chercher ou creer un Customer Stripe pour cet email
-    const existingCustomers = await stripe.customers.list({ email: safeEmail, limit: 1 });
-    let customer = existingCustomers.data[0];
-    if (!customer) {
-      customer = await stripe.customers.create({
-        email: safeEmail,
-        name: [firstname, lastname].filter(Boolean).join(' ') || undefined,
-      });
+    let customer = null;
+    if (safeEmail) {
+      const existingCustomers = await stripe.customers.list({ email: safeEmail, limit: 1 });
+      customer = existingCustomers.data[0];
+      if (!customer) {
+        customer = await stripe.customers.create({
+          email: safeEmail,
+          name: [firstname, lastname].filter(Boolean).join(' ') || undefined,
+        });
+      }
     }
-
     const paymentIntent = await stripe.paymentIntents.create({
       amount: PRICES[plan],
       currency: 'eur',
-      customer: customer.id,
+      customer: customer ? customer.id : undefined,
       setup_future_usage: plan === 'split' ? 'off_session' : undefined,
       metadata: {
         plan,
-        email: safeEmail,
+        email: safeEmail || 'pending@esprittrading.fr',
         firstname: firstname || '',
         lastname: lastname || '',
       },
