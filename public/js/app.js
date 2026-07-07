@@ -1909,7 +1909,11 @@ async function loadInscrits() {
       <td style="padding:8px 4px;"><span style="padding:2px 8px;border-radius:4px;background:${u.role==='student'?'#f4c70f22':'#ffffff11'};color:${u.role==='student'?'#f4c70f':'var(--text-muted)'};">${u.role==='student'?'Élève':'Communauté'}</span></td>
       <td style="padding:8px 4px;color:var(--text-muted);">${new Date(u.created_at).toLocaleDateString('fr-FR')}</td>
     </tr>`).join('')}</tbody>
-  </table>`;
+  </table>${nav}`;
+  }
+  renderInscritsPage();
+  window.inscritsPagePrev = () => { if(inscritsPage>1){inscritsPage--;renderInscritsPage();} };
+  window.inscritsPageNext = () => { if(inscritsPage<Math.ceil(users.length/PAGE_SIZE)){inscritsPage++;renderInscritsPage();} };
 }
 
 document.querySelectorAll('.inscrits-filter').forEach(btn => {
