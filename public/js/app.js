@@ -1883,16 +1883,27 @@ async function loadInscrits() {
   if (inscritsCurrentPeriod !== 'all') params.append('period', inscritsCurrentPeriod);
   const data = await api('GET', '/admin/inscrits?' + params.toString());
   const users = data.users || [];
-  countEl.textContent = `${users.length} inscrit${users.length > 1 ? 's' : ''}`;
-  if (!users.length) { el.innerHTML = '<p style="font-size:12px;color:var(--text-muted);">Aucun inscrit trouvé.</p>'; return; }
-  el.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:12px;">
+  const PAGE_SIZE = 15;
+  let inscritsPage = 1;
+  function renderInscritsPage() {
+    const start = (inscritsPage - 1) * PAGE_SIZE;
+    const pageUsers = users.slice(start, start + PAGE_SIZE);
+    const totalPages = Math.ceil(users.length / PAGE_SIZE);
+    countEl.textContent = `${users.length} inscrit${users.length > 1 ? 's' : ''} — page ${inscritsPage}/${totalPages}`;
+    if (!pageUsers.length) { el.innerHTML = '<p style="font-size:12px;color:var(--text-muted);">Aucun inscrit trouvé.</p>'; return; }
+    const nav = totalPages > 1 ? `<div style="display:flex;gap:8px;margin-top:12px;justify-content:center;">
+      <button onclick="window.inscritsPagePrev()" style="padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:#fff;cursor:pointer;" ${inscritsPage===1?'disabled':''}>←</button>
+      <span style="font-size:12px;color:var(--text-muted);line-height:28px;">${inscritsPage} / ${totalPages}</span>
+      <button onclick="window.inscritsPageNext()" style="padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:#fff;cursor:pointer;" ${inscritsPage===totalPages?'disabled':''}>→</button>
+    </div>` : '';
+    el.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:12px;">
     <thead><tr style="border-bottom:1px solid var(--border);">
       <th style="text-align:left;padding:8px 4px;">Nom</th>
       <th style="text-align:left;padding:8px 4px;">Email</th>
       <th style="text-align:left;padding:8px 4px;">Rôle</th>
       <th style="text-align:left;padding:8px 4px;">Inscrit le</th>
     </tr></thead>
-    <tbody>${users.map(u => `<tr style="border-bottom:1px solid var(--border)20;">
+    <tbody>${pageUsers.map(u => `<tr style="border-bottom:1px solid var(--border)20;">
       <td style="padding:8px 4px;">${u.firstname || ''} ${u.lastname || ''}</td>
       <td style="padding:8px 4px;">${u.email}</td>
       <td style="padding:8px 4px;"><span style="padding:2px 8px;border-radius:4px;background:${u.role==='student'?'#f4c70f22':'#ffffff11'};color:${u.role==='student'?'#f4c70f':'var(--text-muted)'};">${u.role==='student'?'Élève':'Communauté'}</span></td>
