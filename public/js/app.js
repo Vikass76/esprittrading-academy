@@ -1895,8 +1895,8 @@ async function loadInscrits() {
 
 document.querySelectorAll('.inscrits-filter').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.inscrits-filter').forEach(b => { b.style.background='transparent'; b.style.color='var(--text)'; b.style.fontWeight='normal'; });
-    btn.style.background = 'var(--yellow)'; btn.style.color = '#000'; btn.style.fontWeight = '700';
+    document.querySelectorAll('.inscrits-filter').forEach(b => { b.style.background='transparent'; b.style.color='#fff'; b.style.fontWeight='400'; b.style.border='1px solid var(--border)'; });
+    btn.style.background = '#f4c70f'; btn.style.color = '#000'; btn.style.fontWeight = '700'; btn.style.border = '1px solid #f4c70f';
     inscritsCurrentRole = btn.dataset.role;
     loadInscrits();
   });
