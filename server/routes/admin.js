@@ -206,8 +206,8 @@ router.get('/inscrits', requireAdmin, (req, res) => {
   }
 
   if (period && period !== 'all') {
-    query += ' AND created_at >= datetime("now", "-" || ? || " days")';
-    params.push(period);
+    const days = parseInt(period);
+    query += ` AND created_at >= datetime('now', '-${days} days')`;
   }
 
   query += ' ORDER BY created_at DESC';
