@@ -1866,6 +1866,14 @@ let inscritsCurrentRole = 'all';
 let inscritsCurrentPeriod = 'all';
 
 async function loadInscrits() {
+  // Mettre à jour le style du bouton actif
+  document.querySelectorAll('.inscrits-filter').forEach(b => {
+    if (b.dataset.role === inscritsCurrentRole) {
+      b.style.background = '#f4c70f'; b.style.color = '#000'; b.style.fontWeight = '700'; b.style.border = '1px solid #f4c70f';
+    } else {
+      b.style.background = 'transparent'; b.style.color = '#fff'; b.style.fontWeight = '400'; b.style.border = '1px solid var(--border)';
+    }
+  });
   const el = document.getElementById('inscrits-list');
   const countEl = document.getElementById('inscrits-count');
   if (!el) return;
