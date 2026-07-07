@@ -1212,9 +1212,10 @@ document.getElementById('access-search-btn')?.addEventListener('click', async ()
 });
 document.querySelectorAll('.atab').forEach(btn=>btn.addEventListener('click',()=>{
   document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));
-  document.querySelectorAll('#atab-modules,#atab-users,#atab-access').forEach(s=>s.classList.add('hidden'));
+  document.querySelectorAll('#atab-modules,#atab-users,#atab-inscrits,#atab-access').forEach(s=>s.classList.add('hidden'));
   btn.classList.add('on'); $(`atab-${btn.dataset.atab}`).classList.remove('hidden');
   if(btn.dataset.atab==='users') loadAdminUsers();
+  if(btn.dataset.atab==='inscrits') loadInscrits();
 }));
 async function loadAdmin(){await loadAdminMods();}
 
@@ -1859,3 +1860,49 @@ document.addEventListener('click', e=>{
     initEditSetup();
   });
 })();
+
+// ===== INSCRITS ADMIN =====
+let inscritsCurrentRole = 'all';
+let inscritsCurrentPeriod = 'all';
+
+async function loadInscrits() {
+  const el = document.getElementById('inscrits-list');
+  const countEl = document.getElementById('inscrits-count');
+  if (!el) return;
+  el.innerHTML = '<p style="font-size:12px;color:var(--text-muted);">Chargement...</p>';
+  const params = new URLSearchParams();
+  if (inscritsCurrentRole !== 'all') params.append('role', inscritsCurrentRole);
+  if (inscritsCurrentPeriod !== 'all') params.append('period', inscritsCurrentPeriod);
+  const data = await api('GET', '/admin/inscrits?' + params.toString());
+  const users = data.users || [];
+  countEl.textContent = `${users.length} inscrit${users.length > 1 ? 's' : ''}`;
+  if (!users.length) { el.innerHTML = '<p style="font-size:12px;color:var(--text-muted);">Aucun inscrit trouvé.</p>'; return; }
+  el.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:12px;">
+    <thead><tr style="border-bottom:1px solid var(--border);">
+      <th style="text-align:left;padding:8px 4px;">Nom</th>
+      <th style="text-align:left;padding:8px 4px;">Email</th>
+      <th style="text-align:left;padding:8px 4px;">Rôle</th>
+      <th style="text-align:left;padding:8px 4px;">Inscrit le</th>
+    </tr></thead>
+    <tbody>${users.map(u => `<tr style="border-bottom:1px solid var(--border)20;">
+      <td style="padding:8px 4px;">${u.firstname || ''} ${u.lastname || ''}</td>
+      <td style="padding:8px 4px;">${u.email}</td>
+      <td style="padding:8px 4px;"><span style="padding:2px 8px;border-radius:4px;background:${u.role==='student'?'#f4c70f22':'#ffffff11'};color:${u.role==='student'?'#f4c70f':'var(--text-muted)'};">${u.role==='student'?'Élève':'Communauté'}</span></td>
+      <td style="padding:8px 4px;color:var(--text-muted);">${new Date(u.created_at).toLocaleDateString('fr-FR')}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+document.querySelectorAll('.inscrits-filter').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.inscrits-filter').forEach(b => { b.style.background='transparent'; b.style.color='var(--text)'; b.style.fontWeight='normal'; });
+    btn.style.background = 'var(--yellow)'; btn.style.color = '#000'; btn.style.fontWeight = '700';
+    inscritsCurrentRole = btn.dataset.role;
+    loadInscrits();
+  });
+});
+
+document.getElementById('inscrits-period')?.addEventListener('change', e => {
+  inscritsCurrentPeriod = e.target.value;
+  loadInscrits();
+});

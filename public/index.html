@@ -2184,6 +2184,7 @@
                 Modules & Vidéos
               </button>
               <button class="atab" data-atab="users">Élèves</button>
+              <button class="atab" data-atab="inscrits">Inscrits</button>
               <button class="atab" data-atab="access">Accès formation</button>
             </div>
             <div id="atab-modules">
@@ -2330,6 +2331,26 @@
                 </div>
               </div>
             </div>
+        <div id="atab-inscrits" class="hidden">
+          <div class="adm-grid">
+            <div class="card" style="grid-column:1/-1;">
+              <h3 style="font-size:.88rem;margin-bottom:14px">Inscrits</h3>
+              <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+                <button class="inscrits-filter active" data-role="all" style="padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--yellow);color:#000;font-weight:700;font-size:12px;cursor:pointer;">Tous</button>
+                <button class="inscrits-filter" data-role="student" style="padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:12px;cursor:pointer;">Élèves</button>
+                <button class="inscrits-filter" data-role="community" style="padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:12px;cursor:pointer;">Communauté</button>
+                <select id="inscrits-period" style="padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12px;cursor:pointer;margin-left:auto;">
+                  <option value="all">Tout</option>
+                  <option value="7">7 derniers jours</option>
+                  <option value="30">30 derniers jours</option>
+                  <option value="90">3 derniers mois</option>
+                </select>
+              </div>
+              <div id="inscrits-count" style="font-size:12px;color:var(--text-muted);margin-bottom:12px;"></div>
+              <div id="inscrits-list"></div>
+            </div>
+          </div>
+        </div>
         <div id="atab-access" class="hidden">
           <div class="adm-grid">
             <div class="card">

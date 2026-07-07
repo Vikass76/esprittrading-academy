@@ -193,3 +193,25 @@ router.delete('/videos/:id', requireAdmin, (req, res) => {
 });
 
 module.exports = router;
+
+// Liste des inscrits avec filtres
+router.get('/inscrits', requireAdmin, (req, res) => {
+  const { role, period } = req.query;
+  let query = 'SELECT id, username, email, role, firstname, lastname, created_at FROM users WHERE 1=1';
+  const params = [];
+
+  if (role && role !== 'all') {
+    query += ' AND role = ?';
+    params.push(role);
+  }
+
+  if (period && period !== 'all') {
+    query += ' AND created_at >= datetime("now", "-" || ? || " days")';
+    params.push(period);
+  }
+
+  query += ' ORDER BY created_at DESC';
+
+  const users = db.prepare(query).all(...params);
+  res.json({ users });
+});
