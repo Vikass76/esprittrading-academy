@@ -215,3 +215,14 @@ router.get('/inscrits', requireAdmin, (req, res) => {
   const users = db.prepare(query).all(...params);
   res.json({ users });
 });
+
+// Export CSV inscrits community
+router.get('/inscrits/export', requireAdmin, (req, res) => {
+  const users = db.prepare("SELECT email, firstname, lastname, role, created_at FROM users WHERE role = 'community' ORDER BY created_at DESC").all();
+  const csv = ['Email,Prenom,Nom,Role,Date inscription']
+    .concat(users.map(u => `${u.email},${u.firstname||''},${u.lastname||''},${u.role},${u.created_at}`))
+    .join('\n');
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename="community_export.csv"');
+  res.send(csv);
+});
