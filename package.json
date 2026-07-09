@@ -12,6 +12,7 @@
     "build": "npm install"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^6.0.2",
     "bcrypt": "^5.1.1",
     "better-sqlite3": "^12.10.0",
     "connect-pg-simple": "^9.0.1",

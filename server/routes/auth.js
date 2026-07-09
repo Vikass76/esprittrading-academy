@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const db = require('../db');
+const { addContactToBrevo } = require('../brevo');
 const router = express.Router();
 
 passport.use(new GoogleStrategy({
@@ -31,6 +32,7 @@ passport.use(new GoogleStrategy({
       const row = db.prepare('INSERT INTO users (username, email, password, role, google_id, firstname, lastname, email_verified) VALUES (?,?,?,?,?,?,?,?)')
         .run(username, email, '', 'community', googleId, profile.name.givenName||name, profile.name.familyName||'', 1);
       user = db.prepare('SELECT * FROM users WHERE id = ?').get(row.lastInsertRowid);
+      addContactToBrevo({ email, firstname: profile.name.givenName||name, lastname: profile.name.familyName||'', role: 'community' });
     }
   }
   return done(null, user);
@@ -70,6 +72,7 @@ router.post('/register', async (req, res) => {
   const token = crypto.randomBytes(32).toString('hex');
   const row = db.prepare('INSERT INTO users (username, email, password, role, firstname, lastname, verification_token, email_verified) VALUES (?,?,?,?,?,?,?,?)').run(username, email, hash, 'community', firstname, lastname, token, 0);
   const user = db.prepare('SELECT * FROM users WHERE id = ?').get(row.lastInsertRowid);
+  addContactToBrevo({ email, firstname, lastname, role: 'community' });
   // Envoi email confirmation
   const appUrl = process.env.APP_URL || 'http://localhost:3000';
   try {
