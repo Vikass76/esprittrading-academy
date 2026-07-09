@@ -1,17 +1,14 @@
-const SibApiV3Sdk = require('@getbrevo/brevo');
-
-const apiInstance = new SibApiV3Sdk.ContactsApi();
-apiInstance.setApiKey(SibApiV3Sdk.ContactsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
+const axios = require('axios');
 
 const LIST_IDS = {
-  community: 3,  // Community Academy
-  student: 5,    // Élèves
-  leadMagnet: 4, // Lead Magnet
+  community: 3,
+  student: 5,
+  leadMagnet: 4,
 };
 
 async function addContactToBrevo({ email, firstname, lastname, role }) {
   try {
-    const contact = {
+    await axios.post('https://api.brevo.com/v3/contacts', {
       email,
       attributes: {
         PRENOM: firstname || '',
@@ -19,11 +16,15 @@ async function addContactToBrevo({ email, firstname, lastname, role }) {
       },
       listIds: [role === 'student' ? LIST_IDS.student : LIST_IDS.community],
       updateEnabled: true,
-    };
-    await apiInstance.createContact(contact);
+    }, {
+      headers: {
+        'api-key': process.env.BREVO_API_KEY,
+        'Content-Type': 'application/json',
+      }
+    });
     console.log(`[Brevo] Contact ajouté: ${email} → liste ${role}`);
   } catch (err) {
-    console.error('[Brevo] Erreur ajout contact:', err?.response?.text || err.message);
+    console.error('[Brevo] Erreur:', err?.response?.data || err.message);
   }
 }
 
