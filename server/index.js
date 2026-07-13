@@ -31,7 +31,7 @@ const uploadsDir = process.env.RENDER ? '/data/uploads' : path.join(__dirname, '
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 app.use('/uploads', express.static(uploadsDir));
 
-app.use('/api/auth', authRouter);
+app.use('/api/auth', cors(corsOptions), authRouter);
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/videos', require('./routes/videos'));
 app.use('/api/trades', require('./routes/trades'));
