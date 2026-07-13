@@ -44,6 +44,7 @@ const corsOptions = {
     'https://www.esprittrading.fr',
     'https://formation-ote-705.vercel.app',
     'https://new.esprittrading.fr',
+    'https://ote.esprittrading.fr',
     'https://vikass76.github.io'
   ],
   methods: ['GET', 'POST'],

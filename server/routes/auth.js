@@ -185,4 +185,18 @@ router.post('/change-password', async (req, res) => {
   res.json({ success: true });
 });
 
+// Route lead magnet (formulaire analyses)
+router.post('/lead-magnet', async (req, res) => {
+  const { email, firstname, lastname } = req.body;
+  if (!email || !email.includes('@')) return res.status(400).json({ error: 'Email invalide' });
+  try {
+    const { addContactToBrevo } = require('../brevo');
+    await addContactToBrevo({ email, firstname: firstname || '', lastname: lastname || '', role: 'leadMagnet' });
+    res.json({ success: true });
+  } catch(err) {
+    console.error('Erreur lead-magnet:', err);
+    res.json({ success: true });
+  }
+});
+
 module.exports = { router, passport };
