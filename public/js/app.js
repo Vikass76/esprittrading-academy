@@ -1958,7 +1958,7 @@ async function loadNathanTrades() {
     <thead><tr style="border-bottom:1px solid var(--border);">
       <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Date</th>
       <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Paire</th>
-      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Dir.</th>
+      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Direction</th>
       <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Résultat</th>
       <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">R:R</th>
       <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Chart</th>
@@ -1990,7 +1990,12 @@ function openNathanTrade(id) {
   $('nd-badge').innerHTML = t.result === 'win' ? '<span class="badge b-win">WIN</span>' : '<span class="badge b-loss">LOSE</span>';
   $('nd-date').textContent = new Date(t.date).toLocaleDateString('fr-FR');
   $('nd-dir').innerHTML = `<span class="dir dir-${t.direction==='buy'?'long':'short'}">${t.direction==='buy'?'BUY':'SELL'}</span>`;
-  $('nd-rr').textContent = t.rr;
+  const rrVal = parseFloat(t.rr) || 0;
+  const isWinNd = t.result === 'win';
+  const rrDisplay = (isWinNd ? '+' : '-') + Math.abs(rrVal) + 'R';
+  const rrEl2 = $('nd-rr');
+  rrEl2.textContent = rrDisplay;
+  rrEl2.className = 'dv big ' + (isWinNd ? 'g' : 'r');
   $('nd-result').innerHTML = t.result === 'win' ? '<span style="color:#22c55e;font-weight:700;">WIN</span>' : '<span style="color:#ef4444;font-weight:700;">LOSE</span>';
   const nw = $('nd-notes-wrap');
   if (t.notes) { $('nd-notes').textContent = t.notes; nw.style.display = ''; } else nw.style.display = 'none';
@@ -2001,6 +2006,19 @@ function openNathanTrade(id) {
     const videoId = t.video_url.match(/(?:youtu\.be\/|v=)([^&?#]+)/)?.[1];
     vw.innerHTML = videoId ? `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:10px;"><iframe src="https://www.youtube-nocookie.com/embed/${videoId}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:10px;" allowfullscreen></iframe></div>` : `<a href="${t.video_url}" target="_blank" class="btn btn-secondary btn-sm"><i class="ti ti-player-play"></i> Voir l'analyse</a>`;
   } else vw.innerHTML = '';
+  $('nd-edit-btn').onclick = () => {
+    closeNathanDetail();
+    // Pré-remplir le formulaire d'ajout
+    document.getElementById('nt-date').value = t.date;
+    document.getElementById('nt-pair').value = t.pair;
+    document.getElementById('nt-direction').value = t.direction;
+    document.getElementById('nt-result').value = t.result;
+    document.getElementById('nt-rr').value = Math.abs(parseFloat(t.rr) || 0);
+    document.getElementById('nt-video').value = t.video_url || '';
+    document.getElementById('nt-notes').value = t.notes || '';
+    window._editNathanId = t.id;
+    openNathanForm();
+  };
   $('nd-del').onclick = async () => {
     if (!await confirmAction('Supprimer ce trade ?', '')) return;
     await api('DELETE', `/nathan-trades/${t.id}`);
@@ -2039,9 +2057,13 @@ async function submitNathanTrade() {
   if (imageFile) fd.append('image', imageFile);
 
   try {
-    const res = await fetch('/api/nathan-trades', { method: 'POST', body: fd, credentials: 'include' });
+    const editId = window._editNathanId;
+    const url = editId ? `/api/nathan-trades/${editId}` : '/api/nathan-trades';
+    const method = editId ? 'PUT' : 'POST';
+    const res = await fetch(url, { method, body: fd, credentials: 'include' });
     const data = await res.json();
     if (data.success) {
+      window._editNathanId = null;
       closeNathanForm();
       loadNathanTrades();
     } else {

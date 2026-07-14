@@ -41,6 +41,18 @@ router.post('/', requireAdmin, upload.single('image'), (req, res) => {
   res.json({ success: true, id: trade.lastInsertRowid });
 });
 
+// PUT modifier trade (admin uniquement)
+router.put('/:id', requireAdmin, upload.single('image'), (req, res) => {
+  const { date, pair, direction, result, rr, video_url, notes } = req.body;
+  if (!date || !pair || !direction || !result || !rr) return res.status(400).json({ error: 'Champs obligatoires manquants' });
+  const existing = db.prepare('SELECT * FROM nathan_trades WHERE id = ?').get(req.params.id);
+  if (!existing) return res.status(404).json({ error: 'Trade introuvable' });
+  const image_path = req.file ? '/uploads/' + req.file.filename : existing.image_path;
+  db.prepare('UPDATE nathan_trades SET date=?, pair=?, direction=?, result=?, rr=?, image_path=?, video_url=?, notes=? WHERE id=?')
+    .run(date, pair, direction, result, rr, image_path, video_url || null, notes || null, req.params.id);
+  res.json({ success: true });
+});
+
 // DELETE trade (admin uniquement)
 router.delete('/:id', requireAdmin, (req, res) => {
   db.prepare('DELETE FROM nathan_trades WHERE id = ?').run(req.params.id);
