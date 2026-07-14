@@ -11,7 +11,7 @@ async function addContactToBrevo({ email, firstname, lastname, role }) {
     const body = JSON.stringify({
       email,
       attributes: { PRENOM: firstname || '', NOM: lastname || '' },
-      listIds: [role === 'student' ? LIST_IDS.student : LIST_IDS.community],
+      listIds: [role === 'student' ? LIST_IDS.student : role === 'leadMagnet' ? LIST_IDS.leadMagnet : LIST_IDS.community],
       updateEnabled: true,
     });
 
