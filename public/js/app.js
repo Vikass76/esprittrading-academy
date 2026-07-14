@@ -1952,24 +1952,30 @@ async function loadNathanTrades() {
     const data = await api('GET', '/nathan-trades');
     const trades = data.trades || [];
     if (!trades.length) { el.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Aucun trade pour l\'instant.</p>'; return; }
-    el.innerHTML = trades.map(t => {
+    el.innerHTML = `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">
+    <thead><tr style="border-bottom:1px solid var(--border);">
+      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Date</th>
+      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Paire</th>
+      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Dir.</th>
+      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Résultat</th>
+      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">R:R</th>
+      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Chart</th>
+      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Analyse</th>
+    </tr></thead>
+    <tbody>${trades.map(t => {
       const isWin = t.result === 'win';
       const isBuy = t.direction === 'buy';
-      const videoId = t.video_url ? (t.video_url.match(/(?:youtu\.be\/|v=)([^&\n?#]+)/)?.[1] || '') : '';
-      return `<div class="trade-card" onclick="openNathanTrade(${t.id})" style="cursor:pointer;">
-        <div class="tc-head">
-          <div class="tc-pair">${t.pair}</div>
-          <div class="tc-badges">
-            <span class="tc-badge" style="background:${isBuy?'rgba(34,197,94,0.15)':'rgba(239,68,68,0.15)'};color:${isBuy?'#22c55e':'#ef4444'}">${isBuy?'BUY':'SELL'}</span>
-            <span class="tc-badge" style="background:${isWin?'rgba(34,197,94,0.15)':'rgba(239,68,68,0.15)'};color:${isWin?'#22c55e':'#ef4444'}">${isWin?'WIN':'LOSE'}</span>
-            <span class="tc-badge" style="background:rgba(244,199,15,0.15);color:#f4c70f;">${t.rr}</span>
-          </div>
-        </div>
-        <div class="tc-date">${new Date(t.date).toLocaleDateString('fr-FR')}</div>
-        ${t.image_path ? `<img src="${t.image_path}" style="width:100%;border-radius:8px;margin-top:10px;object-fit:cover;max-height:200px;">` : ''}
-        ${videoId ? `<div style="margin-top:10px;display:flex;align-items:center;gap:6px;color:#f4c70f;font-size:13px;font-weight:600;"><i class="ti ti-player-play"></i> Voir l'analyse</div>` : ''}
-      </div>`;
-    }).join('');
+      return `<tr style="border-bottom:1px solid var(--border);cursor:pointer;" onclick="openNathanTrade(${t.id})">
+        <td style="padding:10px 6px;color:var(--text-muted);font-size:.78rem;white-space:nowrap;">${new Date(t.date).toLocaleDateString('fr-FR')}</td>
+        <td style="padding:10px 6px;"><span class="pair-tag">${t.pair}</span></td>
+        <td style="padding:10px 6px;"><span class="dir dir-${isBuy?'long':'short'}">${isBuy?'BUY':'SELL'}</span></td>
+        <td style="padding:10px 6px;"><span class="badge ${isWin?'b-win':'b-loss'}">${isWin?'WIN':'LOSE'}</span></td>
+        <td style="padding:10px 6px;"><span class="rr ${parseFloat(t.rr)>=0?'rr-p':'rr-n'}">${t.rr}</span></td>
+        <td style="padding:10px 6px;">${t.image_path?`<img class="ss-thumb" src="${t.image_path}" onclick="openImg('${t.image_path}',event)"/>`:'—'}</td>
+        <td style="padding:10px 6px;">${t.video_url?`<a href="${t.video_url}" target="_blank" style="color:#f4c70f;font-size:12px;font-weight:600;"><i class="ti ti-player-play"></i> Voir</a>`:'—'}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
   } catch(e) {
     el.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Erreur de chargement.</p>';
   }
