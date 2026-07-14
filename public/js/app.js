@@ -1865,6 +1865,7 @@ document.addEventListener('click', e=>{
 })();
 
 // ===== INSCRITS ADMIN =====
+let nathanTrades = [];
 let inscritsCurrentRole = 'all';
 let inscritsCurrentPeriod = 'all';
 
@@ -1950,7 +1951,8 @@ async function loadNathanTrades() {
 
   try {
     const data = await api('GET', '/nathan-trades');
-    const trades = data.trades || [];
+    nathanTrades = data.trades || [];
+    const trades = nathanTrades;
     if (!trades.length) { el.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Aucun trade pour l\'instant.</p>'; return; }
     el.innerHTML = `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">
     <thead><tr style="border-bottom:1px solid var(--border);">
@@ -1982,8 +1984,36 @@ async function loadNathanTrades() {
 }
 
 function openNathanTrade(id) {
-  // Ouvre le trade en modal (à implémenter)
+  const t = nathanTrades.find(x => x.id === id);
+  if (!t) return;
+  $('nd-pair').textContent = t.pair;
+  $('nd-badge').innerHTML = t.result === 'win' ? '<span class="badge b-win">WIN</span>' : '<span class="badge b-loss">LOSE</span>';
+  $('nd-date').textContent = new Date(t.date).toLocaleDateString('fr-FR');
+  $('nd-dir').innerHTML = `<span class="dir dir-${t.direction==='buy'?'long':'short'}">${t.direction==='buy'?'BUY':'SELL'}</span>`;
+  $('nd-rr').textContent = t.rr;
+  $('nd-result').innerHTML = t.result === 'win' ? '<span style="color:#22c55e;font-weight:700;">WIN</span>' : '<span style="color:#ef4444;font-weight:700;">LOSE</span>';
+  const nw = $('nd-notes-wrap');
+  if (t.notes) { $('nd-notes').textContent = t.notes; nw.style.display = ''; } else nw.style.display = 'none';
+  const iw = $('nd-image-wrap');
+  iw.innerHTML = t.image_path ? `<img src="${t.image_path}" style="width:100%;border-radius:10px;object-fit:cover;max-height:400px;">` : '';
+  const vw = $('nd-video-wrap');
+  if (t.video_url) {
+    const videoId = t.video_url.match(/(?:youtu\.be\/|v=)([^&
+?#]+)/)?.[1];
+    vw.innerHTML = videoId ? `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:10px;"><iframe src="https://www.youtube-nocookie.com/embed/${videoId}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:10px;" allowfullscreen></iframe></div>` : `<a href="${t.video_url}" target="_blank" class="btn btn-secondary btn-sm"><i class="ti ti-player-play"></i> Voir l'analyse</a>`;
+  } else vw.innerHTML = '';
+  $('nd-del').onclick = async () => {
+    if (!await confirmAction('Supprimer ce trade ?', '')) return;
+    await api('DELETE', `/nathan-trades/${t.id}`);
+    closeNathanDetail(); loadNathanTrades();
+  };
+  $('nathan-detail-modal').classList.remove('hidden');
 }
+
+function closeNathanDetail() { $('nathan-detail-modal').classList.add('hidden'); }
+document.getElementById('ndm-close')?.addEventListener('click', closeNathanDetail);
+document.getElementById('ndm-close2')?.addEventListener('click', closeNathanDetail);
+document.getElementById('nathan-detail-modal')?.addEventListener('click', e => { if (e.target === $('nathan-detail-modal')) closeNathanDetail(); });
 
 async function submitNathanTrade() {
   const date = document.getElementById('nt-date').value;

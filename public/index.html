@@ -2908,6 +2908,30 @@
     </div>
 
     <!-- MODAL DETAIL TRADE -->
+    <div class="overlay hidden" id="nathan-detail-modal">
+      <div class="modal modal-lg">
+        <div class="mh">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <h3 id="nd-pair" style="font-size:1.1rem"></h3>
+            <span id="nd-badge"></span>
+          </div>
+          <button class="mclose" id="ndm-close"><i class="ti ti-x"></i></button>
+        </div>
+        <div class="detail-grid">
+          <div class="df"><span class="dl">Date</span><span class="dv" id="nd-date"></span></div>
+          <div class="df"><span class="dl">Direction</span><span class="dv" id="nd-dir"></span></div>
+          <div class="df"><span class="dl">R:R</span><span class="dv big" id="nd-rr"></span></div>
+          <div class="df"><span class="dl">Résultat</span><span class="dv" id="nd-result"></span></div>
+        </div>
+        <div id="nd-notes-wrap" style="display:none;"><div class="notes-box" id="nd-notes"></div></div>
+        <div id="nd-image-wrap" style="margin-top:12px;"></div>
+        <div id="nd-video-wrap" style="margin-top:12px;"></div>
+        <div class="mfoot">
+          <button class="btn btn-danger btn-sm" id="nd-del"><i class="ti ti-trash"></i> Supprimer</button>
+          <button class="btn btn-secondary" id="ndm-close2">Fermer</button>
+        </div>
+      </div>
+    </div>
     <div class="overlay hidden" id="detail-modal">
       <div class="modal modal-lg">
         <div class="mh">
