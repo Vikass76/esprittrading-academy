@@ -966,3 +966,12 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
   cursor: not-allowed;
   pointer-events: none;
 }
+
+/* Nathan trades */
+.trade-card{background:var(--bg);border:1px solid var(--border-2);border-radius:10px;padding:12px 14px;margin-bottom:8px;transition:border-color 0.2s;}
+.trade-card:hover{border-color:rgba(244,199,15,0.4);}
+.tc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.tc-pair{font-weight:700;font-size:15px;color:var(--text);}
+.tc-badges{display:flex;gap:6px;flex-wrap:wrap;}
+.tc-badge{padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;}
+.tc-date{font-size:12px;color:var(--text-muted);}
