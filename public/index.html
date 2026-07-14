@@ -2,7 +2,10 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
+    />
     <title>Esprit Trading</title>
     <link rel="icon" type="image/jpeg" href="/logo.jpg" />
     <link rel="stylesheet" href="/css/style.css" />
@@ -14,14 +17,59 @@
   </head>
   <body>
     <!-- LOADING SCREEN -->
-    <div id="app-loading" style="position:fixed;inset:0;background:#0a0a0f;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:99999">
-      <img src="/logo.jpg" alt="Esprit Trading" style="width:64px;height:64px;border-radius:50%;border:2px solid #F4C70F"/>
-      <div style="width:40px;height:3px;background:rgba(244,199,15,0.15);border-radius:99px;overflow:hidden">
-        <div style="height:100%;width:40%;background:#F4C70F;border-radius:99px;animation:loadbar 1.2s ease-in-out infinite"></div>
+    <div
+      id="app-loading"
+      style="
+        position: fixed;
+        inset: 0;
+        background: #0a0a0f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 16px;
+        z-index: 99999;
+      "
+    >
+      <img
+        src="/logo.jpg"
+        alt="Esprit Trading"
+        style="
+          width: 64px;
+          height: 64px;
+          border-radius: 50%;
+          border: 2px solid #f4c70f;
+        "
+      />
+      <div
+        style="
+          width: 40px;
+          height: 3px;
+          background: rgba(244, 199, 15, 0.15);
+          border-radius: 99px;
+          overflow: hidden;
+        "
+      >
+        <div
+          style="
+            height: 100%;
+            width: 40%;
+            background: #f4c70f;
+            border-radius: 99px;
+            animation: loadbar 1.2s ease-in-out infinite;
+          "
+        ></div>
       </div>
     </div>
     <style>
-      @keyframes loadbar { 0% { transform:translateX(-100%); } 100% { transform:translateX(250%); } }
+      @keyframes loadbar {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(250%);
+        }
+      }
     </style>
     <!-- LOGIN -->
     <div id="login-page">
@@ -47,7 +95,20 @@
           <p class="lp-desc">
             Journal de trades, analytics en temps réel et suivi de performance —
             tout ce qu'il te faut pour passer au niveau supérieur.
-          <button class="mob-cta-btn btn btn-primary" style="display:none;margin-top:24px;width:100%;padding:16px;font-size:1rem;font-weight:800" onclick="document.querySelector('.lp-right').classList.add('show')">Se connecter →</button>
+            <button
+              class="mob-cta-btn btn btn-primary"
+              style="
+                display: none;
+                margin-top: 24px;
+                width: 100%;
+                padding: 16px;
+                font-size: 1rem;
+                font-weight: 800;
+              "
+              onclick="document.querySelector('.lp-right').classList.add('show')"
+            >
+              Se connecter →
+            </button>
           </p>
           <div class="lp-feat">
             <div class="lp-feat-text">
@@ -700,11 +761,32 @@
           <p class="login-footer" style="padding-bottom: 48px">
             Esprit Trading &copy; 2025 · Gratuit pour tous
           </p>
-          <button class="mob-cta-btn btn btn-primary" style="display:none;position:fixed;bottom:20px;left:20px;right:20px;padding:16px;font-size:1rem;font-weight:800;z-index:500" onclick="document.querySelector('.lp-right').classList.add('show')">Se connecter →</button>
+          <button
+            class="mob-cta-btn btn btn-primary"
+            style="
+              display: none;
+              position: fixed;
+              bottom: 20px;
+              left: 20px;
+              right: 20px;
+              padding: 16px;
+              font-size: 1rem;
+              font-weight: 800;
+              z-index: 500;
+            "
+            onclick="document.querySelector('.lp-right').classList.add('show')"
+          >
+            Se connecter →
+          </button>
         </div>
         <div class="lp-right">
-
-          <button class="mob-close-btn btn btn-secondary" style="display:none;width:100%;margin-bottom:16px" onclick="document.querySelector('.lp-right').classList.remove('show')">RETOUR</button>
+          <button
+            class="mob-close-btn btn btn-secondary"
+            style="display: none; width: 100%; margin-bottom: 16px"
+            onclick="document.querySelector('.lp-right').classList.remove('show')"
+          >
+            RETOUR
+          </button>
           <div class="lp-form-wrap">
             <div class="lp-tabs">
               <button
@@ -1125,7 +1207,11 @@
               <span class="ni"><i class="ti ti-player-play"></i></span>Vidéos
             </button>
             <button class="nav-subitem" data-ftab="rdv">
-              <span class="ni"><i class="ti ti-calendar"></i></span>Session coaching Nathan
+              <span class="ni"><i class="ti ti-calendar"></i></span>Session
+              coaching Nathan
+            </button>
+            <button class="nav-subitem" data-ftab="nathan-trades">
+              <span class="ni"><i class="ti ti-chart-candle"></i></span>Mes trades
             </button>
           </div>
           <div class="sb-section admin-only hidden" style="margin-top: 8px">
@@ -1247,8 +1333,50 @@
                 <option>New York</option>
                 <option>Asia</option>
               </select>
-              <span style="position:relative;display:inline-block"><input type="date" class="filter-input" id="f-from" style="color:transparent;background:transparent" onclick="this.showPicker && this.showPicker()" oninput="document.getElementById('f-from-display').textContent = this.value ? this.value.split('-').reverse().join('/') : 'jj/mm/aaaa'" /><span id="f-from-display" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:.78rem;color:var(--text-muted)">jj/mm/aaaa</span></span>
-              <span style="position:relative;display:inline-block"><input type="date" class="filter-input" id="f-to" style="color:transparent;background:transparent" onclick="this.showPicker && this.showPicker()" oninput="document.getElementById('f-to-display').textContent = this.value ? this.value.split('-').reverse().join('/') : 'jj/mm/aaaa'" /><span id="f-to-display" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:.78rem;color:var(--text-muted)">jj/mm/aaaa</span></span>
+              <span style="position: relative; display: inline-block"
+                ><input
+                  type="date"
+                  class="filter-input"
+                  id="f-from"
+                  style="color: transparent; background: transparent"
+                  onclick="this.showPicker && this.showPicker()"
+                  oninput="document.getElementById('f-from-display').textContent = this.value ? this.value.split('-').reverse().join('/') : 'jj/mm/aaaa'"
+                /><span
+                  id="f-from-display"
+                  style="
+                    position: absolute;
+                    left: 14px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    pointer-events: none;
+                    font-size: 0.78rem;
+                    color: var(--text-muted);
+                  "
+                  >jj/mm/aaaa</span
+                ></span
+              >
+              <span style="position: relative; display: inline-block"
+                ><input
+                  type="date"
+                  class="filter-input"
+                  id="f-to"
+                  style="color: transparent; background: transparent"
+                  onclick="this.showPicker && this.showPicker()"
+                  oninput="document.getElementById('f-to-display').textContent = this.value ? this.value.split('-').reverse().join('/') : 'jj/mm/aaaa'"
+                /><span
+                  id="f-to-display"
+                  style="
+                    position: absolute;
+                    left: 14px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    pointer-events: none;
+                    font-size: 0.78rem;
+                    color: var(--text-muted);
+                  "
+                  >jj/mm/aaaa</span
+                ></span
+              >
               <button class="btn btn-secondary btn-sm" id="f-reset">
                 <i class="ti ti-x"></i> Reset
               </button>
@@ -1385,7 +1513,7 @@
               Performance par paire
             </div>
             <div class="an-card" style="margin-bottom: 28px">
-              <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+              <div style="overflow-x: auto; -webkit-overflow-scrolling: touch">
                 <table class="perf-table" id="pair-tbl"></table>
               </div>
             </div>
@@ -1683,7 +1811,12 @@
                 <div class="grid2">
                   <div class="fg">
                     <label>Capital initial ($)</label
-                    ><input type="number" id="o-cap" placeholder="10000" onkeydown="if(['e','E','+','-','^'].includes(event.key))event.preventDefault()" />
+                    ><input
+                      type="number"
+                      id="o-cap"
+                      placeholder="10000"
+                      onkeydown="if(['e','E','+','-','^'].includes(event.key))event.preventDefault()"
+                    />
                   </div>
                   <div class="fg">
                     <label>Objectif ($)</label
@@ -1736,32 +1869,141 @@
               <div id="ftab-rdv" class="hidden">
                 <div id="rdv-available" class="rdv-card">
                   <div class="rdv-intro">
-                    <div class="rdv-badge"><i class="ti ti-calendar-event"></i> Session mensuelle OTE 705</div>
+                    <div class="rdv-badge">
+                      <i class="ti ti-calendar-event"></i> Session mensuelle OTE
+                      705
+                    </div>
                     <h3>Réserve ta session avec Nathan</h3>
-                    <p>1h pour faire le point sur ta progression, débloquer tes points faibles et ajuster ton process.</p>
+                    <p>
+                      1h pour faire le point sur ta progression, débloquer tes
+                      points faibles et ajuster ton process.
+                    </p>
                   </div>
                   <div class="rdv-divider"></div>
-                  <div style="background:#1a1a1a; border:1px solid #f4c70f33; border-radius:12px; padding:14px 18px; margin-bottom:20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
-                    <i class="ti ti-info-circle" style="color:#f4c70f; font-size:22px; flex-shrink:0;"></i>
-                    <p style="margin:0; font-size:13px; color:#ccc;">Le Discord est actuellement en reconstruction. Pour me contacter, passe par le bouton :</p>
-                    <a href="https://t.me/EspritTradingSupport" target="_blank" style="display:inline-flex; align-items:center; gap:6px; background:#f4c70f; color:#000; font-weight:700; font-size:13px; padding:8px 16px; border-radius:8px; text-decoration:none; white-space:nowrap;">
+                  <div
+                    style="
+                      background: #1a1a1a;
+                      border: 1px solid #f4c70f33;
+                      border-radius: 12px;
+                      padding: 14px 18px;
+                      margin-bottom: 20px;
+                      display: flex;
+                      align-items: center;
+                      gap: 14px;
+                      flex-wrap: wrap;
+                    "
+                  >
+                    <i
+                      class="ti ti-info-circle"
+                      style="color: #f4c70f; font-size: 22px; flex-shrink: 0"
+                    ></i>
+                    <p style="margin: 0; font-size: 13px; color: #ccc">
+                      Le Discord est actuellement en reconstruction. Pour me
+                      contacter, passe par le bouton :
+                    </p>
+                    <a
+                      href="https://t.me/EspritTradingSupport"
+                      target="_blank"
+                      style="
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 6px;
+                        background: #f4c70f;
+                        color: #000;
+                        font-weight: 700;
+                        font-size: 13px;
+                        padding: 8px 16px;
+                        border-radius: 8px;
+                        text-decoration: none;
+                        white-space: nowrap;
+                      "
+                    >
                       <i class="ti ti-message"></i> Contacter Nathan
                     </a>
                   </div>
-                  <div class="calendly-inline-widget" data-url="https://calendly.com/esprittrading-contact/session-mensuelle-ote-705-1h-avec-nathan?primary_color=e0a800&text_color=ffffff&background_color=1f1f1f" style="min-width:320px;height:700px;"></div>
-                  <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+                  <div
+                    class="calendly-inline-widget"
+                    data-url="https://calendly.com/esprittrading-contact/session-mensuelle-ote-705-1h-avec-nathan?primary_color=e0a800&text_color=ffffff&background_color=1f1f1f"
+                    style="min-width: 320px; height: 700px"
+                  ></div>
+                  <script
+                    type="text/javascript"
+                    src="https://assets.calendly.com/assets/external/widget.js"
+                    async
+                  ></script>
                 </div>
                 <div id="rdv-locked" class="hidden">
                   <div class="rdv-locked-box">
-                    <div class="rdv-locked-icon"><i class="ti ti-calendar-check"></i></div>
+                    <div class="rdv-locked-icon">
+                      <i class="ti ti-calendar-check"></i>
+                    </div>
                     <h3>Session réservée ✅</h3>
-                    <p>Ton RDV est confirmé pour le <strong id="rdv-booked-date">--</strong></p>
-                    <div id="rdv-meeting-link-wrap" class="hidden" style="margin-top:16px">
-                      <a id="rdv-meeting-link" href="#" target="_blank" class="rdv-join-btn">
+                    <p>
+                      Ton RDV est confirmé pour le
+                      <strong id="rdv-booked-date">--</strong>
+                    </p>
+                    <div
+                      id="rdv-meeting-link-wrap"
+                      class="hidden"
+                      style="margin-top: 16px"
+                    >
+                      <a
+                        id="rdv-meeting-link"
+                        href="#"
+                        target="_blank"
+                        class="rdv-join-btn"
+                      >
                         <i class="ti ti-video"></i> Rejoindre l'appel
                       </a>
                     </div>
-                    <p style="margin-top:20px;font-size:0.82rem;">Prochain RDV disponible à partir du <strong id="rdv-unlock-date" style="color:var(--gold)">--</strong></p>
+                    <p style="margin-top: 20px; font-size: 0.82rem">
+                      Prochain RDV disponible à partir du
+                      <strong id="rdv-unlock-date" style="color: var(--gold)"
+                        >--</strong
+                      >
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="ftab-nathan-trades" class="hidden">
+              <div class="admin-only hidden" id="nathan-add-btn-wrap" style="margin-bottom:16px;">
+                <button onclick="openNathanForm()" style="display:flex;align-items:center;gap:8px;background:#f4c70f;color:#000;font-weight:700;font-size:13px;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;">
+                  <i class="ti ti-plus"></i> Nouveau trade
+                </button>
+              </div>
+              <div id="nathan-trades-list"></div>
+              <!-- Modal ajout trade -->
+              <div id="nathan-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center;">
+                <div style="background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:24px;width:90%;max-width:480px;max-height:90vh;overflow-y:auto;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                    <h3 style="font-size:16px;font-weight:700;">Nouveau trade</h3>
+                    <button onclick="closeNathanForm()" style="background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer;">✕</button>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:12px;">
+                    <input type="date" id="nt-date" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;width:100%;" />
+                    <select id="nt-pair" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;width:100%;">
+                      <option value="">Paire...</option>
+                      <option>XAUUSD</option><option>EURUSD</option><option>GBPUSD</option>
+                      <option>NAS100</option><option>US30</option><option>USDJPY</option>
+                      <option>GBPJPY</option><option>AUDUSD</option>
+                    </select>
+                    <div style="display:flex;gap:8px;">
+                      <select id="nt-direction" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;flex:1;">
+                        <option value="buy">Buy</option>
+                        <option value="sell">Sell</option>
+                      </select>
+                      <select id="nt-result" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;flex:1;">
+                        <option value="win">Win</option>
+                        <option value="lose">Lose</option>
+                      </select>
+                    </div>
+                    <input type="text" id="nt-rr" placeholder="R:R (ex: 1:2)" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;width:100%;" />
+                    <input type="file" id="nt-image" accept="image/*" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;width:100%;" />
+                    <input type="text" id="nt-video" placeholder="Lien YouTube (optionnel)" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;width:100%;" />
+                    <textarea id="nt-notes" placeholder="Notes (optionnel)" rows="3" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;width:100%;resize:none;"></textarea>
+                    <div id="nt-error" style="color:#d32f2f;font-size:13px;"></div>
+                    <button onclick="submitNathanTrade()" style="background:#f4c70f;color:#000;font-weight:700;font-size:14px;padding:12px;border-radius:8px;border:none;cursor:pointer;width:100%;">Ajouter le trade</button>
                   </div>
                 </div>
               </div>
@@ -2331,53 +2573,166 @@
                 </div>
               </div>
             </div>
-        <div id="atab-inscrits" class="hidden">
-          <div class="adm-grid">
-            <div class="card" style="grid-column:1/-1;">
-              <h3 style="font-size:.88rem;margin-bottom:14px">Inscrits</h3>
-              <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
-                <button class="inscrits-filter active" data-role="all" style="padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--yellow);color:#000;font-weight:700;font-size:12px;cursor:pointer;">Tous</button>
-                <button class="inscrits-filter" data-role="student" style="padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:12px;cursor:pointer;">Élèves</button>
-                <button class="inscrits-filter" data-role="community" style="padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:12px;cursor:pointer;">Communauté</button>
-                <select id="inscrits-period" style="padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12px;cursor:pointer;margin-left:auto;">
-                  <option value="all">Tout</option>
-                  <option value="7">7 derniers jours</option>
-                  <option value="30">30 derniers jours</option>
-                  <option value="90">3 derniers mois</option>
-                </select>
+            <div id="atab-inscrits" class="hidden">
+              <div class="adm-grid">
+                <div class="card" style="grid-column: 1/-1">
+                  <h3 style="font-size: 0.88rem; margin-bottom: 14px">
+                    Inscrits
+                  </h3>
+                  <div
+                    style="
+                      display: flex;
+                      gap: 8px;
+                      margin-bottom: 16px;
+                      flex-wrap: wrap;
+                    "
+                  >
+                    <button
+                      class="inscrits-filter active"
+                      data-role="all"
+                      style="
+                        padding: 6px 14px;
+                        border-radius: 6px;
+                        border: 1px solid var(--border);
+                        background: var(--yellow);
+                        color: #000;
+                        font-weight: 700;
+                        font-size: 12px;
+                        cursor: pointer;
+                      "
+                    >
+                      Tous
+                    </button>
+                    <button
+                      class="inscrits-filter"
+                      data-role="student"
+                      style="
+                        padding: 6px 14px;
+                        border-radius: 6px;
+                        border: 1px solid var(--border);
+                        background: transparent;
+                        color: var(--text);
+                        font-size: 12px;
+                        cursor: pointer;
+                      "
+                    >
+                      Élèves
+                    </button>
+                    <button
+                      class="inscrits-filter"
+                      data-role="community"
+                      style="
+                        padding: 6px 14px;
+                        border-radius: 6px;
+                        border: 1px solid var(--border);
+                        background: transparent;
+                        color: var(--text);
+                        font-size: 12px;
+                        cursor: pointer;
+                      "
+                    >
+                      Communauté
+                    </button>
+                    <select
+                      id="inscrits-period"
+                      style="
+                        padding: 6px 14px;
+                        border-radius: 6px;
+                        border: 1px solid var(--border);
+                        background: var(--card);
+                        color: var(--text);
+                        font-size: 12px;
+                        cursor: pointer;
+                        margin-left: auto;
+                      "
+                    >
+                      <option value="all">Tout</option>
+                      <option value="7">7 derniers jours</option>
+                      <option value="30">30 derniers jours</option>
+                      <option value="90">3 derniers mois</option>
+                    </select>
+                  </div>
+                  <div
+                    id="inscrits-count"
+                    style="
+                      font-size: 12px;
+                      color: var(--text-muted);
+                      margin-bottom: 12px;
+                    "
+                  ></div>
+                  <div id="inscrits-list"></div>
+                </div>
               </div>
-              <div id="inscrits-count" style="font-size:12px;color:var(--text-muted);margin-bottom:12px;"></div>
-              <div id="inscrits-list"></div>
             </div>
-          </div>
-        </div>
-        <div id="atab-access" class="hidden">
-          <div class="adm-grid">
-            <div class="card">
-              <h3 style="font-size:.88rem;margin-bottom:14px">Donner acces a la formation</h3>
-              <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:16px">Recherche un compte existant par email pour debloquer la formation, sans toucher au journal de trading.</p>
-              <div class="fg">
-                <label>Email de la personne</label>
-                <input type="email" id="access-search-email" placeholder="exemple@gmail.com"/>
+            <div id="atab-access" class="hidden">
+              <div class="adm-grid">
+                <div class="card">
+                  <h3 style="font-size: 0.88rem; margin-bottom: 14px">
+                    Donner acces a la formation
+                  </h3>
+                  <p
+                    style="
+                      font-size: 0.78rem;
+                      color: var(--text-muted);
+                      margin-bottom: 16px;
+                    "
+                  >
+                    Recherche un compte existant par email pour debloquer la
+                    formation, sans toucher au journal de trading.
+                  </p>
+                  <div class="fg">
+                    <label>Email de la personne</label>
+                    <input
+                      type="email"
+                      id="access-search-email"
+                      placeholder="exemple@gmail.com"
+                    />
+                  </div>
+                  <button
+                    class="btn btn-primary"
+                    id="access-search-btn"
+                    style="margin-top: 10px"
+                  >
+                    Rechercher
+                  </button>
+                  <div id="access-result" style="margin-top: 18px"></div>
+                </div>
               </div>
-              <button class="btn btn-primary" id="access-search-btn" style="margin-top:10px">Rechercher</button>
-              <div id="access-result" style="margin-top:18px"></div>
             </div>
-          </div>
-        </div>
           </section>
         </div>
         <div id="atab-access" class="hidden">
           <div class="adm-grid">
             <div class="card">
-              <h3 style="font-size:.88rem;margin-bottom:14px">Donner acces a la formation</h3>
-              <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:16px">Recherche un compte existant par email pour debloquer la formation, sans toucher au journal de trading.</p>
+              <h3 style="font-size: 0.88rem; margin-bottom: 14px">
+                Donner acces a la formation
+              </h3>
+              <p
+                style="
+                  font-size: 0.78rem;
+                  color: var(--text-muted);
+                  margin-bottom: 16px;
+                "
+              >
+                Recherche un compte existant par email pour debloquer la
+                formation, sans toucher au journal de trading.
+              </p>
               <div class="fg">
                 <label>Email de la personne</label>
-                <input type="email" id="access-search-email" placeholder="exemple@gmail.com"/>
+                <input
+                  type="email"
+                  id="access-search-email"
+                  placeholder="exemple@gmail.com"
+                />
               </div>
-              <button class="btn btn-primary" id="access-search-btn" style="margin-top:10px">Rechercher</button>
-              <div id="access-result" style="margin-top:18px"></div>
+              <button
+                class="btn btn-primary"
+                id="access-search-btn"
+                style="margin-top: 10px"
+              >
+                Rechercher
+              </button>
+              <div id="access-result" style="margin-top: 18px"></div>
             </div>
           </div>
         </div>
@@ -3026,7 +3381,12 @@
         </button>
       </div>
       <video id="vid-player" controls></video>
-      <iframe id="vid-player-yt" style="display:none;width:100%;aspect-ratio:16/9;border:none" allow="autoplay; fullscreen" allowfullscreen></iframe>
+      <iframe
+        id="vid-player-yt"
+        style="display: none; width: 100%; aspect-ratio: 16/9; border: none"
+        allow="autoplay; fullscreen"
+        allowfullscreen
+      ></iframe>
     </div>
 
     <div id="toasts"></div>
@@ -3120,10 +3480,12 @@
         </div>
       </div>
     </div>
-    <a id="feedback-link"
+    <a
+      id="feedback-link"
       href="https://t.me/EspritTradingSupport"
       target="_blank"
-      style="display:none;
+      style="
+        display: none;
         position: fixed;
         bottom: 24px;
         right: 24px;
@@ -3208,7 +3570,12 @@
             </div>
             <div class="fg">
               <label>Capital initial</label
-              ><input type="number" id="eacc-balance" placeholder="10000" onkeydown="if(['e','E','+','-','^'].includes(event.key))event.preventDefault()" />
+              ><input
+                type="number"
+                id="eacc-balance"
+                placeholder="10000"
+                onkeydown="if(['e','E','+','-','^'].includes(event.key))event.preventDefault()"
+              />
             </div>
           </div>
           <div class="fg">

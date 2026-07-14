@@ -1021,6 +1021,7 @@ async function loadFormation() {
   // Reset sur Videos a chaque ouverture
   $('ftab-videos').classList.remove('hidden');
   $('ftab-rdv').classList.add('hidden');
+  $('ftab-nathan-trades').classList.add('hidden');
   document.querySelectorAll('.nav-subitem').forEach(b => b.classList.remove('active'));
   const firstSubitem = document.querySelector('.nav-subitem[data-ftab="videos"]');
   if (firstSubitem) firstSubitem.classList.add('active');
@@ -1033,6 +1034,8 @@ async function loadFormation() {
       const ftab = btn.dataset.ftab;
       $('ftab-videos').classList.toggle('hidden', ftab !== 'videos');
       $('ftab-rdv').classList.toggle('hidden', ftab !== 'rdv');
+      $('ftab-nathan-trades').classList.toggle('hidden', ftab !== 'nathan-trades');
+      if (ftab === 'nathan-trades') loadNathanTrades();
       if (ftab === 'rdv') loadRdvStatus();
     });
   });
@@ -1929,3 +1932,87 @@ document.getElementById('inscrits-period')?.addEventListener('change', e => {
   inscritsCurrentPeriod = e.target.value;
   loadInscrits();
 });
+
+// ===== NATHAN TRADES =====
+function openNathanForm() {
+  document.getElementById('nathan-modal').style.display = 'flex';
+}
+function closeNathanForm() {
+  document.getElementById('nathan-modal').style.display = 'none';
+}
+
+async function loadNathanTrades() {
+  const el = document.getElementById('nathan-trades-list');
+  if (!el) return;
+  el.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Chargement...</p>';
+  const adminWrap = document.getElementById('nathan-add-btn-wrap');
+  if (adminWrap && window._me?.role === 'admin') adminWrap.classList.remove('hidden');
+
+  try {
+    const data = await api('GET', '/nathan-trades');
+    const trades = data.trades || [];
+    if (!trades.length) { el.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Aucun trade pour l\'instant.</p>'; return; }
+    el.innerHTML = trades.map(t => {
+      const isWin = t.result === 'win';
+      const isBuy = t.direction === 'buy';
+      const videoId = t.video_url ? (t.video_url.match(/(?:youtu\.be\/|v=)([^&\n?#]+)/)?.[1] || '') : '';
+      return `<div class="trade-card" onclick="openNathanTrade(${t.id})" style="cursor:pointer;">
+        <div class="tc-head">
+          <div class="tc-pair">${t.pair}</div>
+          <div class="tc-badges">
+            <span class="tc-badge" style="background:${isBuy?'rgba(34,197,94,0.15)':'rgba(239,68,68,0.15)'};color:${isBuy?'#22c55e':'#ef4444'}">${isBuy?'BUY':'SELL'}</span>
+            <span class="tc-badge" style="background:${isWin?'rgba(34,197,94,0.15)':'rgba(239,68,68,0.15)'};color:${isWin?'#22c55e':'#ef4444'}">${isWin?'WIN':'LOSE'}</span>
+            <span class="tc-badge" style="background:rgba(244,199,15,0.15);color:#f4c70f;">${t.rr}</span>
+          </div>
+        </div>
+        <div class="tc-date">${new Date(t.date).toLocaleDateString('fr-FR')}</div>
+        ${t.image_path ? `<img src="${t.image_path}" style="width:100%;border-radius:8px;margin-top:10px;object-fit:cover;max-height:200px;">` : ''}
+        ${videoId ? `<div style="margin-top:10px;display:flex;align-items:center;gap:6px;color:#f4c70f;font-size:13px;font-weight:600;"><i class="ti ti-player-play"></i> Voir l'analyse</div>` : ''}
+      </div>`;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Erreur de chargement.</p>';
+  }
+}
+
+function openNathanTrade(id) {
+  // Ouvre le trade en modal (à implémenter)
+}
+
+async function submitNathanTrade() {
+  const date = document.getElementById('nt-date').value;
+  const pair = document.getElementById('nt-pair').value;
+  const direction = document.getElementById('nt-direction').value;
+  const result = document.getElementById('nt-result').value;
+  const rr = document.getElementById('nt-rr').value;
+  const video = document.getElementById('nt-video').value;
+  const notes = document.getElementById('nt-notes').value;
+  const imageFile = document.getElementById('nt-image').files[0];
+  const errEl = document.getElementById('nt-error');
+
+  if (!date || !pair || !rr) { errEl.textContent = 'Date, paire et R:R sont obligatoires.'; return; }
+  errEl.textContent = '';
+
+  const fd = new FormData();
+  fd.append('date', date);
+  fd.append('pair', pair);
+  fd.append('direction', direction);
+  fd.append('result', result);
+  fd.append('rr', rr);
+  if (video) fd.append('video_url', video);
+  if (notes) fd.append('notes', notes);
+  if (imageFile) fd.append('image', imageFile);
+
+  try {
+    const res = await fetch('/api/nathan-trades', { method: 'POST', body: fd, credentials: 'include' });
+    const data = await res.json();
+    if (data.success) {
+      closeNathanForm();
+      loadNathanTrades();
+    } else {
+      errEl.textContent = data.error || 'Erreur lors de l\'ajout.';
+    }
+  } catch(e) {
+    errEl.textContent = 'Erreur réseau.';
+  }
+}

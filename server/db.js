@@ -204,4 +204,19 @@ db.exec(`
 const apptCols = db.prepare('PRAGMA table_info(appointments)').all().map(c => c.name);
 if (apptCols.indexOf('meeting_link') < 0) db.exec('ALTER TABLE appointments ADD COLUMN meeting_link TEXT');
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS nathan_trades (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date TEXT NOT NULL,
+    pair TEXT NOT NULL,
+    direction TEXT NOT NULL,
+    result TEXT NOT NULL,
+    rr TEXT NOT NULL,
+    image_path TEXT,
+    video_url TEXT,
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+`);
+
 module.exports = db;
