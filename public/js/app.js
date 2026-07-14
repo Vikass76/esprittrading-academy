@@ -1998,8 +1998,7 @@ function openNathanTrade(id) {
   iw.innerHTML = t.image_path ? `<img src="${t.image_path}" style="width:100%;border-radius:10px;object-fit:cover;max-height:400px;">` : '';
   const vw = $('nd-video-wrap');
   if (t.video_url) {
-    const videoId = t.video_url.match(/(?:youtu\.be\/|v=)([^&
-?#]+)/)?.[1];
+    const videoId = t.video_url.match(/(?:youtu\.be\/|v=)([^&?#]+)/)?.[1];
     vw.innerHTML = videoId ? `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:10px;"><iframe src="https://www.youtube-nocookie.com/embed/${videoId}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:10px;" allowfullscreen></iframe></div>` : `<a href="${t.video_url}" target="_blank" class="btn btn-secondary btn-sm"><i class="ti ti-player-play"></i> Voir l'analyse</a>`;
   } else vw.innerHTML = '';
   $('nd-del').onclick = async () => {
