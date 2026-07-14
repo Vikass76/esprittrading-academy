@@ -1967,12 +1967,14 @@
               </div>
             </div>
             <div id="ftab-nathan-trades" class="hidden">
-              <div class="admin-only hidden" id="nathan-add-btn-wrap" style="margin-bottom:16px;">
-                <button onclick="openNathanForm()" style="display:flex;align-items:center;gap:8px;background:#f4c70f;color:#000;font-weight:700;font-size:13px;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;">
-                  <i class="ti ti-plus"></i> Nouveau trade
-                </button>
+              <div class="card">
+                <div class="admin-only hidden" id="nathan-add-btn-wrap" style="margin-bottom:16px;">
+                  <button onclick="openNathanForm()" style="display:flex;align-items:center;gap:8px;background:#f4c70f;color:#000;font-weight:700;font-size:13px;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;">
+                    <i class="ti ti-plus"></i> Nouveau trade
+                  </button>
+                </div>
+                <div id="nathan-trades-list"></div>
               </div>
-              <div id="nathan-trades-list"></div>
               <!-- Modal ajout trade -->
               <div id="nathan-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center;">
                 <div style="background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:24px;width:90%;max-width:480px;max-height:90vh;overflow-y:auto;">
