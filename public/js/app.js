@@ -1983,7 +1983,7 @@ async function loadNathanTrades() {
         <td style="padding:10px 6px;"><span class="badge ${isWin?'b-win':'b-loss'}">${isWin?'WIN':'LOSE'}</span></td>
         <td style="padding:10px 6px;"><span class="rr ${t.result==='win'?'rr-p':'rr-n'}">${(t.result==='win'?'+':'-')+Math.abs(parseFloat(t.rr)||0)+'R'}</span></td>
         <td style="padding:10px 6px;">${t.image_path?`<img class="ss-thumb" src="${t.image_path}" onclick="openImg('${t.image_path}',event)"/>`:'—'}</td>
-        <td style="padding:10px 6px;">${t.video_url?`<a href="${t.video_url}" target="_blank" style="color:#f4c70f;font-size:12px;font-weight:600;"><i class="ti ti-player-play"></i> Voir</a>`:'—'}</td>
+        <td style="padding:10px 6px;">${t.video_url?`<span onclick="event.stopPropagation();openNathanTrade(${t.id})" style="color:#f4c70f;font-size:12px;font-weight:600;cursor:pointer;"><i class="ti ti-player-play"></i> Voir</span>`:'—'}</td>
       </tr>`;
     }).join('')}</tbody>
   </table></div>`;
