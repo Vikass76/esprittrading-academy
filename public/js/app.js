@@ -1940,6 +1940,15 @@ function openNathanForm() {
 }
 function closeNathanForm() {
   document.getElementById('nathan-modal').style.display = 'none';
+  document.getElementById('nt-date').value = '';
+  document.getElementById('nt-pair').value = '';
+  document.getElementById('nt-direction').value = 'buy';
+  document.getElementById('nt-result').value = 'win';
+  document.getElementById('nt-rr').value = '';
+  document.getElementById('nt-video').value = '';
+  document.getElementById('nt-notes').value = '';
+  document.getElementById('nt-error').textContent = '';
+  window._editNathanId = null;
 }
 
 async function loadNathanTrades() {
