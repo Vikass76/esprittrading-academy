@@ -1950,6 +1950,7 @@ function closeNathanForm() {
   document.getElementById('nt-video').value = '';
   document.getElementById('nt-notes').value = '';
   document.getElementById('nt-error').textContent = '';
+  document.getElementById('nt-image').value = '';
   window._editNathanId = null;
 }
 
