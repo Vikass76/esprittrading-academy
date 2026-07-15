@@ -446,6 +446,8 @@ function openAddTrade() {
     return;
   }
   $('trade-form').reset();
+  ['e-ss1','e-ss2'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  const tf = $('trade-form'); if(tf) tf.querySelectorAll('input[type="file"]').forEach(el => el.value = '');
   document.querySelectorAll('.field-error').forEach(el => el.remove());
   document.querySelectorAll('.field-error-input').forEach(el => el.classList.remove('field-error-input'));
   setTimeout(()=>{ initPairSearch(); const pi=document.getElementById('pair-search-input');if(pi)pi.value=''; const ph=document.getElementById('pair-search-hidden');if(ph)ph.value=''; },50);
