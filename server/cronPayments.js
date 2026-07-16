@@ -55,7 +55,7 @@ async function attemptCharge(payment) {
       await sendEmail(payment.email, 'Action requise - ton accès à la formation OTE 705',
         `<p>Nous n'avons pas pu prélever ton 2e versement de ${(payment.amount_due/100).toFixed(2)}€ après plusieurs tentatives.</p>
          <p>Ton accès à la formation a été temporairement suspendu. Pour le réactiver, merci de relancer ton paiement :</p>
-         <a href="${appUrl}/checkout.html?retry=${payment.id}" style="display:inline-block;background:#F4C70F;color:#000;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;margin:16px 0">Relancer mon paiement</a>`);
+         <a href="https://ote.esprittrading.fr/checkout.html?retry=${payment.id}" style="display:inline-block;background:#F4C70F;color:#000;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;margin:16px 0">Relancer mon paiement</a>`);
       console.log(`[cron-payments] Acces bloque pour ${payment.email} apres ${newRetryCount} echecs`);
     } else {
       const delayDays = RETRY_DELAYS_DAYS[newRetryCount - 1] || 14;
