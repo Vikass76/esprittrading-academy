@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 
 const SQLiteStore = require('connect-sqlite3')(session);
 app.use(session({
-  store: new SQLiteStore({ db: 'sessions.db', dir: path.join(__dirname, '..') }),
+  store: new SQLiteStore({ db: 'sessions.db', dir: process.env.RENDER ? '/data' : path.join(__dirname, '..') }),
   secret: process.env.SESSION_SECRET || 'esprit-trading-secret-2025',
   resave: false,
   saveUninitialized: false,
