@@ -41,6 +41,7 @@ const corsOptions = {
     'http://localhost:5500',
     'https://esprittrading.fr',
     'https://www.esprittrading.fr',
+    'https://www.esprittrading.fr',
     'https://formation-ote-705.vercel.app',
     'https://new.esprittrading.fr',
     'https://ote.esprittrading.fr',
