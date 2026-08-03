@@ -1023,6 +1023,7 @@ async function loadFormation() {
   // Reset sur Videos a chaque ouverture
   $('ftab-videos').classList.remove('hidden');
   $('ftab-rdv').classList.add('hidden');
+  $('ftab-rdv-contact').classList.add('hidden');
   $('ftab-nathan-trades').classList.add('hidden');
   document.querySelectorAll('.nav-subitem').forEach(b => b.classList.remove('active'));
   const firstSubitem = document.querySelector('.nav-subitem[data-ftab="videos"]');
@@ -1036,6 +1037,7 @@ async function loadFormation() {
       const ftab = btn.dataset.ftab;
       $('ftab-videos').classList.toggle('hidden', ftab !== 'videos');
       $('ftab-rdv').classList.toggle('hidden', ftab !== 'rdv');
+      $('ftab-rdv-contact').classList.toggle('hidden', ftab !== 'rdv-contact');
       $('ftab-nathan-trades').classList.toggle('hidden', ftab !== 'nathan-trades');
       if (ftab === 'nathan-trades') loadNathanTrades();
       if (ftab === 'rdv') loadRdvStatus();
