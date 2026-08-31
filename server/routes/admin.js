@@ -226,3 +226,12 @@ router.get('/inscrits/export', requireAdmin, (req, res) => {
   res.setHeader('Content-Disposition', 'attachment; filename="community_export.csv"');
   res.send(csv);
 });
+
+// Marquer un paiement comme paid (stopper les retries)
+router.patch('/payments/:email/paid', requireAdmin, (req, res) => {
+  const email = req.params.email.toLowerCase();
+  const payment = db.prepare("SELECT * FROM payments WHERE LOWER(email) = ?").get(email);
+  if (!payment) return res.status(404).json({ error: 'Paiement introuvable' });
+  db.prepare("UPDATE payments SET status = 'paid', attempts = 99 WHERE LOWER(email) = ?").run(email);
+  res.json({ success: true, message: `Paiement de ${email} marqué comme payé` });
+});
