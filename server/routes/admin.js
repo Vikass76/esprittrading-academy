@@ -232,6 +232,6 @@ router.patch('/payments/:email/paid', requireAdmin, (req, res) => {
   const email = req.params.email.toLowerCase();
   const payment = db.prepare("SELECT * FROM payments WHERE LOWER(email) = ?").get(email);
   if (!payment) return res.status(404).json({ error: 'Paiement introuvable' });
-  db.prepare("UPDATE payments SET status = 'paid', attempts = 99 WHERE LOWER(email) = ?").run(email);
+  db.prepare("UPDATE payments SET status = 'paid', retry_count = 99 WHERE LOWER(email) = ?").run(email);
   res.json({ success: true, message: `Paiement de ${email} marqué comme payé` });
 });
