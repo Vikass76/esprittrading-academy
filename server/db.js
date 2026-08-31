@@ -219,4 +219,20 @@ db.exec(`
   );
 `);
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS promo_codes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    code TEXT NOT NULL UNIQUE,
+    discount_percent INTEGER NOT NULL,
+    active INTEGER NOT NULL DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+`);
+
+// Insérer le code OTE20 si pas encore là
+const existing = db.prepare("SELECT id FROM promo_codes WHERE code = 'OTE20'").get();
+if (!existing) {
+  db.prepare("INSERT INTO promo_codes (code, discount_percent) VALUES ('OTE20', 23)").run();
+}
+
 module.exports = db;

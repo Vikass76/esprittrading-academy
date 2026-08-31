@@ -11,7 +11,7 @@ const PRICES = {
 };
 
 router.post('/create-intent', async (req, res) => {
-  const { plan, email, firstname, lastname } = req.body;
+  const { plan, email, firstname, lastname, promo_code } = req.body;
 
   if (!plan || !PRICES[plan]) {
     return res.status(400).json({ error: 'Offre invalide' });
@@ -31,7 +31,14 @@ router.post('/create-intent', async (req, res) => {
       }
     }
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: PRICES[plan],
+      amount: (() => {
+        let amt = PRICES[plan];
+        if (promo_code) {
+          const promo = db.prepare("SELECT * FROM promo_codes WHERE UPPER(code) = UPPER(?) AND active = 1").get(promo_code.trim());
+          if (promo) amt = Math.round(amt * (1 - promo.discount_percent / 100));
+        }
+        return amt;
+      })(),
       currency: 'eur',
       customer: customer ? customer.id : undefined,
       setup_future_usage: plan === 'split' ? 'off_session' : undefined,
@@ -114,3 +121,12 @@ router.post('/update-intent-metadata', async (req, res) => {
 });
 
 module.exports = router;
+
+// Valider un code promo
+router.post('/validate-promo', async (req, res) => {
+  const { code } = req.body;
+  if (!code) return res.status(400).json({ error: 'Code manquant' });
+  const promo = db.prepare("SELECT * FROM promo_codes WHERE UPPER(code) = UPPER(?) AND active = 1").get(code.trim());
+  if (!promo) return res.status(404).json({ error: 'Code invalide' });
+  res.json({ valid: true, code: promo.code.toUpperCase(), discount_percent: promo.discount_percent });
+});
