@@ -99,6 +99,7 @@ async function handleSuccessfulPayment({ email, firstname, lastname, plan, custo
       'INSERT INTO users (username, email, password, role, firstname, lastname, email_verified) VALUES (?,?,?,?,?,?,?)'
     ).run(username, emailLower, hash, 'student', firstname || '', lastname || '', 1);
     user = db.prepare('SELECT * FROM users WHERE id = ?').get(row.lastInsertRowid);
+    addContactToBrevo({ email: user.email, firstname: user.firstname, lastname: user.lastname, role: 'student' }).catch(()=>{});
   }
 
   // Si paiement en 2 fois, enregistrer le suivi pour le 2e prelevement
