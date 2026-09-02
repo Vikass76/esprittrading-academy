@@ -7,6 +7,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const { Resend } = require('resend');
 const resend = new Resend(process.env.RESEND_API_KEY);
+const addContactToBrevo = require('../brevo');
 
 const router = express.Router();
 
@@ -48,6 +49,8 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
         db.prepare("UPDATE payments SET status = 'paid', last_attempt_at = ? WHERE id = ?")
           .run(Date.now(), paymentId);
         db.prepare("UPDATE users SET role = 'student' WHERE LOWER(email) = ?").run(email.toLowerCase());
+        const uRetry = db.prepare('SELECT * FROM users WHERE LOWER(email) = ?').get(email.toLowerCase());
+        if (uRetry) addContactToBrevo({ email: uRetry.email, firstname: uRetry.firstname, lastname: uRetry.lastname, role: 'student' }).catch(()=>{});
         console.log(`Relance de paiement reussie pour ${email}, acces reactive`);
       } catch (err) {
         console.error('Erreur traitement relance paiement:', err);
@@ -81,6 +84,7 @@ async function handleSuccessfulPayment({ email, firstname, lastname, plan, custo
   if (user) {
     // Compte existant -> debloquer la formation
     db.prepare("UPDATE users SET role = 'student' WHERE id = ?").run(user.id);
+    addContactToBrevo({ email: user.email, firstname: user.firstname, lastname: user.lastname, role: 'student' }).catch(()=>{});
   } else {
     // Nouveau compte -> creer avec mot de passe temporaire
     tempPassword = crypto.randomBytes(6).toString('hex');
