@@ -4,6 +4,7 @@ const LIST_IDS = {
   community: 3,
   student: 5,
   leadMagnet: 4,
+  videoLeadMagnet: 11,
 };
 
 async function addContactToBrevo({ email, firstname, lastname, role }) {
@@ -11,7 +12,7 @@ async function addContactToBrevo({ email, firstname, lastname, role }) {
     const body = JSON.stringify({
       email,
       attributes: { PRENOM: firstname || '', NOM: lastname || '' },
-      listIds: [role === 'student' ? LIST_IDS.student : role === 'leadMagnet' ? LIST_IDS.leadMagnet : LIST_IDS.community],
+      listIds: [role === 'student' ? LIST_IDS.student : role === 'leadMagnet' ? LIST_IDS.leadMagnet : role === 'videoLeadMagnet' ? LIST_IDS.videoLeadMagnet : LIST_IDS.community],
       updateEnabled: true,
     });
 

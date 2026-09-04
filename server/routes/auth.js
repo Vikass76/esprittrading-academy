@@ -191,7 +191,7 @@ router.post('/lead-magnet', async (req, res) => {
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'Email invalide' });
   try {
     const { addContactToBrevo } = require('../brevo');
-    await addContactToBrevo({ email, firstname: firstname || '', lastname: lastname || '', role: 'leadMagnet' });
+    await addContactToBrevo({ email, firstname: firstname || '', lastname: lastname || '', role: 'videoLeadMagnet' });
     res.json({ success: true });
   } catch(err) {
     console.error('Erreur lead-magnet:', err);
