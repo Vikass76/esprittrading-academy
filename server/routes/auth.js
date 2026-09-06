@@ -76,17 +76,17 @@ router.post('/register', async (req, res) => {
   // Envoi email confirmation
   const appUrl = process.env.APP_URL || 'http://localhost:3000';
   try {
-    await resend.emails.send({
-      from: 'Esprit Trading <noreply@mail.esprittrading.fr>',
-      to: email,
-      subject: 'Confirme ton adresse email — Esprit Trading',
-      html: `<div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:32px">
-        <h2 style="color:#F4C70F">Esprit Trading</h2>
-        <p>Bonjour ${firstname},</p>
-        <p>Merci de confirmer ton adresse email pour activer ton compte.</p>
-        <a href="${appUrl}/api/auth/verify?token=${token}" style="display:inline-block;background:#F4C70F;color:#000;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;margin:16px 0">Confirmer mon email</a>
-        <p style="color:#666;font-size:.85rem">Si tu n'as pas créé de compte, ignore cet email.</p>
-      </div>`
+    await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: { 'api-key': process.env.BREVO_API_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: [{ email, name: firstname }],
+        templateId: 18,
+        params: {
+          confirmUrl: `${appUrl}/api/auth/verify?token=${token}`,
+          FIRSTNAME: firstname
+        }
+      })
     });
   } catch(e) { console.error('Email error:', e); }
   res.json({ ok: true, message: 'Compte créé, vérifie ton email' });
