@@ -14,7 +14,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'esprit-trading-secret-2025',
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 7 * 24 * 60 * 60 * 1000, secure: process.env.RENDER ? true : false, sameSite: process.env.RENDER ? 'none' : 'lax' }
+  cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }
 }));
 
 app.use('/api/payment/webhook', require('./routes/stripeWebhook'));
