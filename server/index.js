@@ -9,6 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const SQLiteStore = require('connect-sqlite3')(session);
+app.set('trust proxy', 1);
 app.use(session({
   store: new SQLiteStore({ db: 'sessions.db', dir: process.env.RENDER ? '/data' : path.join(__dirname, '..') }),
   secret: process.env.SESSION_SECRET || 'esprit-trading-secret-2025',
