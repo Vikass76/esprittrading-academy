@@ -688,7 +688,8 @@ function showAnalyticsLock() {
   // Créer l'overlay par-dessus
   const overlay = document.createElement('div');
   overlay.id = 'analytics-lock-overlay';
-  overlay.style.cssText = 'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:100;background:rgba(0,0,0,0.5);';
+  overlay.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:100;background:rgba(0,0,0,0.5);border-radius:12px;';
+  container.style.position = 'relative';
   overlay.innerHTML = `
     <div style="background:var(--bg-card);border:1px solid rgba(244,199,15,0.3);border-radius:16px;padding:40px 48px;text-align:center;max-width:420px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.6);">
       <div style="font-size:2.5rem;margin-bottom:16px;">📊</div>
