@@ -716,7 +716,7 @@ function showAnalyticsLock() {
       <h3 style="font-size:1.3rem;font-weight:900;color:#fff;margin-bottom:10px;">Passe au niveau supérieur avec tes Analytics</h3>
       <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.65;margin-bottom:28px;">Analyse ton win rate, ton profit factor, tes performances et tes erreurs pour comprendre ce qui fonctionne réellement dans ton trading.</p>
       <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
-        <button onclick="startAnalyticsCheckout()" class="btn btn-primary" style="width:100%;max-width:300px;padding:14px;font-size:0.95rem;">Débloquer pour 3,99 €/mois</button>
+        <button onclick="startAnalyticsCheckout()" class="btn btn-primary" style="width:100%;max-width:300px;padding:14px;font-size:0.95rem;">Débloquer pour 5,99 €/mois</button>
         <p style="font-size:0.72rem;color:var(--text-muted);margin-top:6px;">Sans engagement · Annulable à tout moment depuis ton profil.</p>
         <div style="font-size:0.75rem;color:var(--text-muted);">ou</div>
         <p style="font-size:0.78rem;color:var(--text-muted);margin:4px 0;">Analytics inclus avec OTE 705</p>
