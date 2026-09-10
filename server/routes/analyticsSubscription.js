@@ -42,7 +42,7 @@ router.get('/status', requireAuth, (req, res) => {
 router.post('/portal', requireAuth, async (req, res) => {
   try {
     const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.session.userId);
-    if (!user?.stripe_subscription_id) return res.status(400).json({ error: 'Pas d'abonnement actif' });
+    if (!user?.stripe_subscription_id) return res.status(400).json({ error: "Pas d'abonnement actif" });
     const appUrl = process.env.APP_URL || 'https://app.esprittrading.fr';
     // Récupérer le customer ID depuis l'abonnement
     const sub = await stripe.subscriptions.retrieve(user.stripe_subscription_id);
