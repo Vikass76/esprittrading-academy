@@ -93,6 +93,19 @@ function showApp(me) {
   const fb = document.getElementById('feedback-link');
   if (fb) fb.style.display = 'flex';
   role = me.role; user = me; window._me = me;
+  // Détecter retour après paiement Analytics
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('subscribed') === '1' && urlParams.get('tab') === 'analytics') {
+    history.replaceState(null, '', window.location.pathname);
+    setTimeout(() => {
+      toast('🎉 Analytics débloqué ! Bienvenue.', 'success');
+      // Recharger les données utilisateur
+      api('GET', '/auth/me').then(freshMe => {
+        window._me = freshMe;
+        loadAnalytics();
+      }).catch(() => {});
+    }, 500);
+  }
   const isPremium = me.premium_until && me.premium_until > Date.now();
   const manageWrap = document.getElementById('analytics-manage-wrap');
   if (manageWrap && isPremium) manageWrap.style.display = 'block';
