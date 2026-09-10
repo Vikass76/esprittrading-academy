@@ -38,4 +38,23 @@ router.get('/status', requireAuth, (req, res) => {
   res.json({ isPremium });
 });
 
+// Portail client Stripe pour gérer l'abonnement
+router.post('/portal', requireAuth, async (req, res) => {
+  try {
+    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.session.userId);
+    if (!user?.stripe_subscription_id) return res.status(400).json({ error: 'Pas d'abonnement actif' });
+    const appUrl = process.env.APP_URL || 'https://app.esprittrading.fr';
+    // Récupérer le customer ID depuis l'abonnement
+    const sub = await stripe.subscriptions.retrieve(user.stripe_subscription_id);
+    const session = await stripe.billingPortal.sessions.create({
+      customer: sub.customer,
+      return_url: appUrl,
+    });
+    res.json({ url: session.url });
+  } catch(err) {
+    console.error('Portal error:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 module.exports = router;
