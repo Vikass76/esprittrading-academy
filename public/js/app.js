@@ -702,6 +702,7 @@ function showAnalyticsLock() {
       <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.65;margin-bottom:28px;">Analyse ton win rate, profit factor, performances et erreurs pour comprendre ce qui fonctionne réellement dans ton trading.</p>
       <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
         <button onclick="startAnalyticsCheckout()" class="btn btn-primary" style="width:100%;max-width:300px;padding:14px;font-size:0.95rem;">Débloquer pour 3,99 €/mois</button>
+        <p style="font-size:0.72rem;color:var(--text-muted);margin-top:6px;">Sans engagement · Annulable à tout moment depuis ton profil.</p>
         <div style="font-size:0.75rem;color:var(--text-muted);">ou</div>
         <a href="https://esprittrading.fr/?utm_source=plateforme&utm_medium=referral&utm_campaign=ote705&utm_content=analytics_lock" target="_blank" class="btn" style="width:100%;max-width:300px;padding:14px;font-size:0.95rem;background:transparent;border:1px solid rgba(244,199,15,0.3);color:#d4a800;text-decoration:none;">Rejoindre OTE 705</a>
       </div>
