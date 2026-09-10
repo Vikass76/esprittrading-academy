@@ -707,7 +707,7 @@ function showAnalyticsLock() {
   // Créer l'overlay centré dans le container
   const overlay = document.createElement('div');
   overlay.id = 'analytics-lock-overlay';
-  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;z-index:100;pointer-events:none;';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;z-index:50;pointer-events:none;';
   overlay.innerHTML = `
     <div style="background:var(--bg-card);border:1px solid rgba(244,199,15,0.3);border-radius:16px;padding:40px 48px;text-align:center;max-width:420px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.6);pointer-events:auto;">
       <div style="margin-bottom:16px;"><i class="ti ti-chart-dots-3" style="font-size:2rem;color:#d4a800;"></i></div>
