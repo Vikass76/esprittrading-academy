@@ -117,7 +117,15 @@ function showApp(me) {
   if (me.role === 'student' || me.role === 'admin') { $('formation-student').classList.remove('hidden'); $('formation-community').classList.add('hidden'); const up = document.getElementById('formation-upsell'); if(up) up.style.display='none'; }
   else { $('formation-student').classList.add('hidden'); $('formation-community').classList.remove('hidden');
     const ph = document.getElementById('formation-ph'); if (ph) ph.style.display = 'none';
-    const iframe = document.getElementById('formation-iframe'); if (iframe) iframe.style.height = 'calc(100vh - 60px)';
+    const iframe = document.getElementById('formation-iframe'); 
+    if (iframe) {
+      iframe.style.height = '100vh';
+      iframe.style.width = '100vw';
+      iframe.style.position = 'fixed';
+      iframe.style.top = '0';
+      iframe.style.left = '0';
+      iframe.style.zIndex = '999';
+    }
     // Afficher subnav bloque pour community
     const subnavC = $('formation-subnav');
     if (subnavC) {
