@@ -4,7 +4,7 @@ const Stripe = require('stripe');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const db = require('../db');
 
-const PRICE_ID = 'price_1UECfcFeDnhdh12wxIK1hvf0';
+const PRICE_ID = 'price_1UEEWxFeDnhdh12wvOZRqG5L';
 
 function requireAuth(req, res, next) {
   if (!req.session?.userId) return res.status(401).json({ error: 'Non connecté' });
