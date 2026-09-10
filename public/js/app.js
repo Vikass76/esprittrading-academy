@@ -723,7 +723,7 @@ async function manageAnalyticsSubscription() {
 async function startAnalyticsCheckout() {
   try {
     const res = await api('POST', '/analytics-subscription/checkout');
-    if (res.url) window.location.href = res.url;
+    if (res.url) window.open(res.url, '_blank');
   } catch(e) {
     toast('Erreur lors du paiement', 'error');
   }
