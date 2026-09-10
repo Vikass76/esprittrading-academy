@@ -92,7 +92,7 @@ function showLogin() { $('login-page').classList.remove('hidden'); $('app').clas
 function showApp(me) {
   const fb = document.getElementById('feedback-link');
   if (fb) fb.style.display = 'flex';
-  role = me.role; user = me;
+  role = me.role; user = me; window._me = me;
   $('login-page').classList.add('hidden'); $('app').classList.remove('hidden');
   window.scrollTo(0, 0);
   $('nav-username').textContent = me.username;
@@ -677,7 +677,54 @@ const AN_DIR_KEYS  = ['BUY','SELL'];
 const AN_SESS_KEYS = ['London','New York','Asia'];
 const AN_SETUP_KEYS= ['OTE','FVG','BOS','MSS','PRT','Autre'];
 
+
+function showAnalyticsLock() {
+  const container = document.getElementById('tab-analytics');
+  if (!container) return;
+  container.innerHTML = `
+    <div style="position:relative;filter:blur(4px);pointer-events:none;opacity:0.4;height:300px;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+        ${['Total Trades','Win Rate','RR cumulé','Profit Factor'].map(l=>`<div class="kpi"><div class="kpi-label">${l}</div><div class="kpi-val">—</div></div>`).join('')}
+      </div>
+    </div>
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg-card);border:1px solid rgba(244,199,15,0.3);border-radius:16px;padding:36px 40px;text-align:center;max-width:420px;width:90%;z-index:10;box-shadow:0 8px 40px rgba(0,0,0,0.4);">
+      <div style="font-size:2rem;margin-bottom:12px;">📊</div>
+      <h3 style="font-size:1.2rem;font-weight:900;color:#fff;margin-bottom:8px;">Débloquer les Analytics</h3>
+      <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.6;margin-bottom:24px;">Accède à toutes tes statistiques, ton win rate, ton profit factor et bien plus encore.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;align-items:center;">
+        <button onclick="startAnalyticsCheckout()" class="btn btn-primary" style="width:100%;max-width:280px;padding:13px;">3,99 € / mois — Débloquer</button>
+        <div style="font-size:0.75rem;color:var(--text-muted);">ou</div>
+        <a href="https://esprittrading.fr/?utm_source=plateforme&utm_medium=referral&utm_campaign=ote705&utm_content=analytics_lock" target="_blank" class="btn" style="width:100%;max-width:280px;padding:13px;background:transparent;border:1px solid rgba(244,199,15,0.3);color:#d4a800;">Rejoindre OTE 705</a>
+      </div>
+    </div>
+  `;
+  container.style.position = 'relative';
+}
+
+async function startAnalyticsCheckout() {
+  try {
+    const res = await api('POST', '/analytics-subscription/checkout');
+    if (res.url) window.location.href = res.url;
+  } catch(e) {
+    toast('Erreur lors du paiement', 'error');
+  }
+}
+
 async function loadAnalytics() {
+  // Vérification accès premium
+  if (role === 'community') {
+    const isPremium = window._me?.premium_until && window._me.premium_until > Date.now();
+    if (!isPremium) {
+      // Vérifier s'il a des trades
+      try {
+        const allTrades = await api('GET', '/trades');
+        if (allTrades && allTrades.length > 0) {
+          showAnalyticsLock();
+          return;
+        }
+      } catch(e) {}
+    }
+  }
   try {
     const anEl=$('an-kpis'); anEl.innerHTML='';
     const mkEmpty=keys=>Object.fromEntries(keys.map(k=>[k,{total:0,wins:0}]));

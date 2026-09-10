@@ -165,7 +165,7 @@ router.patch('/profile', async (req, res) => {
 });
 router.get('/me', (req, res) => {
   if (!req.session.userId) return res.status(401).json({ error: 'Non connecté' });
-  const user = db.prepare('SELECT id, username, role, email, firstname, lastname FROM users WHERE id = ?').get(req.session.userId);
+  const user = db.prepare('SELECT id, username, role, email, firstname, lastname, premium_until FROM users WHERE id = ?').get(req.session.userId);
   if (!user) return res.status(401).json({ error: 'Introuvable' });
   res.json(user);
 });

@@ -16,6 +16,8 @@ addCol('verification_token', 'TEXT');
 addCol('email_verified', 'INTEGER DEFAULT 1');
 addCol('reset_token', 'TEXT');
 addCol('reset_token_expiry', 'INTEGER');
+addCol('premium_until', 'INTEGER DEFAULT 0');
+addCol('stripe_subscription_id', 'TEXT');
 
 // Migration trades
 const tradesCols = db.prepare("PRAGMA table_info(trades)").all().map(c=>c.name);

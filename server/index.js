@@ -53,6 +53,7 @@ app.use('/api/auth', cors(corsOptions), authRouter);
 app.use('/api/payment', cors(corsOptions), require('./routes/payment'));
 app.use('/api/appointments', require('./routes/appointments'));
 app.use('/api/nathan-trades', require('./routes/nathanTrades'));
+app.use('/api/analytics-subscription', require('./routes/analyticsSubscription'));
 
 const { execFile } = require('child_process');
 let _ecoCache = null, _ecoCacheTime = 0;

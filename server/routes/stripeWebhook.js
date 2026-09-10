@@ -148,4 +148,32 @@ async function handleSuccessfulPayment({ email, firstname, lastname, plan, custo
   }
 }
 
+// Gestion abonnements Analytics
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    if (session.mode === 'subscription' && session.metadata?.userId) {
+      const userId = parseInt(session.metadata.userId);
+      const premiumUntil = Date.now() + 31 * 24 * 60 * 60 * 1000;
+      db.prepare('UPDATE users SET premium_until = ?, stripe_subscription_id = ? WHERE id = ?')
+        .run(premiumUntil, session.subscription, userId);
+      console.log('[Analytics] Premium activé pour userId:', userId);
+    }
+  }
+
+  if (event.type === 'customer.subscription.deleted' || event.type === 'customer.subscription.paused') {
+    const sub = event.data.object;
+    db.prepare('UPDATE users SET premium_until = 0, stripe_subscription_id = NULL WHERE stripe_subscription_id = ?')
+      .run(sub.id);
+    console.log('[Analytics] Premium désactivé pour subscription:', sub.id);
+  }
+
+  if (event.type === 'invoice.payment_succeeded') {
+    const invoice = event.data.object;
+    if (invoice.subscription) {
+      db.prepare('UPDATE users SET premium_until = ? WHERE stripe_subscription_id = ?')
+        .run(Date.now() + 31 * 24 * 60 * 60 * 1000, invoice.subscription);
+      console.log('[Analytics] Premium renouvelé pour subscription:', invoice.subscription);
+    }
+  }
+
 module.exports = router;
