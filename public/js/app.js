@@ -681,17 +681,19 @@ const AN_SETUP_KEYS= ['OTE','FVG','BOS','MSS','PRT','Autre'];
 function showAnalyticsLock() {
   const container = document.getElementById('tab-analytics');
   if (!container) return;
-  // Flouter le contenu existant
-  container.style.filter = 'blur(6px)';
-  container.style.pointerEvents = 'none';
-  container.style.userSelect = 'none';
-  // Créer l'overlay par-dessus
+  container.style.position = 'relative';
+  // Flouter uniquement le contenu intérieur
+  Array.from(container.children).forEach(el => {
+    el.style.filter = 'blur(5px)';
+    el.style.pointerEvents = 'none';
+    el.style.userSelect = 'none';
+  });
+  // Créer l'overlay centré dans le container
   const overlay = document.createElement('div');
   overlay.id = 'analytics-lock-overlay';
-  overlay.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:100;background:rgba(0,0,0,0.5);border-radius:12px;';
-  container.style.position = 'relative';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;z-index:100;pointer-events:none;';
   overlay.innerHTML = `
-    <div style="background:var(--bg-card);border:1px solid rgba(244,199,15,0.3);border-radius:16px;padding:40px 48px;text-align:center;max-width:420px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.6);">
+    <div style="background:var(--bg-card);border:1px solid rgba(244,199,15,0.3);border-radius:16px;padding:40px 48px;text-align:center;max-width:420px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.6);pointer-events:auto;">
       <div style="font-size:2.5rem;margin-bottom:16px;">📊</div>
       <h3 style="font-size:1.3rem;font-weight:900;color:#fff;margin-bottom:10px;">Débloquer les Analytics</h3>
       <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.65;margin-bottom:28px;">Accède à toutes tes statistiques, ton win rate, ton profit factor et bien plus encore.</p>
@@ -702,7 +704,7 @@ function showAnalyticsLock() {
       </div>
     </div>
   `;
-  document.body.appendChild(overlay);
+  container.appendChild(overlay);
 }
 
 async function startAnalyticsCheckout() {
@@ -715,16 +717,15 @@ async function startAnalyticsCheckout() {
 }
 
 async function loadAnalytics() {
-  // Vérification accès premium
+  // Vérification accès premium (on charge d'abord, on bloque après)
+  let analyticsLocked = false;
   if (role === 'community') {
     const isPremium = window._me?.premium_until && window._me.premium_until > Date.now();
     if (!isPremium) {
-      // Vérifier s'il a des trades
       try {
         const allTrades = await api('GET', '/trades');
         if (allTrades && allTrades.length > 0) {
-          showAnalyticsLock();
-          return;
+          analyticsLocked = true;
         }
       } catch(e) {}
     }
@@ -784,6 +785,7 @@ async function loadAnalytics() {
     renderPerfJour(trades);
     renderFrequency(trades);
   }catch(ex){console.error(ex);}
+  if (analyticsLocked) showAnalyticsLock();
 }
 
 let _anCharts={};
