@@ -110,6 +110,17 @@ async function handleSuccessfulPayment({ email, firstname, lastname, plan, custo
     // Compte existant -> debloquer la formation
     db.prepare("UPDATE users SET role = 'student' WHERE id = ?").run(user.id);
     addContactToBrevo({ email: user.email, firstname: user.firstname, lastname: user.lastname, role: 'student' }).catch(()=>{});
+    // Annuler l'abonnement Analytics si premium
+    const userForSub = db.prepare('SELECT stripe_subscription_id FROM users WHERE id = ?').get(user.id);
+    if (userForSub?.stripe_subscription_id) {
+      try {
+        const Stripe = require('stripe');
+        const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY);
+        await stripeClient.subscriptions.cancel(userForSub.stripe_subscription_id);
+        db.prepare('UPDATE users SET premium_until = 0, stripe_subscription_id = NULL WHERE id = ?').run(user.id);
+        console.log('[Analytics] Abonnement annulé car formation achetée pour userId:', user.id);
+      } catch(e) { console.error('[Analytics] Erreur annulation abonnement:', e.message); }
+    }
   } else {
     // Nouveau compte -> creer avec mot de passe temporaire
     tempPassword = crypto.randomBytes(6).toString('hex');
