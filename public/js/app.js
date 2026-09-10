@@ -714,7 +714,7 @@ function showAnalyticsLock() {
     <div style="background:var(--bg-card);border:1px solid rgba(244,199,15,0.3);border-radius:16px;padding:40px 48px;text-align:center;max-width:420px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.6);pointer-events:auto;">
       <div style="margin-bottom:16px;"><i class="ti ti-chart-dots-3" style="font-size:2rem;color:#d4a800;"></i></div>
       <h3 style="font-size:1.3rem;font-weight:900;color:#fff;margin-bottom:10px;">Passe au niveau supérieur avec tes Analytics</h3>
-      <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.65;margin-bottom:28px;">Analyse ton win rate, profit factor, performances et erreurs pour comprendre ce qui fonctionne réellement dans ton trading.</p>
+      <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.65;margin-bottom:28px;">Analyse ton win rate, ton profit factor, tes performances et tes erreurs pour comprendre ce qui fonctionne réellement dans ton trading.</p>
       <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
         <button onclick="startAnalyticsCheckout()" class="btn btn-primary" style="width:100%;max-width:300px;padding:14px;font-size:0.95rem;">Débloquer pour 3,99 €/mois</button>
         <p style="font-size:0.72rem;color:var(--text-muted);margin-top:6px;">Sans engagement · Annulable à tout moment depuis ton profil.</p>
