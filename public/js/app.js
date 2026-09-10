@@ -681,24 +681,27 @@ const AN_SETUP_KEYS= ['OTE','FVG','BOS','MSS','PRT','Autre'];
 function showAnalyticsLock() {
   const container = document.getElementById('tab-analytics');
   if (!container) return;
-  container.innerHTML = `
-    <div style="position:relative;filter:blur(4px);pointer-events:none;opacity:0.4;height:300px;overflow:hidden;">
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
-        ${['Total Trades','Win Rate','RR cumulé','Profit Factor'].map(l=>`<div class="kpi"><div class="kpi-label">${l}</div><div class="kpi-val">—</div></div>`).join('')}
-      </div>
-    </div>
-    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg-card);border:1px solid rgba(244,199,15,0.3);border-radius:16px;padding:36px 40px;text-align:center;max-width:420px;width:90%;z-index:10;box-shadow:0 8px 40px rgba(0,0,0,0.4);">
-      <div style="font-size:2rem;margin-bottom:12px;">📊</div>
-      <h3 style="font-size:1.2rem;font-weight:900;color:#fff;margin-bottom:8px;">Débloquer les Analytics</h3>
-      <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.6;margin-bottom:24px;">Accède à toutes tes statistiques, ton win rate, ton profit factor et bien plus encore.</p>
-      <div style="display:flex;flex-direction:column;gap:10px;align-items:center;">
-        <button onclick="startAnalyticsCheckout()" class="btn btn-primary" style="width:100%;max-width:280px;padding:13px;">3,99 € / mois — Débloquer</button>
+  // Flouter le contenu existant
+  container.style.filter = 'blur(6px)';
+  container.style.pointerEvents = 'none';
+  container.style.userSelect = 'none';
+  // Créer l'overlay par-dessus
+  const overlay = document.createElement('div');
+  overlay.id = 'analytics-lock-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:100;background:rgba(0,0,0,0.5);';
+  overlay.innerHTML = `
+    <div style="background:var(--bg-card);border:1px solid rgba(244,199,15,0.3);border-radius:16px;padding:40px 48px;text-align:center;max-width:420px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.6);">
+      <div style="font-size:2.5rem;margin-bottom:16px;">📊</div>
+      <h3 style="font-size:1.3rem;font-weight:900;color:#fff;margin-bottom:10px;">Débloquer les Analytics</h3>
+      <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.65;margin-bottom:28px;">Accède à toutes tes statistiques, ton win rate, ton profit factor et bien plus encore.</p>
+      <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+        <button onclick="startAnalyticsCheckout()" class="btn btn-primary" style="width:100%;max-width:300px;padding:14px;font-size:0.95rem;">3,99 € / mois — Débloquer</button>
         <div style="font-size:0.75rem;color:var(--text-muted);">ou</div>
-        <a href="https://esprittrading.fr/?utm_source=plateforme&utm_medium=referral&utm_campaign=ote705&utm_content=analytics_lock" target="_blank" class="btn" style="width:100%;max-width:280px;padding:13px;background:transparent;border:1px solid rgba(244,199,15,0.3);color:#d4a800;">Rejoindre OTE 705</a>
+        <a href="https://esprittrading.fr/?utm_source=plateforme&utm_medium=referral&utm_campaign=ote705&utm_content=analytics_lock" target="_blank" class="btn" style="width:100%;max-width:300px;padding:14px;font-size:0.95rem;background:transparent;border:1px solid rgba(244,199,15,0.3);color:#d4a800;text-decoration:none;">Rejoindre OTE 705</a>
       </div>
     </div>
   `;
-  container.style.position = 'relative';
+  document.body.appendChild(overlay);
 }
 
 async function startAnalyticsCheckout() {
