@@ -7,7 +7,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const { Resend } = require('resend');
 const resend = new Resend(process.env.RESEND_API_KEY);
-const addContactToBrevo = require('../brevo');
+const { addContactToBrevo } = require('../brevo');
 
 const router = express.Router();
 
