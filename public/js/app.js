@@ -1107,7 +1107,7 @@ async function loadFormation() {
   $('ftab-rdv').classList.add('hidden');
   $('ftab-rdv-contact').classList.add('hidden');
   $('ftab-nathan-trades').classList.add('hidden');
-  $('ftab-groupe-prive').classList.add('hidden');
+  if ($('ftab-groupe-prive')) $('ftab-groupe-prive').classList.add('hidden');
   document.querySelectorAll('.nav-subitem').forEach(b => b.classList.remove('active'));
   const firstSubitem = document.querySelector('.nav-subitem[data-ftab="videos"]');
   if (firstSubitem) firstSubitem.classList.add('active');
@@ -1122,7 +1122,7 @@ async function loadFormation() {
       $('ftab-rdv').classList.toggle('hidden', ftab !== 'rdv');
       $('ftab-rdv-contact').classList.toggle('hidden', ftab !== 'rdv-contact');
       $('ftab-nathan-trades').classList.toggle('hidden', ftab !== 'nathan-trades');
-      $('ftab-groupe-prive').classList.toggle('hidden', ftab !== 'groupe-prive');
+      if ($('ftab-groupe-prive')) $('ftab-groupe-prive').classList.toggle('hidden', ftab !== 'groupe-prive');
       if (ftab === 'nathan-trades') loadNathanTrades();
       if (ftab === 'rdv') loadRdvStatus();
     });
