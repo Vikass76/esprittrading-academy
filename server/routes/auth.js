@@ -186,6 +186,19 @@ router.post('/change-password', async (req, res) => {
 });
 
 // Route lead magnet (formulaire analyses)
+router.post('/lead-magnet-pdf', async (req, res) => {
+  const { email, firstname, lastname } = req.body;
+  if (!email || !email.includes('@')) return res.status(400).json({ error: 'Email invalide' });
+  try {
+    const { addContactToBrevo } = require('../brevo');
+    await addContactToBrevo({ email, firstname: firstname || '', lastname: lastname || '', role: 'pdfLeadMagnet' });
+    res.json({ success: true });
+  } catch(err) {
+    console.error('Erreur lead-magnet-pdf:', err);
+    res.json({ success: true });
+  }
+});
+
 router.post('/lead-magnet', async (req, res) => {
   const { email, firstname, lastname } = req.body;
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'Email invalide' });
