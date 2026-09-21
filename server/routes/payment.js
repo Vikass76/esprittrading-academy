@@ -35,7 +35,7 @@ router.post('/create-intent', async (req, res) => {
         let amt = PRICES[plan];
         if (promo_code) {
           const promo = db.prepare("SELECT * FROM promo_codes WHERE UPPER(code) = UPPER(?) AND active = 1").get(promo_code.trim());
-          if (promo) amt = Math.round(amt * (1 - promo.discount_percent / 100));
+          if (promo) amt = Math.max(0, amt - (plan === 'split' ? 15000 : 30000)); // Réduction fixe 300€ total
         }
         return amt;
       })(),
