@@ -39,6 +39,12 @@ async function attemptCharge(payment) {
       db.prepare("UPDATE payments SET status = 'paid', last_attempt_at = ? WHERE id = ?")
         .run(Date.now(), payment.id);
       console.log(`[cron-payments] Paiement reussi pour ${payment.email}`);
+      // Rétablir l'accès si suspendu
+      const u = db.prepare("SELECT * FROM users WHERE LOWER(email) = ?").get(payment.email.toLowerCase());
+      if (u && u.role === 'community') {
+        db.prepare("UPDATE users SET role = 'student' WHERE LOWER(email) = ?").run(payment.email.toLowerCase());
+        console.log(`[cron-payments] Acces retabli pour ${payment.email}`);
+      }
       await sendEmail(payment.email, 'Confirmation de ton 2e versement - OTE 705',
         `<p>Ton 2e versement de ${(payment.amount_due/100).toFixed(2)}€ a été prélevé avec succès. Merci !</p>`);
     }
@@ -62,6 +68,22 @@ async function attemptCharge(payment) {
       const nextDueDate = Date.now() + delayDays * 24 * 60 * 60 * 1000;
       db.prepare("UPDATE payments SET retry_count = ?, last_attempt_at = ?, due_date = ? WHERE id = ?")
         .run(newRetryCount, Date.now(), nextDueDate, payment.id);
+      // Email au 1er échec
+      if (newRetryCount === 1) {
+        await sendEmail(payment.email, 'Problème avec ton paiement OTE 705',
+          `<div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:32px">
+            <h2 style="color:#F4C70F">Esprit Trading</h2>
+            <p>Bonjour,</p>
+            <p>Nous n'avons pas pu prélever ton second versement de ${(payment.amount_due/100).toFixed(2).replace('.',',')} €.</p>
+            <p>Ton accès à la formation est maintenu pour l'instant. Merci de régulariser ta situation dès que possible.</p>
+            <a href="https://esprittrading.fr/checkout.html?retry=${payment.id}" style="display:inline-block;background:#F4C70F;color:#000;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;margin:16px 0">Régulariser mon paiement</a>
+          </div>`);
+      }
+      // Suspendre l'accès au 3e échec
+      if (newRetryCount === 3) {
+        db.prepare("UPDATE users SET role = 'community' WHERE LOWER(email) = ?").run(payment.email.toLowerCase());
+        console.log(`[cron-payments] Acces suspendu pour ${payment.email} apres 3 echecs`);
+      }
       console.log(`[cron-payments] Retry ${newRetryCount}/${MAX_RETRIES} programme pour ${payment.email} dans ${delayDays} jour(s)`);
     }
   }
