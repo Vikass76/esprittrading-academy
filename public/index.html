@@ -1135,10 +1135,13 @@
             <div class="sub">OTE 705</div>
           </div>
         </div>
-          <button class="nav-item" data-tab="formation">
+          <button class="nav-item ote-menu-toggle" data-tab="formation">
             <span class="ni"><i class="ti ti-video"></i></span>Accompagnement OTE 705
           </button>
           <div id="formation-subnav" class="hidden">
+            <button class="nav-subitem" data-ftab="parcours">
+              <span class="ni"><i class="ti ti-route"></i></span>Mon parcours
+            </button>
             <button class="nav-subitem active" data-ftab="videos">
               <span class="ni"><i class="ti ti-player-play"></i></span>Vidéos
             </button>
@@ -1156,6 +1159,13 @@
               <span class="ni"><i class="ti ti-message"></i></span>Contact
             </button>
           </div>
+        <button type="button" id="journal-toggle"
+          class="nav-item ote-menu-toggle" aria-expanded="false">
+          <span class="ni"><i class="ti ti-notebook"></i></span>
+          Journal de trading
+          <i class="ti ti-chevron-down ote-menu-chevron"></i>
+        </button>
+        <div id="journal-subnav" class="ote-journal-group hidden">
         <div
           id="sb-accounts"
           style="padding: 10px; border-bottom: 1px solid #ede9e2"
@@ -1220,6 +1230,8 @@
           <button class="nav-item" data-tab="outils">
             <span class="ni"><i class="ti ti-tool"></i></span>Outils
           </button>
+        </div>
+        <nav class="sb-nav">
           <div class="sb-section admin-only hidden" style="margin-top: 8px">
             Admin
           </div>
@@ -1865,7 +1877,10 @@
           <!-- FORMATION -->
           <section id="tab-formation" class="tab-section hidden">
             <div id="formation-student">
-              <div id="ftab-videos" class="mod-list"></div>
+              <div id="ftab-parcours" class="hidden">
+                 <div id="ote-parcours-root"></div>
+               </div>
+               <div id="ftab-videos" class="mod-list"></div>
               <div id="ftab-rdv" class="hidden">
                 <div id="rdv-available" class="rdv-card">
                   <div class="rdv-intro">
@@ -1925,47 +1940,101 @@
               </div>
             </div>
             <div id="ftab-rdv-contact" class="hidden">
-              <div class="card" style="text-align:center;padding:32px 24px;">
-                <div style="width:48px;height:48px;border-radius:50%;background:rgba(244,199,15,0.15);border:1px solid rgba(244,199,15,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
-                  <i class="ti ti-message" style="font-size:22px;color:var(--gold);"></i>
+  <section class="ote-contact-v85">
+
+    <div class="ote-contact-icon">
+      <i class="ti ti-message"></i>
+    </div>
+
+    <h2>Suivi de ton accompagnement</h2>
+
+    <div class="ote-contact-content">
+      <p>Tu rencontres un blocage, tu souhaites un retour sur une analyse ou un avis après un trade ?</p>
+      <p>Je suis disponible sur Telegram pour t'accompagner entre nos sessions de coaching et t'aider à progresser.</p>
+      <p>Afin que nos échanges soient les plus constructifs possible, réalise d'abord ton analyse puis partage-la avec tes questions ou tes captures d'écran.</p>
+    </div>
+
+    <a href="https://t.me/EspritTradingSupport"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="ote-contact-button">
+      <i class="ti ti-brand-telegram"></i>
+      Contacter Nathan sur Telegram
+      <i class="ti ti-arrow-right"></i>
+    </a>
+
+  </section>
+</div>
+<div id="ftab-groupe-prive" class="hidden">
+              <section class="ote-private-redesign">
+
+                <div class="ote-private-symbol">
+                  <i class="ti ti-users-group"></i>
                 </div>
-                <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:12px;color:var(--text);">Suivi de ton accompagnement</h3>
-                <p style="font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:12px;max-width:480px;margin-left:auto;margin-right:auto;">
-                  Tu rencontres un blocage, tu souhaites un retour sur une analyse ou un avis après un trade ?
+
+                <h2 class="ote-private-heading">
+                  Rejoins le groupe privé OTE 705
+                </h2>
+
+                <p class="ote-private-subtitle">
+                  Retrouve tout ce que je partage au quotidien
+                  en dehors des vidéos de formation.
                 </p>
-                <p style="font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:12px;max-width:480px;margin-left:auto;margin-right:auto;">
-                  Je suis disponible sur Telegram pour t'accompagner entre nos sessions de coaching et t'aider à progresser.
-                </p>
-                <p style="font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:28px;max-width:480px;margin-left:auto;margin-right:auto;">
-                  Afin que nos échanges soient les plus constructifs possible, réalise d'abord ton analyse puis partage-la avec tes questions ou tes captures d'écran.
-                </p>
-                <a href="https://t.me/EspritTradingSupport" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:#229ED9;color:#fff;font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;text-decoration:none;">
-                  <i class="ti ti-brand-telegram"></i> Contacter Nathan sur Telegram
+
+                <div class="ote-private-grid">
+
+                  <div class="ote-private-benefit">
+                    <div class="ote-private-benefit-icon">
+                      <i class="ti ti-chart-bar"></i>
+                    </div>
+                    <div>
+                      <strong>Mes trades et leurs analyses</strong>
+                      <p>Des exemples concrets sur le marché.</p>
+                    </div>
+                  </div>
+
+                  <div class="ote-private-benefit">
+                    <div class="ote-private-benefit-icon">
+                      <i class="ti ti-chart-candle"></i>
+                    </div>
+                    <div>
+                      <strong>Mes idées et analyses de marché</strong>
+                      <p>Le contexte et les opportunités à surveiller.</p>
+                    </div>
+                  </div>
+
+                  <div class="ote-private-benefit">
+                    <div class="ote-private-benefit-icon">
+                      <i class="ti ti-school"></i>
+                    </div>
+                    <div>
+                      <strong>Des conseils et tips</strong>
+                      <p>Des bonnes pratiques pour progresser.</p>
+                    </div>
+                  </div>
+
+                  <div class="ote-private-benefit">
+                    <div class="ote-private-benefit-icon">
+                      <i class="ti ti-bell"></i>
+                    </div>
+                    <div>
+                      <strong>Les infos et annonces importantes</strong>
+                      <p>Sessions, contenus et actualités du programme.</p>
+                    </div>
+                  </div>
+
+                </div>
+
+                <a href="https://t.me/+qTHl9o4mbSJkNjc8"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="ote-private-cta">
+                  <i class="ti ti-brand-telegram"></i>
+                  Rejoindre le groupe privé
+                  <i class="ti ti-arrow-right"></i>
                 </a>
-              </div>
-            </div>
-            <div id="ftab-groupe-prive" class="hidden">
-              <div class="card" style="text-align:center;padding:32px 24px;">
-                <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(244,199,15,0.1);border:1px solid rgba(244,199,15,0.2);border-radius:99px;padding:4px 14px;font-size:0.65rem;font-weight:800;color:#d4a800;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">
-                  ESPACE MEMBRES
-                </div>
-                <h2 style="font-size:1.4rem;font-weight:900;color:var(--gold);letter-spacing:-0.02em;margin-bottom:10px;">Rejoins le groupe privé OTE 705</h2>
-                <p style="font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:28px;max-width:480px;margin-left:auto;margin-right:auto;">
-                  Retrouve tout ce que je partage au quotidien en dehors des vidéos de formation.
-                </p>
-                <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:left;max-width:480px;margin:0 auto 28px;">
-                  <h3 style="font-size:0.95rem;font-weight:800;color:var(--text);margin-bottom:16px;">Dans le groupe, je partage :</h3>
-                  <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
-                    <li style="font-size:13px;color:var(--text-muted);display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--gold);font-weight:700;flex-shrink:0;">•</span>Mes trades et leurs analyses</li>
-                    <li style="font-size:13px;color:var(--text-muted);display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--gold);font-weight:700;flex-shrink:0;">•</span>Mes idées et analyses de marché</li>
-                    <li style="font-size:13px;color:var(--text-muted);display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--gold);font-weight:700;flex-shrink:0;">•</span>Des conseils et tips</li>
-                    <li style="font-size:13px;color:var(--text-muted);display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--gold);font-weight:700;flex-shrink:0;">•</span>Les infos et annonces importantes</li>
-                  </ul>
-                </div>
-                <a href="https://t.me/+qTHl9o4mbSJkNjc8" target="_blank" rel="noopener" class="btn btn-primary btn-lg" style="display:inline-flex;align-items:center;gap:8px;">
-                  Rejoindre le groupe privé →
-                </a>
-              </div>
+
+              </section>
             </div>
             <div id="ftab-nathan-trades" class="hidden">
               <div class="card">
@@ -1985,23 +2054,56 @@
                   </div>
                   <div style="display:flex;flex-direction:column;gap:12px;">
                     <input type="date" id="nt-date" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;width:100%;" />
-                    <select id="nt-pair" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;width:100%;">
-                      <option value="">Paire...</option>
-                      <option>XAUUSD</option><option>EURUSD</option><option>GBPUSD</option>
-                      <option>NAS100</option><option>US30</option><option>USDJPY</option>
-                      <option>GBPJPY</option><option>AUDUSD</option>
-                    </select>
+                    <!-- V54 — Trades sans statistiques -->
+<input type="text" id="nt-pair"
+list="nt-pair-suggestions"
+placeholder="Actif (ex : EURUSD)"
+maxlength="30" autocomplete="off"
+style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;width:100%;" />
+<datalist id="nt-pair-suggestions">
+<option value="EURUSD"></option>
+<option value="GBPUSD"></option>
+<option value="USDJPY"></option>
+<option value="AUDUSD"></option>
+<option value="NZDUSD"></option>
+<option value="USDCAD"></option>
+<option value="USDCHF"></option>
+<option value="EURJPY"></option>
+<option value="GBPJPY"></option>
+<option value="EURGBP"></option>
+<option value="AUDJPY"></option>
+<option value="CADJPY"></option>
+<option value="EURCHF"></option>
+<option value="EURAUD"></option>
+<option value="GBPAUD"></option>
+<option value="GBPCAD"></option>
+<option value="GBPCHF"></option>
+<option value="NZDJPY"></option>
+<option value="AUDCAD"></option>
+<option value="AUDNZD"></option>
+<option value="XAUUSD"></option>
+<option value="XAGUSD"></option>
+<option value="NAS100"></option>
+<option value="US100"></option>
+<option value="US30"></option>
+<option value="US500"></option>
+<option value="SPX500"></option>
+<option value="GER40"></option>
+<option value="DE40"></option>
+<option value="UK100"></option>
+<option value="FRA40"></option>
+<option value="JP225"></option>
+<option value="BTCUSD"></option>
+<option value="ETHUSD"></option>
+<option value="USOIL"></option>
+<option value="UKOIL"></option>
+</datalist>
                     <div style="display:flex;gap:8px;">
                       <select id="nt-direction" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;flex:1;">
                         <option value="buy">Buy</option>
                         <option value="sell">Sell</option>
                       </select>
-                      <select id="nt-result" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;flex:1;">
-                        <option value="win">Win</option>
-                        <option value="lose">Lose</option>
-                      </select>
                     </div>
-                    <input type="text" id="nt-rr" placeholder="R:R (ex: 1:2)" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;width:100%;" />
                     <input type="file" id="nt-image" accept="image/*" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;width:100%;" />
                     <input type="text" id="nt-video" placeholder="Lien YouTube (optionnel)" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;width:100%;" />
                     <textarea id="nt-notes" placeholder="Notes (optionnel)" rows="3" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;width:100%;resize:none;"></textarea>
@@ -2519,15 +2621,13 @@
         <div class="mh">
           <div style="display:flex;align-items:center;gap:10px;">
             <h3 id="nd-pair" style="font-size:1.1rem"></h3>
-            <span id="nd-badge"></span>
+            
           </div>
           <button class="mclose" id="ndm-close"><i class="ti ti-x"></i></button>
         </div>
         <div class="detail-grid">
           <div class="df"><span class="dl">Date</span><span class="dv" id="nd-date"></span></div>
           <div class="df"><span class="dl">Direction</span><span class="dv" id="nd-dir"></span></div>
-          <div class="df"><span class="dl">R:R</span><span class="dv big" id="nd-rr"></span></div>
-          <div class="df"><span class="dl">Résultat</span><span class="dv" id="nd-result"></span></div>
         </div>
         <div id="nd-notes-wrap" style="display:none;"><div class="notes-box" id="nd-notes"></div></div>
         <div id="nd-image-wrap" style="margin-top:12px;"></div>
@@ -3115,34 +3215,7 @@
         </div>
       </div>
     </div>
-    <a
-      id="feedback-link"
-      href="https://t.me/EspritTradingSupport"
-      target="_blank"
-      style="
-        display: none;
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        z-index: 9998;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: #229ed9;
-        color: #fff;
-        font-size: 0.8rem;
-        font-weight: 700;
-        padding: 10px 16px;
-        border-radius: 100px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        text-decoration: none;
-        transition: transform 0.2s;
-      "
-      onmouseover="this.style.transform='scale(1.05)'"
-      onmouseout="this.style.transform='scale(1)'"
-    >
-      <i class="ti ti-brand-telegram" style="font-size: 1.1rem"></i> Feedback
-    </a>
+
     <div class="overlay hidden" id="confirm-modal" style="z-index: 10000">
       <div class="modal" style="max-width: 400px; text-align: center">
         <div style="font-size: 2rem; margin-bottom: 12px">⚠️</div>
@@ -3242,5 +3315,6 @@
         </div>
       </div>
     </div>
-  </body>
+  <script src="/js/parcours.js"></script>
+</body>
 </html>

@@ -90,8 +90,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 function showLogin() { $('login-page').classList.remove('hidden'); $('app').classList.add('hidden'); }
 
 function showApp(me) {
-  const fb = document.getElementById('feedback-link');
-  if (fb) fb.style.display = 'flex';
   role = me.role; user = me; window._me = me;
   // Détecter retour après paiement Analytics
   const urlParams = new URLSearchParams(window.location.search);
@@ -129,7 +127,20 @@ function showApp(me) {
       });
     }
   }
-  loadAccounts().then(() => { if(accounts.length && !selAcc){ selAcc=accounts[0].id; renderAccBar(); } switchTab('dashboard'); loadDashboard(); });
+  loadAccounts().then(() => {
+    if (accounts.length && !selAcc) {
+      selAcc = accounts[0].id;
+      renderAccBar();
+    }
+
+    if (me.role === 'student' || me.role === 'admin') {
+      switchTab('formation');
+      loadFormation();
+    } else {
+      switchTab('dashboard');
+      loadDashboard();
+    }
+  });
 }
 
 /* ── LOGIN ── */
@@ -152,6 +163,15 @@ $('logout-btn').addEventListener('click', async () => {
 /* ── TABS ── */
 document.querySelectorAll('.nav-item[data-tab]').forEach(btn => btn.addEventListener('click', () => {
   const t = btn.dataset.tab;
+
+  // Accompagnement : second clic = refermer sans changer de page.
+  if (t === 'formation' && !$('formation-subnav').classList.contains('hidden')) {
+    $('formation-subnav').classList.add('hidden');
+    btn.classList.remove('active');
+    btn.setAttribute('aria-expanded', 'false');
+    return;
+  }
+
   switchTab(t); closeSb();
   if (t==='dashboard') loadDashboard();
   if (t==='journal') loadTrades();
@@ -168,16 +188,46 @@ function switchTab(t) {
   $(`tab-${t}`)?.classList.remove('hidden');
   document.querySelectorAll(`.nav-item[data-tab="${t}"]`).forEach(b => b.classList.add('active'));
 
-  // Fermer le subnav formation si on change d'onglet
-  const subnav = $('formation-subnav');
-  if (subnav) {
-    if (t === 'formation') {
-      subnav.classList.remove('hidden');
-    } else {
-      subnav.classList.add('hidden');
+  // Navigation en deux groupes : accompagnement et journal.
+  const formationMenu = $('formation-subnav');
+  const journalMenu = $('journal-subnav');
+
+  if (formationMenu && journalMenu) {
+    const isFormation = t === 'formation';
+    formationMenu.classList.toggle('hidden', !isFormation);
+    journalMenu.classList.toggle('hidden', isFormation);
+
+    const journalToggle = $('journal-toggle');
+    const formationToggle = document.querySelector(
+      '.nav-item[data-tab="formation"]'
+    );
+
+    if (journalToggle) {
+      journalToggle.setAttribute('aria-expanded', String(!isFormation));
+      journalToggle.classList.toggle('active', !isFormation);
+    }
+
+    if (formationToggle) {
+      formationToggle.setAttribute('aria-expanded', String(isFormation));
+      formationToggle.classList.toggle('active', isFormation);
     }
   }
 }
+
+// Journal de trading : ouverture et fermeture manuelles.
+$('journal-toggle').addEventListener('click', () => {
+  const menu = $('journal-subnav');
+  const opening = menu.classList.contains('hidden');
+
+  if (opening) {
+    switchTab('dashboard');
+    loadDashboard();
+  } else {
+    menu.classList.add('hidden');
+    $('journal-toggle').classList.remove('active');
+    $('journal-toggle').setAttribute('aria-expanded', 'false');
+  }
+});
 
 /* ── ACCOUNTS ── */
 async function loadAccounts() {
@@ -1098,19 +1148,26 @@ function renderPairTable(byPair){
 async function loadFormation() {
   if(role!=='student'&&role!=='admin') return;
 
-  // Afficher les sous-onglets dans la sidebar et reset sur Videos
+  // Afficher les sous-onglets dans la sidebar
   const subnav = $('formation-subnav');
   if (subnav) subnav.classList.remove('hidden');
 
-  // Reset sur Videos a chaque ouverture
-  $('ftab-videos').classList.remove('hidden');
+  // V103 : ouvrir Mon parcours par défaut
+  const defaultFtab = $('ftab-parcours') ? 'parcours' : 'videos';
+  $('ftab-videos').classList.toggle('hidden', defaultFtab !== 'videos');
+  if ($('ftab-parcours')) $('ftab-parcours').classList.toggle('hidden', defaultFtab !== 'parcours');
   $('ftab-rdv').classList.add('hidden');
   $('ftab-rdv-contact').classList.add('hidden');
   $('ftab-nathan-trades').classList.add('hidden');
   if ($('ftab-groupe-prive')) $('ftab-groupe-prive').classList.add('hidden');
   document.querySelectorAll('.nav-subitem').forEach(b => b.classList.remove('active'));
-  const firstSubitem = document.querySelector('.nav-subitem[data-ftab="videos"]');
+  const firstSubitem = document.querySelector('.nav-subitem[data-ftab="' + defaultFtab + '"]');
   if (firstSubitem) firstSubitem.classList.add('active');
+
+  // V104 : initialiser le parcours lors de son ouverture automatique
+  if (defaultFtab === 'parcours' && firstSubitem) {
+    firstSubitem.click();
+  }
 
   // Gestion des sous-onglets sidebar
   document.querySelectorAll('.nav-subitem').forEach(btn => {
@@ -1119,6 +1176,9 @@ async function loadFormation() {
       btn.classList.add('active');
       const ftab = btn.dataset.ftab;
       $('ftab-videos').classList.toggle('hidden', ftab !== 'videos');
+      if ($('ftab-parcours')) {
+        $('ftab-parcours').classList.toggle('hidden', ftab !== 'parcours');
+      }
       $('ftab-rdv').classList.toggle('hidden', ftab !== 'rdv');
       $('ftab-rdv-contact').classList.toggle('hidden', ftab !== 'rdv-contact');
       $('ftab-nathan-trades').classList.toggle('hidden', ftab !== 'nathan-trades');
@@ -1128,27 +1188,915 @@ async function loadFormation() {
     });
   });
 
-  // Charger les videos
+
+  // Nouvelle interface de formation OTE 705
   try {
-    const mods=await api('GET','/videos');
-    const el=$('ftab-videos');
-    if(!mods.length){el.innerHTML=`<div class="empty"><div class="empty-ico"><i class="ti ti-books"></i></div><p>Aucun module disponible.</p></div>`;return;}
-    el.innerHTML=mods.map((m,i)=>`
-      <div class="mod${i===0?' open':''}" data-id="${m.id}">
-        <div class="mod-head">
-          <div class="mod-title"><i class="ti ti-folder" style="color:var(--gold-dark)"></i>${m.title}<span class="mod-cnt">${m.videos.length}</span></div>
-          <span class="mod-chev"><i class="ti ti-chevron-down"></i></span>
+    const mods = await api('GET', '/videos');
+    const el = $('ftab-videos');
+
+    if (!mods.length) {
+      el.innerHTML = '<div class="empty"><p>Aucun module disponible.</p></div>';
+      return;
+    }
+
+    const colors = ['#5A9DFF', '#D9B66F', '#A68BFA', '#65C9A0'];
+    const icons = ['ti-books', 'ti-target-arrow', 'ti-chart-bar', 'ti-brain'];
+
+    const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({
+      '&':'&amp;', '<':'&lt;', '>':'&gt;',
+      '"':'&quot;', "'":'&#39;'
+    }[c]));
+
+    const moduleDescriptions = [
+      'Les bases pour comprendre le marché en profondeur.',
+      'Le système OTE 705 étape par étape.',
+      'Tester, analyser et obtenir des statistiques concrètes.',
+      'Développer un mental solide pour être régulier sur le long terme.'
+    ];
+
+    let activeModule = 0;
+    let activeVideo = 0;
+
+    el.innerHTML = `
+      <div class="ote-learning ote-home-mode">
+        <section class="ote-training-home" aria-label="Accueil formation">
+          <div class="ote-home-hero">
+            <span class="ote-home-eyebrow">ESPRIT TRADING / FORMATION</span>
+            <h1>Bienvenue dans OTE 705</h1>
+            <p>Une méthode complète pour progresser, de la théorie à la pratique.</p>
+            <div class="ote-home-hero-meta">
+              <span><i class="ti ti-player-play"></i> 4 modules</span>
+              <span class="ote-home-video-total"></span>
+            </div>
+          </div>
+          <div class="ote-home-section-heading">
+            <h2>Les modules de la formation</h2>
+            <p>Les 4 étapes de votre parcours OTE 705.</p>
+          </div>
+          <div class="ote-home-module-grid"></div>
+        </section>
+        <div class="ote-page-header">
+          <button type="button" class="ote-back-to-modules">
+            <i class="ti ti-arrow-left"></i>
+            Retour à l'accueil
+          </button>
+
+          <div class="ote-search-wrap ote-global-search">
+            <i class="ti ti-search"></i>
+            <input class="ote-search" placeholder="Rechercher une vidéo...">
+          </div>
         </div>
-        <div class="vid-list">
-          ${m.videos.map(v=>{
-            const th=v.cover||null;
-            const thumbHtml=th?`<div class="vid-thumb"><img src="${th}" alt=""/></div>`:`<div class="vid-thumb"><i class="ti ti-player-play"></i></div>`;
-            return `<div class="vid-item lv" data-src="${v.url}" data-title="${v.title}">${thumbHtml}<div class="vid-info"><div class="vt">${v.title}</div>${v.description?`<div class="vd">${v.description}</div>`:''}</div></div>`;
-          }).join('')}
+        <div class="ote-module-grid"></div>
+        <div class="ote-workspace">
+          <div class="ote-sidebar">
+            <div class="ote-sidebar-top">
+              <div class="ote-module-heading-row">
+                <span class="ote-module-heading-number"></span>
+                <div class="ote-module-heading-info">
+                  <h2 class="ote-module-heading"></h2>
+                  <div class="ote-module-description"></div>
+                </div>
+                <div class="ote-video-count"></div>
+              </div>
+
+            </div>
+            <div class="ote-video-list"></div>
+          </div>
+          <div class="ote-main">
+            <div class="ote-player-wrap">
+              <div class="ote-player-host"></div>
+            </div>
+            <div class="ote-detail">
+              <div class="ote-video-heading-row">
+                <h2 class="ote-video-title"></h2>
+                <span class="ote-current-number"></span>
+              </div>
+              <p class="ote-video-description"></p>
+              <div class="ote-detail-actions">
+                <button class="ote-prev" type="button">
+                  <i class="ti ti-chevron-left"></i> Précédente
+                </button>
+                <button class="ote-next" type="button">
+                  Suivante <i class="ti ti-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>`).join('');
-    el.querySelectorAll('.mod-head').forEach(h=>h.addEventListener('click',()=>h.closest('.mod').classList.toggle('open')));
-    el.querySelectorAll('.lv').forEach(el=>el.addEventListener('click',()=>openVid(el.dataset.src,el.dataset.title)));
+      </div>`;
+
+    const cards = el.querySelector('.ote-module-grid');
+    const list = el.querySelector('.ote-video-list');
+    const host = el.querySelector('.ote-player-host');
+    const search = el.querySelector('.ote-search');
+
+    // V59_TRAINING_HOME
+    const learning = el.querySelector('.ote-learning');
+    const homeGrid = el.querySelector('.ote-home-module-grid');
+
+    const homeNames = [
+      'Concepts', 'Stratégie', 'Backtesting', 'Psychologie'
+    ];
+
+    const homeDescriptions = [
+      'Comprends les concepts clés et les mécanismes du marché pour construire des bases solides.',
+      'Applique le système OTE 705 étape par étape, avec des exemples concrets.',
+      'Teste tes setups, analyse tes résultats et développe une méthode rigoureuse.',
+      'Développe ta discipline et apprends à maîtriser tes émotions.'
+    ];
+
+    // V62 : palette directement liée aux modules existants.
+    const homeColors = [
+      '#5085CF', // Concepts
+      '#BFA065', // Stratégie
+      '#9279D0', // Backtesting
+      '#58A58A'  // Psychologie
+    ];
+
+    // Illustrations SVG intégrées : aucun fichier externe.
+    const homeArt = [
+      `<svg viewBox="0 0 220 150" aria-hidden="true">
+        <g fill="currentColor" fill-opacity=".22"
+           stroke="currentColor" stroke-width="2.5">
+          <path d="M110 65 175 93 110 122 45 93Z"/>
+          <path d="M110 43 175 71 110 100 45 71Z"/>
+          <path d="M110 21 175 49 110 78 45 49Z"/>
+        </g>
+      </svg>`,
+      `<svg viewBox="0 0 240 210" xmlns="http://www.w3.org/2000/svg"
+  fill="none" aria-hidden="true">
+  <defs>
+    <filter id="ote-target-glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <linearGradient id="ote-target-gold" x1="35" y1="175" x2="205" y2="25">
+      <stop stop-color="#806B43"/>
+      <stop offset=".48" stop-color="#B59658"/>
+      <stop offset="1" stop-color="#D2B77D"/>
+    </linearGradient>
+  </defs>
+  <g stroke="#B59658" stroke-width="7" opacity=".23"
+     filter="url(#ote-target-glow)">
+    <circle cx="109" cy="112" r="77"/>
+    <circle cx="109" cy="112" r="53"/>
+    <circle cx="109" cy="112" r="28"/>
+
+  </g>
+  <g stroke="url(#ote-target-gold)" stroke-width="6.5">
+    <circle cx="109" cy="112" r="77"/>
+    <circle cx="109" cy="112" r="53"/>
+    <circle cx="109" cy="112" r="28"/>
+  </g>
+
+  <circle cx="109" cy="112" r="11" fill="#B59658"/>
+
+</svg>`,
+      `<svg viewBox="0 0 220 150" aria-hidden="true">
+        <g fill="currentColor" fill-opacity=".75"
+           stroke="currentColor" stroke-width="1">
+          <rect x="40" y="105" width="22" height="24" rx="2"/>
+          <rect x="73" y="83" width="22" height="46" rx="2"/>
+          <rect x="106" y="58" width="22" height="71" rx="2"/>
+          <rect x="139" y="28" width="22" height="101" rx="2"/>
+        </g>
+        <path d="M28 130H180" stroke="currentColor" stroke-width="3"/>
+      </svg>`,
+      `<svg viewBox="0 0 240 210" xmlns="http://www.w3.org/2000/svg"
+  fill="none" aria-hidden="true">
+  <defs>
+    <filter id="ote-brain-glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <linearGradient id="ote-brain-green" x1="30" y1="175" x2="210" y2="30">
+      <stop stop-color="#397B64"/>
+      <stop offset=".5" stop-color="#4F9F80"/>
+      <stop offset="1" stop-color="#82C4A6"/>
+    </linearGradient>
+  </defs>
+  <g stroke="#4F9F80" stroke-width="7" opacity=".2"
+     filter="url(#ote-brain-glow)">
+    <path d="M120 52C103 15 51 27 46 65C18 74 13 113 37 134
+      C26 169 62 194 90 176C105 192 120 185 120 169
+      C120 185 135 192 150 176C178 194 214 169 203 134
+      C227 113 222 74 194 65C189 27 137 15 120 52Z"/>
+  </g>
+  <path d="M120 52C103 15 51 27 46 65C18 74 13 113 37 134
+    C26 169 62 194 90 176C105 192 120 185 120 169
+    C120 185 135 192 150 176C178 194 214 169 203 134
+    C227 113 222 74 194 65C189 27 137 15 120 52Z"
+    stroke="url(#ote-brain-green)" stroke-width="5"
+    stroke-linejoin="round"/>
+  <path d="M120 52V169" stroke="url(#ote-brain-green)"
+        stroke-width="5" stroke-linecap="round"/>
+  <path d="M50 108H94M79 90L97 108L79 126"
+        stroke="#67B594" stroke-width="5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M190 108H146M161 90L143 108L161 126"
+        stroke="#67B594" stroke-width="5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`
+    ];
+
+    function renderTrainingHome() {
+      const total = mods.reduce(
+        (sum, module) => sum + (module.videos || []).length, 0
+      );
+
+      // V74 : progression globale de la formation.
+      const completedTotal = mods.reduce(
+        (sum, module) => sum +
+          (module.videos || []).filter(video => video.completed).length,
+        0
+      );
+
+      const globalPercentage = total
+        ? Math.round(completedTotal * 100 / total)
+        : 0;
+
+      const hero = el.querySelector('.ote-home-hero');
+
+      if (hero) {
+        let progress = hero.querySelector('.ote-global-progress');
+
+        if (!progress) {
+          progress = document.createElement('div');
+          progress.className = 'ote-global-progress';
+          hero.appendChild(progress);
+        }
+
+        progress.innerHTML = `
+          <div class="ote-global-progress-heading">
+            Votre progression
+          </div>
+          <div class="ote-global-progress-value">
+            <strong>${globalPercentage} %</strong>
+            <span>du parcours</span>
+          </div>
+          <div class="ote-global-progress-track">
+            <span style="width:${globalPercentage}%"></span>
+          </div>
+          <div class="ote-global-progress-count">
+            ${completedTotal} vidéo${completedTotal > 1 ? 's' : ''}
+            terminée${completedTotal > 1 ? 's' : ''}
+            sur ${total}
+          </div>
+        `;
+      }
+
+      el.querySelector('.ote-home-video-total').innerHTML =
+        '<i class="ti ti-video"></i> ' +
+        total + ' vidéo' + (total > 1 ? 's' : '');
+
+      homeGrid.innerHTML = mods.map((module, index) => {
+        const count = (module.videos || []).length;
+        const completedCount = (module.videos || [])
+          .filter(video => video.completed).length;
+        const percentage = count
+          ? Math.round(completedCount * 100 / count)
+          : 0;
+        const color = homeColors[index % homeColors.length];
+
+        return `
+          <article class="ote-home-card"
+            style="--home-color:${color}">
+            <span class="ote-home-card-number">
+              ${String(index + 1).padStart(2, '0')}
+            </span>
+            <div class="ote-home-card-art"
+              style="color:${color}">
+              ${homeArt[index % homeArt.length]}
+            </div>
+            <div class="ote-home-card-content">
+              <h3>${homeNames[index] || esc(module.title)}</h3>
+              <p>${homeDescriptions[index] ||
+                esc(module.description || '')}</p>
+              <div class="ote-home-card-count">
+                <i class="ti ti-player-play-filled"></i>
+                ${count} vidéo${count > 1 ? 's' : ''}
+              </div>
+              <div class="ote-home-progress">
+                <span style="width:${percentage}%"></span>
+              </div>
+              <div class="ote-home-progress-label">
+                <span>Progression</span>
+                <span>${percentage} %</span>
+              </div>
+              <button type="button"
+                class="ote-home-access"
+                data-home-module="${index}">
+                Accéder <i class="ti ti-arrow-right"></i>
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function openTrainingModule(index) {
+      activeModule = index;
+      activeVideo = 0;
+      search.value = '';
+      learning.classList.remove('ote-home-mode');
+      renderModules();
+      renderVideos();
+      renderPlayer();
+      // V64 : revenir exactement en haut à l'ouverture du module.
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+
+    homeGrid.addEventListener('click', event => {
+      const button = event.target.closest('[data-home-module]');
+      if (!button) return;
+      openTrainingModule(Number(button.dataset.homeModule));
+    });
+
+    el.querySelector('.ote-back-to-modules')
+      .addEventListener('click', () => {
+        stopPlayer();
+        learning.classList.add('ote-home-mode');
+        renderTrainingHome();
+        el.scrollIntoView({
+          block: 'start',
+          behavior: 'instant'
+        });
+      });
+
+    let vidalyticsProgress = null;
+
+    // V58_MOBILE_INLINE_PLAYER
+    // Déplacer le lecteur existant, sans le recréer.
+    const mobileVideoQuery = window.matchMedia('(max-width: 767px)');
+    const workspace = el.querySelector('.ote-workspace');
+    const main = el.querySelector('.ote-main');
+
+    function syncMobileVideoLayout() {
+      if (!el.isConnected) return;
+
+      if (!mobileVideoQuery.matches) {
+        if (main.parentElement !== workspace) {
+          workspace.appendChild(main);
+        }
+        main.classList.remove('ote-mobile-inline-player');
+        return;
+      }
+
+      const selected = list.querySelector(
+        '.ote-video-row.active'
+      );
+
+      if (!selected) {
+        if (main.parentElement !== workspace) {
+          workspace.appendChild(main);
+        }
+        return;
+      }
+
+      selected.after(main);
+      main.classList.add('ote-mobile-inline-player');
+    }
+
+    // Rétablir la disposition ordinateur au changement de largeur.
+    mobileVideoQuery.addEventListener(
+      'change',
+      syncMobileVideoLayout
+    );
+
+    function stopPlayer() {
+      if (vidalyticsProgress) {
+        vidalyticsProgress.stop();
+        vidalyticsProgress = null;
+      }
+
+      const video = host.querySelector('video');
+      if (video) video.pause();
+
+      // Nettoyer le lecteur Vidalytics précédent.
+      const embeds = window._vidalytics?.embeds || {};
+
+      host.querySelectorAll('[id^="vidalytics_embed_"]').forEach(node => {
+        const instance = embeds[node.id];
+
+        if (instance?.player?.pause) {
+          try { instance.player.pause(); } catch (_) {}
+        }
+
+        if (typeof instance?.destroy === 'function') {
+          try { instance.destroy(); } catch (_) {}
+        }
+
+        // Éviter de réutiliser une ancienne instance.
+        if (embeds[node.id] === instance && instance) {
+          delete embeds[node.id];
+        }
+      });
+
+      host.replaceChildren();
+    }
+
+    function parseVidalytics(value) {
+      const match = String(value || '').match(
+        /^https:\/\/fast\.vidalytics\.com\/embeds\/([A-Za-z0-9_-]+)\/([A-Za-z0-9_-]+)\/?$/
+      );
+      return match ? { account: match[1], video: match[2] } : null;
+    }
+
+    function mountVidalytics(host, value, videoId) {
+      const info = parseVidalytics(value);
+      if (!info) return false;
+
+      const embedId = 'vidalytics_embed_' + info.video;
+      const container = document.createElement('div');
+      container.id = embedId;
+      container.style.cssText =
+        'width:100%;position:relative;padding-top:56.25%';
+
+      host.appendChild(container);
+
+      // Charger la position avant de démarrer le lecteur.
+      const progressPromise = fetch(
+        '/api/videos/' + encodeURIComponent(videoId) + '/progress',
+        { credentials: 'same-origin' }
+      ).then(r => {
+        if (!r.ok) throw new Error('Progression indisponible');
+        return r.json();
+      }).then(data => Number(data.position) || 0)
+        .catch(() => 0);
+
+      const base = 'https://fast.vidalytics.com/embeds/' +
+        info.account + '/' + info.video + '/';
+
+      // Conserver le chargement Vidalytics validé en V22.
+      const script = document.createElement('script');
+      script.src = base + 'loader.min.js';
+      script.async = true;
+
+      script.onload = () => {
+        if (!container.isConnected) return;
+
+        const playerScript = document.createElement('script');
+        playerScript.src = base + 'player.min.js';
+        playerScript.async = true;
+
+        playerScript.onload = () => {
+          if (!container.isConnected) return;
+
+          const Player = window.Vidalytics?.Embed;
+          if (typeof Player !== 'function') return;
+
+          new Player().run(embedId);
+
+          // Attendre que Vidalytics initialise son lecteur.
+          let attempts = 0;
+          const check = () => {
+            if (!container.isConnected) return;
+
+            const instance = window._vidalytics?.embeds?.[embedId];
+            const player = instance?.player;
+
+            // Attendre la nouvelle instance et son initialisation.
+            const ready = instance &&
+              instance.isMounted &&
+              player &&
+              typeof player.play === 'function' &&
+              typeof player.getDuration === 'function';
+
+            if (ready) {
+              // Récupérer automatiquement la durée.
+              if (typeof player.getDuration === 'function') {
+                try {
+                  const duration = formatDuration(player.getDuration());
+                  if (duration) {
+                    durationCache.set(value, duration);
+                    refreshDurations();
+                  }
+                } catch (_) {}
+              }
+
+              // Restaurer la position, puis lancer la lecture.
+              progressPromise.then(savedPosition => {
+                if (!container.isConnected) return;
+
+                const currentInstance =
+                  window._vidalytics?.embeds?.[embedId];
+                if (currentInstance !== instance) return;
+
+                let duration = 0;
+                try { duration = Number(player.getDuration()) || 0; }
+                catch (_) {}
+
+                const position = duration > 0 &&
+                  savedPosition >= duration - 5 ? 0 : savedPosition;
+
+                if (position > 0 && typeof player.seekTo === 'function') {
+                  try { player.seekTo(position); }
+                  catch (error) {
+                    console.info('Reprise Vidalytics :', error);
+                  }
+                }
+
+                let lastSaved = -1;
+                let saving = false;
+                const trackedVideo = mods.flatMap(m => m.videos || [])
+                  .find(video => Number(video.id) === Number(videoId));
+                let completionSaved = Boolean(trackedVideo?.completed);
+
+                const save = (force = false) => {
+                  if (saving) return;
+                  let current = 0;
+                  try {
+                    current = Number(player.getCurrentTime()) || 0;
+                  } catch (_) { return; }
+
+                  if (!Number.isFinite(current) || current < 0) return;
+
+                  const ended = duration > 0 &&
+                    current >= duration - 2;
+                  const next = ended ? 0 : current;
+                  const reached90 = duration > 0 &&
+                    current >= duration * 0.9;
+
+                  if (!force && Math.abs(next - lastSaved) < 1 &&
+                      (!reached90 || completionSaved)) return;
+
+                  saving = true;
+                  fetch(
+                    '/api/videos/' + encodeURIComponent(videoId) + '/progress',
+                    {
+                      method: 'PUT',
+                      credentials: 'same-origin',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        position: next,
+                        completed: reached90
+                      }),
+                      keepalive: true
+                    }
+                  ).then(r => {
+                    if (!r.ok) throw new Error('Sauvegarde refusée');
+                    lastSaved = next;
+                    if (reached90) {
+                      completionSaved = true;
+                      if (trackedVideo && !trackedVideo.completed) {
+                        trackedVideo.completed = true;
+                        renderVideos();
+                        renderTrainingHome();
+                      }
+                    }
+                  }).catch(error => {
+                    console.info('Sauvegarde progression :', error);
+                  }).finally(() => { saving = false; });
+                };
+
+                const interval = setInterval(() => {
+                  if (!container.isConnected) {
+                    clearInterval(interval);
+                    return;
+                  }
+                  save();
+                }, 5000);
+
+                vidalyticsProgress = {
+                  stop() {
+                    clearInterval(interval);
+                    save(true);
+                  }
+                };
+
+                try {
+                  const result = player.play();
+                  if (result?.catch) {
+                    result.catch(error => {
+                      console.info(
+                        'Lecture automatique refusée :', error
+                      );
+                    });
+                  }
+                } catch (error) {
+                  console.info('Lecture Vidalytics :', error);
+                }
+              });
+
+              return;
+            }
+
+            if (++attempts < 60) {
+              setTimeout(check, 150);
+            }
+          };
+
+          check();
+        };
+
+        document.head.appendChild(playerScript);
+      };
+
+      document.head.appendChild(script);
+      return true;
+    }
+
+    function renderModules() {
+      cards.innerHTML = mods.map((m, i) => `
+        <button type="button"
+          class="ote-module-card ${i === activeModule ? 'selected' : ''}"
+          style="--module-color:${colors[i % colors.length]}"
+          data-module="${i}">
+          <span class="ote-module-number">0${i+1}</span>
+          <span class="ote-module-watermark">0${i+1}</span>
+          <span class="ote-module-name">${esc(m.title)}</span>
+          <span class="ote-module-sub">${esc(moduleDescriptions[i] || m.description || '')}</span>
+          <span class="ote-module-arrow"><i class="ti ti-arrow-right"></i></span>
+        </button>
+      `).join('');
+
+      cards.querySelectorAll('[data-module]').forEach(button => {
+        button.addEventListener('click', () => {
+          activeModule = Number(button.dataset.module);
+          activeVideo = 0;
+          search.value = '';
+          renderModules();
+          renderVideos();
+          renderPlayer();
+        });
+      });
+    }
+
+    function renderVideos() {
+      const m = mods[activeModule];
+      const color = colors[activeModule % colors.length];
+
+      el.querySelector('.ote-module-heading').textContent = m.title;
+      el.querySelector('.ote-module-heading-number').textContent =
+        String(activeModule + 1).padStart(2, '0');
+      el.querySelector('.ote-module-heading-number').style.color = color;
+      el.querySelector('.ote-module-description').textContent =
+        moduleDescriptions[activeModule] || m.description || '';
+      el.querySelector('.ote-video-count').textContent =
+        `${m.videos.length} vidéo${m.videos.length > 1 ? 's' : ''}`;
+
+      const filter = search.value.toLocaleLowerCase('fr').trim();
+
+      // V58 : protéger le lecteur avant de reconstruire la liste.
+      if (main.parentElement !== workspace) {
+        workspace.appendChild(main);
+      }
+
+      list.innerHTML = m.videos.map((v, i) => {
+        if (filter && !v.title.toLocaleLowerCase('fr').includes(filter)) return '';
+
+        return `
+          <button type="button"
+            class="ote-video-row ${i === activeVideo ? 'active' : ''}"
+            style="--module-color:${color}"
+            data-video="${i}">
+            <span class="ote-video-index">${String(i+1).padStart(2,'0')}</span>
+            <span class="ote-video-thumb ote-list-thumb"
+                  style="--thumb-color:${color}">
+              <span class="ote-list-thumb-number">${String(activeModule+1).padStart(2,'0')}</span>
+              <span class="ote-list-thumb-play">
+                <i class="ti ti-player-play"></i>
+              </span>
+            </span>
+            <span class="ote-video-info">
+              <span class="ote-video-title-line">
+                <span class="ote-video-name">${esc(v.title)}</span>
+                <span class="ote-video-duration" data-duration="${i}"></span>
+              </span>
+
+            </span>
+            <span class="ote-video-play">
+              <i class="ti ${v.completed ? 'ti-circle-check' : 'ti-player-play'}"></i>
+            </span>
+          </button>`;
+      }).join('');
+
+      list.querySelectorAll('[data-video]').forEach(button => {
+        button.addEventListener('click', () => {
+          activeVideo = Number(button.dataset.video);
+          renderVideos();
+          renderPlayer();
+        });
+      });
+    }
+
+    function renderPlayer() {
+      // V26 : bouton Suivante assorti au module actif.
+      const nextButton = el.querySelector('.ote-next');
+      if (nextButton) {
+        const moduleColor = colors[activeModule % colors.length];
+        nextButton.style.setProperty(
+          'background-color', moduleColor, 'important'
+        );
+        nextButton.style.setProperty(
+          'border-color', moduleColor, 'important'
+        );
+        nextButton.style.setProperty(
+          'color', '#101114', 'important'
+        );
+      }
+
+      stopPlayer();
+
+      const videos = mods[activeModule].videos;
+      const v = videos[activeVideo];
+
+      const title = el.querySelector('.ote-video-title');
+      const description = el.querySelector('.ote-video-description');
+      const number = el.querySelector('.ote-current-number');
+
+      if (!v) {
+        title.textContent = 'Aucune vidéo disponible';
+        description.textContent = '';
+        number.textContent = '';
+        host.innerHTML = '<div class="ote-player-empty">Aucune vidéo dans ce module</div>';
+      } else {
+        title.textContent = v.title;
+        description.textContent = v.description || '';
+        number.textContent = `${activeVideo+1} / ${videos.length}`;
+
+        const youtube = ytId(v.url);
+
+        if (parseVidalytics(v.url)) {
+          // Chargement différé : au clic sur la miniature.
+          const placeholder = document.createElement('div');
+          placeholder.className = 'ote-vidalytics-placeholder';
+          placeholder.dataset.url = v.url;
+          host.appendChild(placeholder);
+        } else if (youtube) {
+          const frame = document.createElement('iframe');
+          frame.src = 'https://www.youtube-nocookie.com/embed/' +
+            encodeURIComponent(youtube) + '?rel=0';
+          frame.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+          frame.allowFullscreen = true;
+          frame.title = v.title;
+          host.appendChild(frame);
+        } else {
+          const player = document.createElement('video');
+          player.controls = true;
+          player.preload = 'metadata';
+          player.playsInline = true;
+          player.src = v.url;
+          if (v.cover) player.poster = v.cover;
+          host.appendChild(player);
+        }
+      }
+
+
+      // Grande miniature automatique OTE 705
+      if (v) {
+        const cover = document.createElement('button');
+        cover.type = 'button';
+        cover.className = 'ote-player-cover';
+        cover.style.setProperty(
+          '--cover-color',
+          colors[activeModule % colors.length]
+        );
+        cover.setAttribute('aria-label', 'Lire : ' + v.title);
+
+        const number = document.createElement('span');
+        number.className = 'ote-cover-watermark';
+        number.textContent = String(activeModule + 1).padStart(2, '0');
+
+        const content = document.createElement('span');
+        content.className = 'ote-cover-content';
+
+        const module = document.createElement('span');
+        module.className = 'ote-cover-module';
+        module.textContent = mods[activeModule].title;
+
+        const heading = document.createElement('span');
+        heading.className = 'ote-cover-title';
+        heading.textContent = v.title;
+
+        const brand = document.createElement('span');
+        brand.className = 'ote-cover-brand';
+        brand.textContent = 'ESPRIT TRADING  /  OTE 705';
+
+        const play = document.createElement('span');
+        play.className = 'ote-cover-play';
+        play.innerHTML = '<i class="ti ti-player-play"></i>';
+
+        content.append(module, heading, brand);
+        cover.append(number, content, play);
+        host.appendChild(cover);
+
+        cover.addEventListener('click', () => {
+          cover.remove();
+
+          const placeholder = host.querySelector('.ote-vidalytics-placeholder');
+          if (placeholder) {
+            const url = placeholder.dataset.url;
+            placeholder.remove();
+            mountVidalytics(host, url, v.id);
+            return;
+          }
+
+          const video = host.querySelector('video');
+          if (video) {
+            const result = video.play();
+            if (result && result.catch) result.catch(() => {});
+          }
+        });
+      }
+
+      el.querySelector('.ote-prev').disabled = activeVideo === 0;
+      el.querySelector('.ote-next').disabled =
+        activeVideo >= videos.length - 1;
+
+      // V58 : positionner le lecteur sur mobile.
+      syncMobileVideoLayout();
+    }
+
+
+    // OTE_VIDEO_FINISH_V4
+    const durationCache = new Map();
+
+    function formatDuration(seconds) {
+      if (!Number.isFinite(seconds) || seconds <= 0) return '';
+      const total = Math.floor(seconds);
+      const hours = Math.floor(total / 3600);
+      const minutes = Math.floor((total % 3600) / 60);
+      const secs = String(total % 60).padStart(2, '0');
+      return hours
+        ? `${hours}:${String(minutes).padStart(2, '0')}:${secs}`
+        : `${minutes}:${secs}`;
+    }
+
+    function refreshDurations() {
+      const moduleId = activeModule;
+
+      mods[moduleId].videos.forEach((video, index) => {
+        const key = video.url;
+        if (!key) return;
+
+        const target = list.querySelector(
+          `.ote-video-duration[data-duration="${index}"]`
+        );
+        if (!target) return;
+
+        if (durationCache.has(key)) {
+          target.textContent = durationCache.get(key);
+          return;
+        }
+
+        // Les durées YouTube nécessitent des métadonnées externes.
+        // On ne fabrique pas de durée.
+        if (ytId(key) || parseVidalytics(key)) return;
+
+        const probe = document.createElement('video');
+        probe.preload = 'metadata';
+
+        probe.addEventListener('loadedmetadata', () => {
+          const duration = formatDuration(probe.duration);
+          if (duration) {
+            durationCache.set(key, duration);
+            if (activeModule === moduleId) {
+              const current = list.querySelector(
+                `.ote-video-duration[data-duration="${index}"]`
+              );
+              if (current) current.textContent = duration;
+            }
+          }
+          probe.removeAttribute('src');
+          probe.load();
+        }, { once: true });
+
+        probe.addEventListener('error', () => {
+          probe.removeAttribute('src');
+        }, { once: true });
+
+        probe.src = key;
+      });
+    }
+
+    const originalRenderVideos = renderVideos;
+    renderVideos = function() {
+      originalRenderVideos();
+      refreshDurations();
+    };
+
+    search.addEventListener('input', renderVideos);
+
+    el.querySelector('.ote-prev').addEventListener('click', () => {
+      if (activeVideo > 0) {
+        activeVideo--;
+        renderVideos();
+        renderPlayer();
+      }
+    });
+
+    el.querySelector('.ote-next').addEventListener('click', () => {
+      if (activeVideo < mods[activeModule].videos.length - 1) {
+        activeVideo++;
+        renderVideos();
+        renderPlayer();
+      }
+    });
+
+    renderModules();
+    renderVideos();
+    renderPlayer();
+    stopPlayer();
+    renderTrainingHome();
   } catch{toast('Erreur formation','error');}
 }
 
@@ -2031,8 +2979,6 @@ function closeNathanForm() {
   document.getElementById('nt-date').value = '';
   document.getElementById('nt-pair').value = '';
   document.getElementById('nt-direction').value = 'buy';
-  document.getElementById('nt-result').value = 'win';
-  document.getElementById('nt-rr').value = '';
   document.getElementById('nt-video').value = '';
   document.getElementById('nt-notes').value = '';
   document.getElementById('nt-error').textContent = '';
@@ -2045,37 +2991,186 @@ async function loadNathanTrades() {
   if (!el) return;
   el.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Chargement...</p>';
   const adminWrap = document.getElementById('nathan-add-btn-wrap');
-  if (adminWrap && window._me?.role === 'admin') adminWrap.classList.remove('hidden');
+  if (adminWrap) {
+    adminWrap.classList.toggle('hidden', window._me?.role !== 'admin');
+  }
 
   try {
     const data = await api('GET', '/nathan-trades');
     nathanTrades = data.trades || [];
     const trades = nathanTrades;
     if (!trades.length) { el.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Aucun trade pour l\'instant.</p>'; return; }
-    el.innerHTML = `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">
-    <thead><tr style="border-bottom:1px solid var(--border);">
-      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Date</th>
-      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Paire</th>
-      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Direction</th>
-      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Résultat</th>
-      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">R:R</th>
-      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Chart</th>
-      <th style="text-align:left;padding:8px 6px;color:var(--text-muted);font-weight:600;">Analyse</th>
-    </tr></thead>
-    <tbody>${trades.map(t => {
-      const isWin = t.result === 'win';
-      const isBuy = t.direction === 'buy';
-      return `<tr style="border-bottom:1px solid var(--border);cursor:pointer;" onclick="openNathanTrade(${t.id})">
-        <td style="padding:10px 6px;color:var(--text-muted);font-size:.78rem;white-space:nowrap;">${new Date(t.date).toLocaleDateString('fr-FR')}</td>
-        <td style="padding:10px 6px;"><span class="pair-tag">${t.pair}</span></td>
-        <td style="padding:10px 6px;"><span class="dir dir-${isBuy?'long':'short'}">${isBuy?'BUY':'SELL'}</span></td>
-        <td style="padding:10px 6px;"><span class="badge ${isWin?'b-win':'b-loss'}">${isWin?'WIN':'LOSE'}</span></td>
-        <td style="padding:10px 6px;"><span class="rr ${t.result==='win'?'rr-p':'rr-n'}">${(t.result==='win'?'+':'-')+Math.abs(parseFloat(t.rr)||0)+'R'}</span></td>
-        <td style="padding:10px 6px;">${t.image_path?`<img class="ss-thumb" src="${t.image_path}" onclick="openImg('${t.image_path}',event)"/>`:'—'}</td>
-        <td style="padding:10px 6px;">${t.video_url?`<span onclick="event.stopPropagation();openNathanTrade(${t.id})" style="color:#f4c70f;font-size:12px;font-weight:600;cursor:pointer;"><i class="ti ti-player-play"></i> Voir</span>`:'—'}</td>
-      </tr>`;
-    }).join('')}</tbody>
-  </table></div>`;
+    // V29 : bibliothèque visuelle, à partir des trades existants.
+    const safe = value => String(value ?? '').replace(
+      /[&<>"']/g,
+      char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[char]
+    );
+
+    el.innerHTML = `
+      <div class="ote-trades-library">
+        <div class="ote-trades-heading">
+          <div>
+            <h2>Trades & Analyses</h2>
+            <p>Retrouvez les analyses et débriefings des trades en conditions réelles.</p>
+          </div>
+          <span class="ote-trades-total">
+            ${trades.length} trade${trades.length > 1 ? 's' : ''}
+          </span>
+        </div>
+
+        <div class="ote-trades-grid">
+          ${trades.map(t => {
+            const isBuy = t.direction === 'buy';
+            const pair = safe(t.pair);
+            const date = t.date
+              ? new Date(t.date).toLocaleDateString('fr-FR')
+              : '—';
+
+            const image = t.image_path
+              ? `<img src="${safe(t.image_path)}"
+                       alt="Graphique ${pair}"
+                       loading="lazy">`
+              : `<span class="ote-trade-placeholder">
+                   <i class="ti ti-chart-candle"></i>
+                 </span>`;
+
+            return `
+              <button type="button"
+                class="ote-trade-tile"
+                data-nathan-trade="${Number(t.id)}">
+
+                <span class="ote-trade-visual">
+                  ${image}
+                  <span class="ote-trade-visual-shade"></span>
+                  ${t.video_url ? `
+                    <span class="ote-trade-play">
+                      <i class="ti ti-player-play"></i>
+                    </span>
+                  ` : ''}
+                </span>
+
+                <span class="ote-trade-body">
+                  <span class="ote-trade-title">Analyse ${pair}</span>
+                  <span class="ote-trade-meta">
+                    <span class="ote-trade-pair">${pair}</span>
+                    <span class="ote-trade-direction ${isBuy ? 'buy' : 'sell'}">
+                      ${isBuy ? 'BUY' : 'SELL'}
+                    </span>
+                    <span class="ote-trade-date"><i class="ti ti-calendar-event"></i>${safe(date)}</span>
+                  </span>
+                </span>
+              </button>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+
+
+    // V30 : filtres locaux, sans modification des données.
+    const library = el.querySelector('.ote-trades-library');
+    const heading = library.querySelector('.ote-trades-heading');
+    const grid = library.querySelector('.ote-trades-grid');
+    const tiles = [...grid.querySelectorAll('.ote-trade-tile')];
+
+    const tradeById = new Map(
+      trades.map(t => [String(t.id), t])
+    );
+
+    // V55 : filtres générés depuis les trades enregistrés.
+    const filterCategories = [
+      ['all', 'Tous'],
+      ...[...new Set(
+        trades
+          .map(t => String(t.pair || '').trim().toUpperCase())
+          .filter(Boolean)
+      )]
+        .sort((a, b) => a.localeCompare(b))
+        .map(pair => [pair, pair])
+    ];
+
+    const filterBar = document.createElement('div');
+    filterBar.className = 'ote-trades-filters';
+
+    const pairGroup = document.createElement('div');
+    pairGroup.className = 'ote-trades-pair-filters';
+
+    // V54 : filtres par actif uniquement.
+
+    let selectedPair = 'all';
+
+    function applyTradeFilters() {
+      let visible = 0;
+
+      tiles.forEach(tile => {
+        const trade = tradeById.get(tile.dataset.nathanTrade);
+        if (!trade) return;
+
+        const pair = String(trade.pair || '').toUpperCase();
+
+        const matchPair =
+          selectedPair === 'all' || pair === selectedPair;
+        const show = matchPair;
+        tile.hidden = !show;
+        if (show) visible++;
+      });
+
+      let empty = library.querySelector('.ote-trades-filter-empty');
+
+      if (!empty) {
+        empty = document.createElement('p');
+        empty.className = 'ote-trades-filter-empty';
+        empty.textContent = 'Aucun trade pour ces filtres.';
+        grid.after(empty);
+      }
+
+      empty.hidden = visible !== 0;
+
+      pairGroup.querySelectorAll('button').forEach(button => {
+        const active = button.dataset.pair === selectedPair;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+    }
+
+    filterCategories.forEach(([pair, label]) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'ote-trades-filter-btn';
+      button.dataset.pair = pair;
+      button.textContent = label;
+
+      button.addEventListener('click', () => {
+        selectedPair = pair;
+        applyTradeFilters();
+      });
+
+      pairGroup.appendChild(button);
+    });
+
+    filterBar.append(pairGroup);
+    heading.after(filterBar);
+
+
+    applyTradeFilters();
+
+    // V57 : toute la carte ouvre directement la vidéo.
+    el.querySelectorAll('[data-nathan-trade]').forEach(card => {
+      card.addEventListener('click', () => {
+        const id = Number(card.dataset.nathanTrade);
+        const trade = nathanTrades.find(t => Number(t.id) === id);
+
+        if (trade?.video_url) {
+          openNathanVideo(trade.video_url);
+        }
+      });
+    });
   } catch(e) {
     el.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Erreur de chargement.</p>';
   }
@@ -2085,16 +3180,8 @@ function openNathanTrade(id) {
   const t = nathanTrades.find(x => x.id === id);
   if (!t) return;
   $('nd-pair').textContent = t.pair;
-  $('nd-badge').innerHTML = t.result === 'win' ? '<span class="badge b-win">WIN</span>' : '<span class="badge b-loss">LOSE</span>';
   $('nd-date').textContent = new Date(t.date).toLocaleDateString('fr-FR');
   $('nd-dir').innerHTML = `<span class="dir dir-${t.direction==='buy'?'long':'short'}">${t.direction==='buy'?'BUY':'SELL'}</span>`;
-  const rrVal = parseFloat(t.rr) || 0;
-  const isWinNd = t.result === 'win';
-  const rrDisplay = (isWinNd ? '+' : '-') + Math.abs(rrVal) + 'R';
-  const rrEl2 = $('nd-rr');
-  rrEl2.textContent = rrDisplay;
-  rrEl2.className = 'dv big ' + (isWinNd ? 'g' : 'r');
-  $('nd-result').innerHTML = t.result === 'win' ? '<span style="color:#22c55e;font-weight:700;">WIN</span>' : '<span style="color:#ef4444;font-weight:700;">LOSE</span>';
   const nw = $('nd-notes-wrap');
   if (t.notes) { $('nd-notes').textContent = t.notes; nw.style.display = ''; } else nw.style.display = 'none';
   const iw = $('nd-image-wrap');
@@ -2110,8 +3197,6 @@ function openNathanTrade(id) {
     document.getElementById('nt-date').value = t.date;
     document.getElementById('nt-pair').value = t.pair;
     document.getElementById('nt-direction').value = t.direction;
-    document.getElementById('nt-result').value = t.result;
-    document.getElementById('nt-rr').value = Math.abs(parseFloat(t.rr) || 0);
     document.getElementById('nt-video').value = t.video_url || '';
     document.getElementById('nt-notes').value = t.notes || '';
     window._editNathanId = t.id;
@@ -2134,22 +3219,18 @@ async function submitNathanTrade() {
   const date = document.getElementById('nt-date').value;
   const pair = document.getElementById('nt-pair').value;
   const direction = document.getElementById('nt-direction').value;
-  const result = document.getElementById('nt-result').value;
-  const rr = document.getElementById('nt-rr').value;
   const video = document.getElementById('nt-video').value;
   const notes = document.getElementById('nt-notes').value;
   const imageFile = document.getElementById('nt-image').files[0];
   const errEl = document.getElementById('nt-error');
 
-  if (!date || !pair || !rr) { errEl.textContent = 'Date, paire et R:R sont obligatoires.'; return; }
+  if (!date || !pair.trim() || !direction) { errEl.textContent = 'Date, actif et direction obligatoires.'; return; }
   errEl.textContent = '';
 
   const fd = new FormData();
   fd.append('date', date);
-  fd.append('pair', pair);
+  fd.append('pair', pair.trim().toUpperCase());
   fd.append('direction', direction);
-  fd.append('result', result);
-  fd.append('rr', rr);
   if (video) fd.append('video_url', video);
   if (notes) fd.append('notes', notes);
   if (imageFile) fd.append('image', imageFile);
@@ -2170,4 +3251,82 @@ async function submitNathanTrade() {
   } catch(e) {
     errEl.textContent = 'Erreur réseau.';
   }
+}
+
+
+// V56 : lecteur vidéo intégré pour Trades & Analyses.
+function openNathanVideo(url) {
+  const value = String(url || '').trim();
+  let videoId = '';
+
+  try {
+    const parsed = new URL(value);
+    const host = parsed.hostname.toLowerCase();
+
+    if (host === 'youtu.be' || host === 'www.youtu.be') {
+      videoId = parsed.pathname.split('/')[1] || '';
+    } else if (
+      host === 'youtube.com' ||
+      host === 'www.youtube.com' ||
+      host === 'm.youtube.com' ||
+      host === 'youtube-nocookie.com' ||
+      host === 'www.youtube-nocookie.com'
+    ) {
+      videoId = parsed.searchParams.get('v') ||
+        (parsed.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/) || [])[1] ||
+        '';
+    }
+  } catch (_) {}
+
+  if (!/^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
+    window.open(value, '_blank', 'noopener,noreferrer');
+    return;
+  }
+
+  document.getElementById('nathan-video-player-modal')?.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'nathan-video-player-modal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;padding:24px;';
+
+  const container = document.createElement('div');
+  container.style.cssText = 'width:100%;max-width:1050px;position:relative;';
+
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.setAttribute('aria-label', 'Fermer la vidéo');
+  close.textContent = '×';
+  close.style.cssText = 'position:absolute;right:0;top:-48px;background:none;border:0;color:white;font-size:34px;cursor:pointer;';
+
+  const frame = document.createElement('div');
+  frame.style.cssText = 'position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;';
+
+  const iframe = document.createElement('iframe');
+  iframe.src = 'https://www.youtube-nocookie.com/embed/' +
+    encodeURIComponent(videoId) + '?autoplay=1&rel=0';
+  iframe.title = 'Analyse de trade';
+  iframe.allow = 'accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share';
+  iframe.allowFullscreen = true;
+  iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;';
+
+  function dismiss() {
+    modal.remove();
+    document.removeEventListener('keydown', onKey);
+  }
+
+  function onKey(event) {
+    if (event.key === 'Escape') dismiss();
+  }
+
+  close.addEventListener('click', dismiss);
+  modal.addEventListener('click', event => {
+    if (event.target === modal) dismiss();
+  });
+
+  document.addEventListener('keydown', onKey);
+
+  frame.appendChild(iframe);
+  container.append(close, frame);
+  modal.appendChild(container);
+  document.body.appendChild(modal);
 }
