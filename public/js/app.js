@@ -1709,11 +1709,18 @@ async function loadFormation() {
 
                   if (!Number.isFinite(current) || current < 0) return;
 
-                  const ended = duration > 0 &&
-                    current >= duration - 2;
+                  // V108 : récupérer la durée réelle à chaque sauvegarde.
+                  // Vidalytics peut initialiser sa durée après le lecteur.
+                  let liveDuration = 0;
+                  try {
+                    liveDuration = Number(player.getDuration()) || 0;
+                  } catch (_) {}
+
+                  const ended = liveDuration > 0 &&
+                    current >= liveDuration - 2;
                   const next = ended ? 0 : current;
-                  const reached90 = duration > 0 &&
-                    current >= duration * 0.9;
+                  const reached90 = liveDuration > 0 &&
+                    current >= liveDuration * 0.9;
 
                   if (!force && Math.abs(next - lastSaved) < 1 &&
                       (!reached90 || completionSaved)) return;
