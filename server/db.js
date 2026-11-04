@@ -111,6 +111,26 @@ db.exec(`
   );
 `);
 
+// V25 : progression des vidéos par élève.
+db.exec(`
+  CREATE TABLE IF NOT EXISTS video_progress (
+    user_id INTEGER NOT NULL,
+    video_id INTEGER NOT NULL,
+    position_seconds REAL NOT NULL DEFAULT 0,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, video_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (video_id) REFERENCES videos(id) ON DELETE CASCADE
+  );
+`);
+
+// V67 : statut terminé, indépendant de la reprise de lecture.
+const progressCols = db.prepare('PRAGMA table_info(video_progress)')
+  .all().map(c => c.name);
+if (!progressCols.includes('completed')) {
+  db.exec('ALTER TABLE video_progress ADD COLUMN completed INTEGER NOT NULL DEFAULT 0');
+}
+
 // Migrations pour colonnes manquantes
 const userCols = db.prepare('PRAGMA table_info(users)').all().map(c => c.name);
 if (!userCols.includes('email')) db.exec('ALTER TABLE users ADD COLUMN email TEXT');
@@ -236,5 +256,18 @@ const existing = db.prepare("SELECT id FROM promo_codes WHERE code = 'OTE20'").g
 if (!existing) {
   db.prepare("INSERT INTO promo_codes (code, discount_percent) VALUES ('OTE20', 23)").run();
 }
+
+
+// V87 - Progression du parcours OTE 705
+db.exec(`
+  CREATE TABLE IF NOT EXISTS parcours_progress (
+    user_id INTEGER NOT NULL,
+    step INTEGER NOT NULL CHECK(step BETWEEN 1 AND 7),
+    completed INTEGER NOT NULL DEFAULT 0 CHECK(completed IN (0,1)),
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(user_id, step),
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+  );
+`);
 
 module.exports = db;

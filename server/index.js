@@ -33,6 +33,7 @@ app.use('/uploads', express.static(uploadsDir));
 
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/videos', require('./routes/videos'));
+app.use('/api/parcours', require('./routes/parcours'));
 app.use('/api/trades', require('./routes/trades'));
 const cors = require('cors');
 const corsOptions = {
