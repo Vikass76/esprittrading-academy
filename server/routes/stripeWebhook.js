@@ -67,6 +67,7 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
         customerId: paymentIntent.customer,
         paymentMethodId: paymentIntent.payment_method,
         amount: paymentIntent.amount,
+        promoUsed: paymentIntent.metadata.promo_used === '1',
       });
     } catch (err) {
       console.error('Erreur traitement paiement reussi:', err);
@@ -101,7 +102,7 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
   res.json({ received: true });
 });
 
-async function handleSuccessfulPayment({ email, firstname, lastname, plan, customerId, paymentMethodId, amount }) {
+async function handleSuccessfulPayment({ email, firstname, lastname, plan, customerId, paymentMethodId, amount, promoUsed }) {
   const emailLower = email.toLowerCase().trim();
   let user = db.prepare('SELECT * FROM users WHERE LOWER(email) = ?').get(emailLower);
   let tempPassword = null;
@@ -141,7 +142,6 @@ async function handleSuccessfulPayment({ email, firstname, lastname, plan, custo
   // Si paiement en 2 fois, enregistrer le suivi pour le 2e prelevement
   if (plan === 'split') {
     const dueDate = Date.now() + 30 * 24 * 60 * 60 * 1000; // J+30
-    const promoUsed = paymentIntent.metadata.promo_used === '1';
     const secondAmount = promoUsed ? 49500 : 64500; // 495€ avec promo, 645€ sans
     db.prepare(`
       INSERT INTO payments (email, stripe_customer_id, stripe_payment_method_id, plan, amount_due, due_date, status)
