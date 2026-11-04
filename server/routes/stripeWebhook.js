@@ -43,6 +43,12 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
       return res.json({ received: true });
     }
 
+    // Un second versement automatique ne doit jamais creer une nouvelle echeance.
+    if (paymentIntent.metadata.type === 'second_installment') {
+      console.log('[Stripe] Second versement confirme : aucune nouvelle echeance');
+      return res.json({ received: true });
+    }
+
     if (plan === 'split-retry') {
       try {
         const paymentId = paymentIntent.metadata.payment_id;
@@ -68,6 +74,7 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
         paymentMethodId: paymentIntent.payment_method,
         amount: paymentIntent.amount,
         promoUsed: paymentIntent.metadata.promo_used === '1',
+        paymentIntentId: paymentIntent.id,
       });
     } catch (err) {
       console.error('Erreur traitement paiement reussi:', err);
@@ -102,7 +109,7 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
   res.json({ received: true });
 });
 
-async function handleSuccessfulPayment({ email, firstname, lastname, plan, customerId, paymentMethodId, amount, promoUsed }) {
+async function handleSuccessfulPayment({ email, firstname, lastname, plan, customerId, paymentMethodId, amount, promoUsed, paymentIntentId }) {
   const emailLower = email.toLowerCase().trim();
   let user = db.prepare('SELECT * FROM users WHERE LOWER(email) = ?').get(emailLower);
   let tempPassword = null;
@@ -144,9 +151,13 @@ async function handleSuccessfulPayment({ email, firstname, lastname, plan, custo
     const dueDate = Date.now() + 30 * 24 * 60 * 60 * 1000; // J+30
     const secondAmount = promoUsed ? 49500 : 64500; // 495€ avec promo, 645€ sans
     db.prepare(`
-      INSERT INTO payments (email, stripe_customer_id, stripe_payment_method_id, plan, amount_due, due_date, status)
-      VALUES (?, ?, ?, ?, ?, ?, 'pending')
-    `).run(emailLower, customerId, paymentMethodId, plan, secondAmount, dueDate);
+      INSERT INTO payments (
+        email, stripe_customer_id, stripe_payment_method_id,
+        plan, amount_due, due_date, status, stripe_payment_intent_id
+      )
+      VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)
+      ON CONFLICT(stripe_payment_intent_id) DO NOTHING
+    `).run(emailLower, customerId, paymentMethodId, plan, secondAmount, dueDate, paymentIntentId);
   }
 
   // Email de bienvenue

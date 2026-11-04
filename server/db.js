@@ -207,6 +207,19 @@ db.exec(`
 `);
 
 
+// Protection contre les echeances Stripe en double
+const paymentCols = db.prepare('PRAGMA table_info(payments)').all().map(c => c.name);
+
+if (!paymentCols.includes('stripe_payment_intent_id')) {
+  db.exec('ALTER TABLE payments ADD COLUMN stripe_payment_intent_id TEXT');
+}
+
+db.exec(`
+  CREATE UNIQUE INDEX IF NOT EXISTS idx_payments_stripe_intent
+  ON payments(stripe_payment_intent_id)
+  WHERE stripe_payment_intent_id IS NOT NULL
+`);
+
 // Table de suivi des RDV mensuels
 db.exec(`
   CREATE TABLE IF NOT EXISTS appointments (
