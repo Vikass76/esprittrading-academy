@@ -141,10 +141,12 @@ async function handleSuccessfulPayment({ email, firstname, lastname, plan, custo
   // Si paiement en 2 fois, enregistrer le suivi pour le 2e prelevement
   if (plan === 'split') {
     const dueDate = Date.now() + 30 * 24 * 60 * 60 * 1000; // J+30
+    const promoUsed = paymentIntent.metadata.promo_used === '1';
+    const secondAmount = promoUsed ? 49500 : 64500; // 495€ avec promo, 645€ sans
     db.prepare(`
       INSERT INTO payments (email, stripe_customer_id, stripe_payment_method_id, plan, amount_due, due_date, status)
       VALUES (?, ?, ?, ?, ?, ?, 'pending')
-    `).run(emailLower, customerId, paymentMethodId, plan, 49500, dueDate);
+    `).run(emailLower, customerId, paymentMethodId, plan, secondAmount, dueDate);
   }
 
   // Email de bienvenue

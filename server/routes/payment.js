@@ -47,6 +47,7 @@ router.post('/create-intent', async (req, res) => {
         email: safeEmail || 'pending@esprittrading.fr',
         firstname: firstname || '',
         lastname: lastname || '',
+        promo_used: (promo_code && (() => { const p = db.prepare("SELECT * FROM promo_codes WHERE UPPER(code) = UPPER(?) AND active = 1").get((promo_code||'').trim()); return p ? '1' : '0'; })()) || '0',
       },
       automatic_payment_methods: { enabled: true },
     });

@@ -35,21 +35,21 @@ router.get('/', requireStudent, (req, res) => {
 // POST nouveau trade (admin uniquement)
 router.post('/', requireAdmin, upload.single('image'), (req, res) => {
   const { date, pair, direction, result, rr, video_url, notes } = req.body;
-  if (!date || !pair || !direction || !result || !rr) return res.status(400).json({ error: 'Champs obligatoires manquants' });
+  if (!date || !pair || !direction) return res.status(400).json({ error: 'Date, actif et direction obligatoires' });
   const image_path = req.file ? '/uploads/' + req.file.filename : null;
-  const trade = db.prepare('INSERT INTO nathan_trades (date, pair, direction, result, rr, image_path, video_url, notes) VALUES (?,?,?,?,?,?,?,?)').run(date, pair, direction, result, rr, image_path, video_url || null, notes || null);
+  const trade = db.prepare('INSERT INTO nathan_trades (date, pair, direction, result, rr, image_path, video_url, notes) VALUES (?,?,?,?,?,?,?,?)').run(date, pair.trim().toUpperCase(), direction, '', '', image_path, video_url || null, notes || null);
   res.json({ success: true, id: trade.lastInsertRowid });
 });
 
 // PUT modifier trade (admin uniquement)
 router.put('/:id', requireAdmin, upload.single('image'), (req, res) => {
   const { date, pair, direction, result, rr, video_url, notes } = req.body;
-  if (!date || !pair || !direction || !result || !rr) return res.status(400).json({ error: 'Champs obligatoires manquants' });
+  if (!date || !pair || !direction) return res.status(400).json({ error: 'Date, actif et direction obligatoires' });
   const existing = db.prepare('SELECT * FROM nathan_trades WHERE id = ?').get(req.params.id);
   if (!existing) return res.status(404).json({ error: 'Trade introuvable' });
   const image_path = req.file ? '/uploads/' + req.file.filename : existing.image_path;
   db.prepare('UPDATE nathan_trades SET date=?, pair=?, direction=?, result=?, rr=?, image_path=?, video_url=?, notes=? WHERE id=?')
-    .run(date, pair, direction, result, rr, image_path, video_url || null, notes || null, req.params.id);
+    .run(date, pair.trim().toUpperCase(), direction, existing.result, existing.rr, image_path, video_url || null, notes || null, req.params.id);
   res.json({ success: true });
 });
 
