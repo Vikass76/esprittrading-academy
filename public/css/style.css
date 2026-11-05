@@ -8562,3 +8562,104 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
     right: 4px;
   }
 }
+
+/* MON PARCOURS — Boutons en bas à droite */
+#ftab-parcours .ote-path-step-grid {
+  align-items: stretch;
+}
+
+#ftab-parcours .ote-path-step-right {
+  display: flex;
+  flex-direction: column;
+}
+
+#ftab-parcours .ote-path-check {
+  align-self: flex-end;
+  margin-top: auto;
+}
+
+
+/* MON PARCOURS — Étapes verrouillées */
+#ftab-parcours .ote-path-step.is-locked {
+  position: relative;
+  filter: grayscale(65%);
+  opacity: 0.55;
+  transition: filter 0.25s ease, opacity 0.25s ease;
+}
+
+#ftab-parcours .ote-path-step.is-locked .ote-path-check {
+  cursor: not-allowed;
+}
+
+
+/* MON PARCOURS — Gris des étapes verrouillées */
+#ftab-parcours .ote-path-step.is-locked {
+  filter: none;
+  opacity: 1;
+  background: #303137;
+  border-color: #505158;
+}
+
+#ftab-parcours .ote-path-step.is-locked .ote-path-step-left,
+#ftab-parcours .ote-path-step.is-locked .ote-path-step-right {
+  filter: grayscale(85%);
+  opacity: 0.65;
+}
+
+/* Conserver les badges en couleur */
+#ftab-parcours .ote-path-step.is-locked .ote-path-badge {
+  filter: none;
+  opacity: 1;
+}
+
+/* Garder les badges hors du filtre appliqué au contenu */
+#ftab-parcours .ote-path-step.is-locked .ote-path-step-left {
+  filter: none;
+}
+
+#ftab-parcours .ote-path-step.is-locked .ote-path-step-left > :not(.ote-path-step-meta) {
+  filter: grayscale(85%);
+  opacity: 0.65;
+}
+
+
+/* MON PARCOURS — Images des exemples */
+#ftab-parcours .ote-path-example img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 5px;
+}
+
+
+/* MON PARCOURS — Réduire les exemples sans recadrage */
+#ftab-parcours .ote-path-examples-wide {
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#ftab-parcours .ote-path-example img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 600px) {
+  #ftab-parcours .ote-path-examples-wide {
+    width: 100%;
+  }
+}
+
+
+/* MON PARCOURS — Images grisées si étape verrouillée */
+#ftab-parcours .ote-path-step.is-locked .ote-path-examples-wide img {
+  filter: grayscale(85%);
+  opacity: 0.65;
+}
+
+#ftab-parcours .ote-path-step:not(.is-locked) .ote-path-examples-wide img {
+  filter: none;
+  opacity: 1;
+}

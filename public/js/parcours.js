@@ -239,11 +239,20 @@
                 ${step.examples ? `
                   <div class="ote-path-examples-heading">Exemples graphiques</div>
                   <div class="ote-path-examples ote-path-examples-wide">
-                    ${step.examples.map(label=>`
+                    ${step.examples.map((label, index)=>`
                       <div class="ote-path-example">
-                        <i class="ti ti-photo"></i>
-                        <span>${escapeHTML(label)}</span>
-                        <small>Exemple à ajouter</small>
+                        ${i === 1 ? `
+                          <img
+                            src="${index === 0 ? '/images/structure-htf.jpg' : '/images/structure-ltf.jpg'}"
+                            alt="${index === 0 ? 'Structure HTF' : 'Structure LTF'}"
+                            loading="lazy"
+                          >
+                          <span>${index === 0 ? 'Structure HTF' : 'Structure LTF'}</span>
+                        ` : `
+                          <i class="ti ti-photo"></i>
+                          <span>${escapeHTML(label)}</span>
+                          <small>Exemple à ajouter</small>
+                        `}
                       </div>
                     `).join('')}
                   </div>
