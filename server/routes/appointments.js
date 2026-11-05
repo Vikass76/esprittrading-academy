@@ -8,6 +8,39 @@ const CALENDLY_WEBHOOK_SECRET = process.env.CALENDLY_WEBHOOK_SECRET;
 const LOCK_DURATION_MS = 0; // Déblocage dès le début du rendez-vous
 
 // Webhook Calendly — reçoit les événements de réservation
+
+const BOOKING_SECRET = process.env.SESSION_SECRET || process.env.CALENDLY_TOKEN;
+
+router.get('/booking-context', (req, res) => {
+  if (!req.session.userId) return res.status(401).json({error:'Non connecté'});
+  if (!BOOKING_SECRET) return res.status(503).json({error:'Configuration manquante'});
+
+  const expiry = Date.now() + 48 * 60 * 60 * 1000;
+  const payload = `${req.session.userId}.${expiry}`;
+  const signature = crypto.createHmac('sha256', BOOKING_SECRET)
+    .update(payload).digest('hex');
+
+  res.json({token: `${payload}.${signature}`});
+});
+
+function userIdFromBookingToken(token) {
+  if (!BOOKING_SECRET || typeof token !== 'string') return null;
+  const parts = token.split('.');
+  if (parts.length !== 3) return null;
+
+  const [id, expiry, signature] = parts;
+  if (!/^\d+$/.test(id) || !/^\d+$/.test(expiry)) return null;
+  if (Date.now() > Number(expiry)) return null;
+
+  const expected = crypto.createHmac('sha256', BOOKING_SECRET)
+    .update(`${id}.${expiry}`).digest('hex');
+
+  if (!/^[a-f0-9]{64}$/.test(signature)) return null;
+  if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return null;
+
+  return Number(id);
+}
+
 router.post('/webhook', async (req, res) => {
   // Repondre immediatement pour eviter les retries Calendly
   try {
@@ -43,9 +76,15 @@ router.post('/webhook', async (req, res) => {
         || event.payload?.location?.location
         || null;
 
-      if (!email) return res.json({ received: true });
 
-      const user = db.prepare('SELECT id FROM users WHERE LOWER(email) = ?').get(email);
+
+      const token = event.payload?.tracking?.utm_content;
+      const userId = userIdFromBookingToken(token);
+      if (!userId) {
+        console.warn('[appointments] Réservation sans identifiant valide');
+        return res.json({ received: true, unlinked: true });
+      }
+      const user = db.prepare('SELECT id FROM users WHERE id = ?').get(userId);
       if (!user) return res.json({ received: true });
 
       const now = Date.now();
@@ -107,23 +146,11 @@ router.post('/webhook', async (req, res) => {
     }
 
     if (event.event === 'invitee.canceled') {
-      const email = event.payload?.email?.toLowerCase().trim();
-      if (!email) return res.json({ received: true });
-
-      const user = db.prepare('SELECT id FROM users WHERE LOWER(email) = ?').get(email);
-      if (!user) return res.json({ received: true });
-
       const eventId = event.payload?.event;
-      if (!eventId) {
-        console.error('[appointments] Annulation sans identifiant Calendly');
-        return res.status(400).json({ error: 'Identifiant manquant' });
+      if (eventId) {
+        db.prepare('DELETE FROM appointments WHERE calendly_event_id = ?')
+          .run(eventId);
       }
-
-      db.prepare(
-        "DELETE FROM appointments WHERE user_id = ? AND calendly_event_id = ?"
-      ).run(user.id, eventId);
-
-      console.log(`[appointments] Annulation traitee pour ${email}`);
     }
 
   } catch (err) {
@@ -135,6 +162,100 @@ router.post('/webhook', async (req, res) => {
 });
 
 // Statut RDV pour l'eleve connecte
+
+// Confirmer une réservation depuis le compte élève connecté.
+// L'e-mail utilisé dans Calendly n'intervient jamais.
+router.post('/confirm', async (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({error:'Non connecté'});
+  }
+
+  const eventUri = req.body?.event_uri;
+  const inviteeUri = req.body?.invitee_uri;
+  const token = process.env.CALENDLY_TOKEN;
+
+  const eventPattern = /^https:\/\/api\.calendly\.com\/scheduled_events\/[a-zA-Z0-9-]+$/;
+  const inviteePattern = /^https:\/\/api\.calendly\.com\/scheduled_events\/[a-zA-Z0-9-]+\/invitees\/[a-zA-Z0-9-]+$/;
+
+  if (!eventPattern.test(eventUri || '') ||
+      !inviteePattern.test(inviteeUri || '') ||
+      !inviteeUri.startsWith(eventUri + '/invitees/')) {
+    return res.status(400).json({error:'Identifiants Calendly invalides'});
+  }
+
+  if (!token) {
+    return res.status(503).json({error:'Token Calendly manquant'});
+  }
+
+  try {
+    const headers = {Authorization: `Bearer ${token}`};
+    const [eventResponse, inviteeResponse] = await Promise.all([
+      fetch(eventUri, {headers}),
+      fetch(inviteeUri, {headers})
+    ]);
+
+    if (!eventResponse.ok || !inviteeResponse.ok) {
+      return res.status(502).json({error:'Vérification Calendly impossible'});
+    }
+
+    const eventData = (await eventResponse.json()).resource;
+    const inviteeData = (await inviteeResponse.json()).resource;
+
+    const expectedType = 'https://api.calendly.com/event_types/2c9b5061-57a6-4431-a82a-95674e5672f7';
+
+    if (eventData?.uri !== eventUri ||
+        eventData?.event_type !== expectedType ||
+        eventData?.status !== 'active' ||
+        inviteeData?.uri !== inviteeUri ||
+        inviteeData?.event !== eventUri ||
+        inviteeData?.status !== 'active') {
+      return res.status(400).json({error:'Réservation non valide'});
+    }
+
+    const bookedAt = new Date(eventData.start_time).getTime();
+    if (!Number.isFinite(bookedAt) || bookedAt <= Date.now()) {
+      return res.status(400).json({error:'Date de réservation invalide'});
+    }
+
+    const userId = req.session.userId;
+
+    const existing = db.prepare(
+      "SELECT * FROM appointments WHERE user_id = ? AND status = 'confirmed' AND booked_at > ? ORDER BY booked_at LIMIT 1"
+    ).get(userId, Date.now());
+
+    if (existing) {
+      if (existing.calendly_event_id === eventUri) {
+        return res.json({confirmed:true,already_saved:true});
+      }
+      return res.status(409).json({error:'Un rendez-vous est déjà réservé'});
+    }
+
+    const linked = db.prepare(
+      "SELECT user_id FROM appointments WHERE calendly_event_id = ? LIMIT 1"
+    ).get(eventUri);
+
+    if (linked && linked.user_id !== userId) {
+      return res.status(409).json({error:'Réservation déjà associée à un autre compte'});
+    }
+
+    const location = eventData.location || {};
+    const meetingLink = location.join_url ||
+      location.data?.join_url ||
+      (typeof location.location === 'string' &&
+       /^https:\/\//.test(location.location) ? location.location : null);
+
+    db.prepare(
+      "INSERT INTO appointments (user_id, calendly_event_id, booked_at, unlocked_at, meeting_link, status) VALUES (?, ?, ?, ?, ?, 'confirmed')"
+    ).run(userId, eventUri, bookedAt, bookedAt, meetingLink);
+
+    console.log('[appointments] Réservation confirmée pour compte', userId);
+    return res.json({confirmed:true});
+  } catch (error) {
+    console.error('[appointments] Erreur confirmation:', error);
+    return res.status(500).json({error:'Confirmation impossible'});
+  }
+});
+
 router.get('/status', async (req, res) => {
   if (!req.session.userId) return res.status(401).json({ error: 'Non connecte' });
 

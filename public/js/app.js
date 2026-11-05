@@ -2107,14 +2107,72 @@ async function loadFormation() {
   } catch{toast('Erreur formation','error');}
 }
 
-window.addEventListener('message', function(e) {
-  if (!e.origin.endsWith('.calendly.com')) return;
-  if (e.data && e.data.event === 'calendly.event_scheduled') {
-    [1500, 3000, 5000, 8000, 12000, 20000, 30000].forEach(delay => {
-      setTimeout(() => loadRdvStatus(), delay);
+window.addEventListener('message', async function(e) {
+  if (e.origin !== 'https://calendly.com' &&
+      !e.origin.endsWith('.calendly.com')) return;
+  if (e.data?.event !== 'calendly.event_scheduled') return;
+
+  const eventUri = e.data.payload?.event?.uri;
+  const inviteeUri = e.data.payload?.invitee?.uri;
+
+  if (!eventUri || !inviteeUri) {
+    console.error('Calendly : identifiants de réservation manquants');
+    return;
+  }
+
+  try {
+    await api('POST', '/appointments/confirm', {
+      event_uri: eventUri,
+      invitee_uri: inviteeUri
     });
+    await loadRdvStatus();
+  } catch (error) {
+    console.error('Confirmation RDV :', error);
+    [2000, 5000, 10000].forEach(delay =>
+      setTimeout(() => loadRdvStatus(), delay)
+    );
   }
 });
+
+
+let rdvCalendlyInitialized = false;
+let rdvCalendlyInitializing = false;
+
+async function initializeRdvCalendly() {
+  if (rdvCalendlyInitialized || rdvCalendlyInitializing) return;
+  rdvCalendlyInitializing = true;
+
+  try {
+    const context = await api('GET', '/appointments/booking-context');
+    const container = document.querySelector('#ftab-rdv .calendly-inline-widget');
+    if (!container) throw new Error('Calendrier introuvable');
+
+    const url = new URL(container.getAttribute('data-url'));
+    url.searchParams.set('utm_content', context.token);
+
+    if (!window.Calendly) {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://assets.calendly.com/assets/external/widget.js';
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    container.innerHTML = '';
+    window.Calendly.initInlineWidget({
+      url: url.toString(),
+      parentElement: container
+    });
+
+    rdvCalendlyInitialized = true;
+  } catch (error) {
+    console.error('Erreur Calendly:', error);
+  } finally {
+    rdvCalendlyInitializing = false;
+  }
+}
 
 async function loadRdvStatus() {
   try {
@@ -2122,6 +2180,7 @@ async function loadRdvStatus() {
     if (status.available) {
       $('rdv-available').classList.remove('hidden');
       $('rdv-locked').classList.add('hidden');
+      await initializeRdvCalendly();
     } else {
       $('rdv-available').classList.add('hidden');
       $('rdv-locked').classList.remove('hidden');
