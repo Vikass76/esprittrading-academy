@@ -68,89 +68,182 @@ router.post('/webhook', async (req, res) => {
 
     const event = typeof req.body === 'string' ? JSON.parse(req.body) : (Buffer.isBuffer(req.body) ? JSON.parse(req.body.toString()) : req.body);
 
+
     if (event.event === 'invitee.created') {
-      const email = event.payload?.email?.toLowerCase().trim();
-      const eventId = event.payload?.event;
-      const meetingLink = event.payload?.location?.join_url
-        || event.payload?.location?.data?.join_url
-        || event.payload?.location?.location
-        || null;
+      const payload = event.payload || {};
+      const eventId = payload.event;
+      const inviteeId = payload.uri;
+      const oldInvitee = payload.old_invitee;
 
+      const oldEventId = typeof oldInvitee === 'string'
+        ? oldInvitee.split('/invitees/')[0] : null;
 
+      // Retrouver l'ancien RDV, même s'il a déjà été annulé.
+      let previous = null;
+      if (oldInvitee) {
+        previous = db.prepare(
+          'SELECT * FROM appointments WHERE calendly_invitee_id = ? ORDER BY id DESC LIMIT 1'
+        ).get(oldInvitee);
 
-      const token = event.payload?.tracking?.utm_content;
-      const userId = userIdFromBookingToken(token);
-      if (!userId) {
-        console.warn('[appointments] Réservation sans identifiant valide');
-        return res.json({ received: true, unlinked: true });
+        if (!previous && oldEventId) {
+          previous = db.prepare(
+            'SELECT * FROM appointments WHERE calendly_event_id = ? ORDER BY id DESC LIMIT 1'
+          ).get(oldEventId);
+        }
       }
-      const user = db.prepare('SELECT id FROM users WHERE id = ?').get(userId);
-      if (!user) return res.json({ received: true });
 
-      const now = Date.now();
-      // Recuperer la vraie date du RDV depuis le payload Calendly
-      const rdvStartTime = event.payload?.scheduled_event?.start_time
-        || event.payload?.event_start_time
-        || null;
-      let rdvAt = rdvStartTime ? new Date(rdvStartTime).getTime() : NaN;
+      // Le jeton est utilisé pour les nouvelles réservations.
+      // Pour une reprogrammation, l'ancien RDV identifie l'élève.
+      const tokenUserId = userIdFromBookingToken(
+        payload.tracking?.utm_content
+      );
+      const userId = previous?.user_id || tokenUserId;
 
-      if (!Number.isFinite(rdvAt) && eventId && process.env.CALENDLY_TOKEN) {
+      if (!userId) {
+        console.warn('[appointments] RDV non associé à un élève');
+        return res.json({received:true,unlinked:true});
+      }
+
+      const user = db.prepare(
+        'SELECT id FROM users WHERE id = ?'
+      ).get(userId);
+
+      if (!user) return res.json({received:true});
+
+      const existingEvent = db.prepare(
+        'SELECT * FROM appointments WHERE calendly_event_id = ? AND user_id = ? LIMIT 1'
+      ).get(eventId, userId);
+
+      if (existingEvent && existingEvent.status === 'confirmed') {
+        if (inviteeId && !existingEvent.calendly_invitee_id) {
+          db.prepare(
+            'UPDATE appointments SET calendly_invitee_id = ? WHERE id = ?'
+          ).run(inviteeId, existingEvent.id);
+        }
+        return res.json({received:true});
+      }
+
+      let rdvAt = new Date(
+        payload.scheduled_event?.start_time ||
+        payload.event_start_time || ''
+      ).getTime();
+
+      let eventData = null;
+
+      if (eventId && process.env.CALENDLY_TOKEN) {
         const response = await fetch(eventId, {
-          headers: { Authorization: `Bearer ${process.env.CALENDLY_TOKEN}` }
+          headers: {
+            Authorization: `Bearer ${process.env.CALENDLY_TOKEN}`
+          }
         });
 
         if (!response.ok) {
-          console.error('[appointments] Calendly API:', response.status);
-          return res.status(503).json({ error: 'Calendly indisponible' });
+          return res.status(503).json({error:'Calendly indisponible'});
         }
 
-        const data = await response.json();
-        rdvAt = new Date(data.resource?.start_time).getTime();
+        eventData = (await response.json()).resource;
+        rdvAt = new Date(eventData?.start_time).getTime();
+
+        const expectedType =
+          'https://api.calendly.com/event_types/2c9b5061-57a6-4431-a82a-95674e5672f7';
+
+        if (eventData?.event_type !== expectedType ||
+            eventData?.status !== 'active') {
+          return res.json({received:true,ignored:true});
+        }
       }
 
-      if (!Number.isFinite(rdvAt)) {
-        console.error('[appointments] Date du RDV introuvable');
-        return res.status(503).json({
-          error: 'Date du rendez-vous indisponible'
-        });
+      if (!Number.isFinite(rdvAt) || rdvAt <= Date.now()) {
+        return res.status(400).json({error:'Date RDV invalide'});
       }
 
-      const unlockedAt = rdvAt;
+      const location = eventData?.location || payload.location || {};
+      const candidateLink = location.join_url ||
+        location.data?.join_url ||
+        location.location || null;
+      const meetingLink =
+        typeof candidateLink === 'string' &&
+        /^https:\/\//i.test(candidateLink)
+          ? candidateLink : null;
 
-      // Ignorer les notifications en double
-      const existingEvent = db.prepare(
-        'SELECT id FROM appointments WHERE user_id = ? AND calendly_event_id = ?'
-      ).get(user.id, eventId);
+      if (previous) {
+        // La nouvelle réservation remplace l'ancienne.
+        db.prepare(`
+          UPDATE appointments
+          SET calendly_event_id = ?,
+              calendly_invitee_id = ?,
+              booked_at = ?,
+              unlocked_at = ?,
+              meeting_link = ?,
+              status = 'confirmed'
+          WHERE id = ?
+        `).run(
+          eventId, inviteeId || null, rdvAt, rdvAt,
+          meetingLink, previous.id
+        );
+
+        console.log('[appointments] RDV reprogrammé pour compte', userId);
+        return res.json({received:true,rescheduled:true});
+      }
 
       if (existingEvent) {
-        return res.json({ received: true });
+        db.prepare(`
+          UPDATE appointments
+          SET calendly_invitee_id = ?,
+              booked_at = ?,
+              unlocked_at = ?,
+              meeting_link = ?,
+              status = 'confirmed'
+          WHERE id = ?
+        `).run(inviteeId || null, rdvAt, rdvAt, meetingLink, existingEvent.id);
+
+        return res.json({received:true});
       }
 
-      // Un seul rendez-vous futur par élève
       const upcoming = db.prepare(
         "SELECT id FROM appointments WHERE user_id = ? AND status = 'confirmed' AND booked_at > ? LIMIT 1"
-      ).get(user.id, Date.now());
+      ).get(userId, Date.now());
 
       if (upcoming) {
-        console.warn(`[appointments] Deuxieme reservation detectee pour ${email}`);
-        return res.json({ received: true, duplicate: true });
+        console.warn('[appointments] Deuxième réservation pour compte', userId);
+        return res.json({received:true,duplicate:true});
       }
 
-      // Enregistrer le nouveau RDV
       db.prepare(`
-        INSERT INTO appointments (user_id, calendly_event_id, booked_at, unlocked_at, meeting_link, status)
-        VALUES (?, ?, ?, ?, ?, 'confirmed')
-      `).run(user.id, eventId || null, rdvAt, unlockedAt, meetingLink);
+        INSERT INTO appointments
+        (user_id, calendly_event_id, calendly_invitee_id,
+         booked_at, unlocked_at, meeting_link, status)
+        VALUES (?, ?, ?, ?, ?, ?, 'confirmed')
+      `).run(
+        userId, eventId || null, inviteeId || null,
+        rdvAt, rdvAt, meetingLink
+      );
 
-      console.log(`[appointments] RDV enregistre pour ${email}, RDV le ${new Date(rdvAt).toLocaleDateString('fr-FR')}, debloquage le ${new Date(unlockedAt).toLocaleDateString('fr-FR')}`);
+      console.log('[appointments] RDV enregistré pour compte', userId);
     }
 
     if (event.event === 'invitee.canceled') {
-      const eventId = event.payload?.event;
-      if (eventId) {
-        db.prepare('DELETE FROM appointments WHERE calendly_event_id = ?')
-          .run(eventId);
+      const payload = event.payload || {};
+
+      // Conserver l'historique permet de retrouver le compte
+      // même si l'annulation arrive avant la nouvelle réservation.
+      const result = payload.uri
+        ? db.prepare(`
+            UPDATE appointments SET status = 'canceled'
+            WHERE calendly_invitee_id = ?
+              AND status = 'confirmed'
+          `).run(payload.uri)
+        : {changes:0};
+
+      if (!result.changes && payload.event) {
+        db.prepare(`
+          UPDATE appointments SET status = 'canceled'
+          WHERE calendly_event_id = ?
+            AND status = 'confirmed'
+        `).run(payload.event);
       }
+
+      console.log('[appointments] Annulation Calendly traitée');
     }
 
   } catch (err) {
@@ -225,6 +318,9 @@ router.post('/confirm', async (req, res) => {
 
     if (existing) {
       if (existing.calendly_event_id === eventUri) {
+        db.prepare(
+          'UPDATE appointments SET calendly_invitee_id = ? WHERE id = ?'
+        ).run(inviteeUri, existing.id);
         return res.json({confirmed:true,already_saved:true});
       }
       return res.status(409).json({error:'Un rendez-vous est déjà réservé'});
@@ -245,8 +341,8 @@ router.post('/confirm', async (req, res) => {
        /^https:\/\//.test(location.location) ? location.location : null);
 
     db.prepare(
-      "INSERT INTO appointments (user_id, calendly_event_id, booked_at, unlocked_at, meeting_link, status) VALUES (?, ?, ?, ?, ?, 'confirmed')"
-    ).run(userId, eventUri, bookedAt, bookedAt, meetingLink);
+      "INSERT INTO appointments (user_id, calendly_event_id, calendly_invitee_id, booked_at, unlocked_at, meeting_link, status) VALUES (?, ?, ?, ?, ?, ?, 'confirmed')"
+    ).run(userId, eventUri, inviteeUri, bookedAt, bookedAt, meetingLink);
 
     console.log('[appointments] Réservation confirmée pour compte', userId);
     return res.json({confirmed:true});

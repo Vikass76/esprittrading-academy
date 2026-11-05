@@ -238,6 +238,7 @@ db.exec(`
 // Migration meeting_link
 const apptCols = db.prepare('PRAGMA table_info(appointments)').all().map(c => c.name);
 if (apptCols.indexOf('meeting_link') < 0) db.exec('ALTER TABLE appointments ADD COLUMN meeting_link TEXT');
+if (apptCols.indexOf('calendly_invitee_id') < 0) db.exec('ALTER TABLE appointments ADD COLUMN calendly_invitee_id TEXT');
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS nathan_trades (
