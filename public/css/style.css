@@ -8663,3 +8663,227 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
   filter: none;
   opacity: 1;
 }
+
+/* SESSIONS COACHING — Design Esprit Trading */
+
+#ftab-rdv {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+#ftab-rdv .rdv-card,
+#ftab-rdv .rdv-locked-box {
+  background: #191b20;
+  border: 1px solid #36383e;
+  border-radius: 11px;
+  padding: 32px;
+}
+
+#ftab-rdv .rdv-intro {
+  margin-bottom: 30px;
+}
+
+#ftab-rdv .rdv-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: #302a19;
+  border: 1px solid #655127;
+  border-radius: 5px;
+  color: #e0b64f;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+#ftab-rdv .rdv-intro h3,
+#ftab-rdv .rdv-locked-box h3 {
+  color: #f5f5f5;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+#ftab-rdv .rdv-intro p,
+#ftab-rdv .rdv-locked-box p {
+  color: #a1a1aa;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+#ftab-rdv .calendly-inline-widget {
+  overflow: hidden;
+  border: 1px solid #36383e;
+  border-radius: 8px;
+}
+
+#ftab-rdv .rdv-locked-box {
+  margin-top: 0;
+  min-height: 380px;
+}
+
+#ftab-rdv .rdv-locked-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: #302a19;
+  border: 1px solid #655127;
+  border-radius: 10px;
+  color: #e0b64f;
+  font-size: 30px;
+  margin-bottom: 22px;
+}
+
+#ftab-rdv .rdv-locked-box strong {
+  color: #e0b64f;
+}
+
+#ftab-rdv .rdv-join-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 22px;
+  background: #d9ad45;
+  color: #111216;
+  border: 1px solid #d9ad45;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+#ftab-rdv .rdv-join-btn:hover {
+  background: #e7bf60;
+}
+
+#ftab-rdv .rdv-join-btn-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+@media (max-width: 600px) {
+  #ftab-rdv .rdv-card,
+  #ftab-rdv .rdv-locked-box {
+    padding: 20px;
+  }
+
+  #ftab-rdv .rdv-intro h3,
+  #ftab-rdv .rdv-locked-box h3 {
+    font-size: 21px;
+  }
+}
+
+
+/* SESSIONS COACHING — Intégration Calendly épurée */
+
+#ftab-rdv .rdv-card {
+  padding: 30px 0 0;
+  overflow: hidden;
+}
+
+#ftab-rdv .rdv-intro {
+  padding: 0 32px;
+  margin-bottom: 16px;
+}
+
+#ftab-rdv .calendly-inline-widget {
+  width: 100%;
+  min-width: 0 !important;
+  height: 950px !important;
+  border: none;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+#ftab-rdv .calendly-inline-widget iframe {
+  width: 100% !important;
+  min-height: 950px !important;
+  border: none !important;
+}
+
+@media (max-width: 600px) {
+  #ftab-rdv .rdv-card {
+    padding: 24px 0 0;
+  }
+
+  #ftab-rdv .rdv-intro {
+    padding: 0 20px;
+  }
+
+  #ftab-rdv .calendly-inline-widget {
+    height: 1100px !important;
+  }
+
+  #ftab-rdv .calendly-inline-widget iframe {
+    min-height: 1100px !important;
+  }
+}
+
+
+/* SESSIONS COACHING — Calendly compact */
+
+#ftab-rdv .rdv-card {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+#ftab-rdv .calendly-inline-widget {
+  width: 100%;
+  max-width: 760px;
+  height: 760px !important;
+  margin: 0 auto;
+}
+
+#ftab-rdv .calendly-inline-widget iframe {
+  height: 760px !important;
+  min-height: 0 !important;
+}
+
+@media (max-width: 600px) {
+  #ftab-rdv .calendly-inline-widget,
+  #ftab-rdv .calendly-inline-widget iframe {
+    height: 900px !important;
+  }
+}
+
+
+/* SESSIONS COACHING — Grand cadre, Calendly réduit */
+
+#ftab-rdv .rdv-card {
+  max-width: none;
+  width: 100%;
+}
+
+#ftab-rdv .calendly-inline-widget {
+  width: 117.65% !important;
+  max-width: none !important;
+  height: 1120px !important;
+  margin: 0 !important;
+  transform: scale(0.85);
+  transform-origin: top left;
+}
+
+#ftab-rdv .calendly-inline-widget iframe {
+  height: 1120px !important;
+  min-height: 0 !important;
+}
+
+@media (max-width: 600px) {
+  #ftab-rdv .calendly-inline-widget {
+    width: 100% !important;
+    transform: none;
+    height: 1000px !important;
+  }
+}
+
+
+/* SESSIONS COACHING — Remonter Calendly */
+#ftab-rdv .calendly-inline-widget {
+  margin-top: -50px !important;
+}
+

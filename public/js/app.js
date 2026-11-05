@@ -2108,8 +2108,11 @@ async function loadFormation() {
 }
 
 window.addEventListener('message', function(e) {
+  if (!e.origin.endsWith('.calendly.com')) return;
   if (e.data && e.data.event === 'calendly.event_scheduled') {
-    setTimeout(() => loadRdvStatus(), 3000);
+    [1500, 3000, 5000, 8000, 12000, 20000, 30000].forEach(delay => {
+      setTimeout(() => loadRdvStatus(), delay);
+    });
   }
 });
 
@@ -2122,12 +2125,12 @@ async function loadRdvStatus() {
     } else {
       $('rdv-available').classList.add('hidden');
       $('rdv-locked').classList.remove('hidden');
-      $('rdv-unlock-date').textContent = status.unlocked_date;
+      
       if (status.booked_date) $('rdv-booked-date').textContent = status.booked_date;
       const linkWrap = $('rdv-meeting-link-wrap');
       const linkBtn = $('rdv-meeting-link');
       linkWrap.classList.remove('hidden');
-      if (status.meeting_link) {
+      if (status.meeting_link && /^https:\/\//i.test(status.meeting_link)) {
         linkBtn.href = status.meeting_link;
         linkBtn.classList.remove('rdv-join-btn-disabled');
         linkBtn.removeAttribute('disabled');

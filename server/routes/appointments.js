@@ -5,13 +5,11 @@ const db = require('../db');
 const crypto = require('crypto');
 
 const CALENDLY_WEBHOOK_SECRET = process.env.CALENDLY_WEBHOOK_SECRET;
-const LOCK_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 jours
+const LOCK_DURATION_MS = 0; // Déblocage dès le début du rendez-vous
 
 // Webhook Calendly — reçoit les événements de réservation
-router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+router.post('/webhook', async (req, res) => {
   // Repondre immediatement pour eviter les retries Calendly
-  res.json({ received: true });
-
   try {
     // Verification de la signature Calendly
     if (CALENDLY_WEBHOOK_SECRET) {
@@ -24,7 +22,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) =>
           return acc;
         }, [null, null]);
 
-        const signedPayload = `${t}.${req.body.toString()}`;
+        const signedPayload = `${t}.${req.rawBody.toString()}`;
         const expectedSig = crypto.createHmac('sha256', CALENDLY_WEBHOOK_SECRET)
           .update(signedPayload)
           .digest('hex');
@@ -55,11 +53,49 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) =>
       const rdvStartTime = event.payload?.scheduled_event?.start_time
         || event.payload?.event_start_time
         || null;
-      const rdvAt = rdvStartTime ? new Date(rdvStartTime).getTime() : now;
-      const unlockedAt = rdvAt + LOCK_DURATION_MS;
+      let rdvAt = rdvStartTime ? new Date(rdvStartTime).getTime() : NaN;
 
-      // Supprimer l'ancien RDV si existant
-      db.prepare('DELETE FROM appointments WHERE user_id = ?').run(user.id);
+      if (!Number.isFinite(rdvAt) && eventId && process.env.CALENDLY_TOKEN) {
+        const response = await fetch(eventId, {
+          headers: { Authorization: `Bearer ${process.env.CALENDLY_TOKEN}` }
+        });
+
+        if (!response.ok) {
+          console.error('[appointments] Calendly API:', response.status);
+          return res.status(503).json({ error: 'Calendly indisponible' });
+        }
+
+        const data = await response.json();
+        rdvAt = new Date(data.resource?.start_time).getTime();
+      }
+
+      if (!Number.isFinite(rdvAt)) {
+        console.error('[appointments] Date du RDV introuvable');
+        return res.status(503).json({
+          error: 'Date du rendez-vous indisponible'
+        });
+      }
+
+      const unlockedAt = rdvAt;
+
+      // Ignorer les notifications en double
+      const existingEvent = db.prepare(
+        'SELECT id FROM appointments WHERE user_id = ? AND calendly_event_id = ?'
+      ).get(user.id, eventId);
+
+      if (existingEvent) {
+        return res.json({ received: true });
+      }
+
+      // Un seul rendez-vous futur par élève
+      const upcoming = db.prepare(
+        "SELECT id FROM appointments WHERE user_id = ? AND status = 'confirmed' AND booked_at > ? LIMIT 1"
+      ).get(user.id, Date.now());
+
+      if (upcoming) {
+        console.warn(`[appointments] Deuxieme reservation detectee pour ${email}`);
+        return res.json({ received: true, duplicate: true });
+      }
 
       // Enregistrer le nouveau RDV
       db.prepare(`
@@ -77,13 +113,25 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) =>
       const user = db.prepare('SELECT id FROM users WHERE LOWER(email) = ?').get(email);
       if (!user) return res.json({ received: true });
 
-      db.prepare("DELETE FROM appointments WHERE user_id = ?").run(user.id);
-      console.log(`[appointments] RDV annule pour ${email} - onglet RDV debloque`);
+      const eventId = event.payload?.event;
+      if (!eventId) {
+        console.error('[appointments] Annulation sans identifiant Calendly');
+        return res.status(400).json({ error: 'Identifiant manquant' });
+      }
+
+      db.prepare(
+        "DELETE FROM appointments WHERE user_id = ? AND calendly_event_id = ?"
+      ).run(user.id, eventId);
+
+      console.log(`[appointments] Annulation traitee pour ${email}`);
     }
 
   } catch (err) {
     console.error('Erreur webhook Calendly:', err);
+    return res.status(500).json({ error: 'Erreur webhook Calendly' });
   }
+
+  return res.json({ received: true });
 });
 
 // Statut RDV pour l'eleve connecte
@@ -91,15 +139,15 @@ router.get('/status', async (req, res) => {
   if (!req.session.userId) return res.status(401).json({ error: 'Non connecte' });
 
   const appointment = db.prepare(
-    "SELECT * FROM appointments WHERE user_id = ? AND status = 'confirmed' ORDER BY booked_at DESC LIMIT 1"
-  ).get(req.session.userId);
+    "SELECT * FROM appointments WHERE user_id = ? AND status = 'confirmed' AND booked_at > ? ORDER BY booked_at ASC LIMIT 1"
+  ).get(req.session.userId, Date.now());
 
   if (!appointment) {
     return res.json({ available: true });
   }
 
   const now = Date.now();
-  if (now >= appointment.unlocked_at) {
+  if (now >= appointment.booked_at) {
     return res.json({ available: true });
   }
 

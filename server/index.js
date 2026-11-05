@@ -18,7 +18,13 @@ app.use(session({
 }));
 
 app.use('/api/payment/webhook', require('./routes/stripeWebhook'));
-app.use(express.json());
+app.use(express.json({
+  verify: (req, res, buf) => {
+    if (req.originalUrl.startsWith('/api/appointments/webhook')) {
+      req.rawBody = Buffer.from(buf);
+    }
+  }
+}));
 app.use(express.urlencoded({ extended: true }));
 
 const { router: authRouter, passport } = require('./routes/auth');
