@@ -243,7 +243,7 @@
                       <div class="ote-path-example">
                         ${i === 1 ? `
                           <img
-                            src="${index === 0 ? '/images/structure-htf.jpg' : '/images/structure-ltf.jpg'}"
+                            src="${index === 0 ? '/images/structure-ltf.jpg' : '/images/structure-htf.jpg'}"
                             alt="${index === 0 ? 'Structure HTF' : 'Structure LTF'}"
                             loading="lazy"
                           >
