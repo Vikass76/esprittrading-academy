@@ -1702,13 +1702,15 @@ async function loadFormation() {
       script.onload = () => {
         if (!active()) return;
 
-        const playerScript = document.createElement('script');
-        playerScript.src = base + 'player.min.js';
-        playerScript.async = true;
-        scripts.add(playerScript);
-        playerScript.onerror = () => fail('Impossible de charger le script de lecture vidéo.');
+        const Loader = window.VidalyticsL?.Loader;
+        if (typeof Loader !== 'function') {
+          fail('Le chargeur Vidalytics est indisponible.');
+          return;
+        }
 
-        playerScript.onload = () => {
+        try {
+          const loader = new Loader();
+          loader.loadScript(base + 'player.min.js', () => {
           if (!active()) return;
 
           const Player = window.Vidalytics?.Embed;
@@ -1877,7 +1879,11 @@ async function loadFormation() {
           };
 
           check();
-        };
+          });
+        } catch (error) {
+          console.warn('[OTE vidéo] Erreur Vidalytics :', error);
+          fail('Impossible de charger le lecteur vidéo.');
+        }
 
         document.head.appendChild(playerScript);
       };
