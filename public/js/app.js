@@ -1522,6 +1522,8 @@ async function loadFormation() {
       });
 
     let vidalyticsProgress = null;
+    let vidalyticsLoadId = 0;
+    let vidalyticsPending = null;
 
     // V58_MOBILE_INLINE_PLAYER
     // Déplacer le lecteur existant, sans le recréer.
@@ -1562,6 +1564,11 @@ async function loadFormation() {
     );
 
     function stopPlayer() {
+      vidalyticsLoadId++;
+      if (vidalyticsPending) {
+        vidalyticsPending.abort();
+        vidalyticsPending = null;
+      }
       if (vidalyticsProgress) {
         vidalyticsProgress.stop();
         vidalyticsProgress = null;
@@ -1600,7 +1607,8 @@ async function loadFormation() {
       return match ? { account: match[1], video: match[2] } : null;
     }
 
-    function mountVidalytics(host, value, videoId) {
+    function mountVidalytics(host, value, videoId, retryCount = 0) {
+      const loadId = ++vidalyticsLoadId;
       const info = parseVidalytics(value);
       if (!info) return false;
 
@@ -1611,6 +1619,65 @@ async function loadFormation() {
         'width:100%;position:relative;padding-top:56.25%';
 
       host.appendChild(container);
+      const status = document.createElement('div');
+      status.setAttribute('role', 'status');
+      status.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:#0e0f12;color:#f2f2f2;text-align:center;padding:20px;z-index:2';
+      status.textContent = 'Chargement de la vidéo…';
+      // Visible uniquement pendant le chargement, puis retiré lorsque le lecteur est prêt.
+      host.style.position = 'relative';
+      host.appendChild(status);
+      let aborted = false;
+      let finished = false;
+      const timers = new Set();
+      const scripts = new Set();
+      const active = () => !aborted && loadId === vidalyticsLoadId && container.isConnected;
+      const later = (fn, ms) => {
+        const timer = setTimeout(() => { timers.delete(timer); if (active()) fn(); }, ms);
+        timers.add(timer);
+      };
+      const cleanup = () => {
+        timers.forEach(clearTimeout);
+        timers.clear();
+        scripts.forEach(script => { script.onload = null; script.onerror = null; });
+        scripts.clear();
+      };
+      const fail = (message) => {
+        if (!active() || finished) return;
+        cleanup();
+        console.warn('[OTE vidéo] Échec du lecteur Vidalytics:', message, { videoId, tentative: retryCount + 1 });
+        // Réinitialiser automatiquement deux fois en cas d'échec de chargement.
+        // Chaque tentative repart d'un lecteur propre, sans changer de leçon.
+        if (retryCount < 2) {
+          status.textContent = 'Nouvelle tentative de chargement…';
+          later(() => {
+            if (!active()) return;
+            stopPlayer();
+            mountVidalytics(host, value, videoId, retryCount + 1);
+          }, 1000 * (retryCount + 1));
+          return;
+        }
+        status.replaceChildren();
+        const messageNode = document.createElement('span');
+        messageNode.textContent = message;
+        const retry = document.createElement('button');
+        retry.type = 'button';
+        retry.textContent = 'Réessayer la lecture';
+        retry.style.cssText = 'padding:11px 18px;border:1px solid #d8b66a;border-radius:6px;background:#d8b66a;color:#111;cursor:pointer;font-weight:600';
+        retry.addEventListener('click', () => {
+          stopPlayer();
+          mountVidalytics(host, value, videoId, 0);
+        }, { once: true });
+        status.append(messageNode, retry);
+      };
+      vidalyticsPending = {
+        abort() {
+          aborted = true;
+          cleanup();
+          status.remove();
+        }
+      };
+      // Si le CDN ne répond pas, afficher une action au lieu d'un écran noir.
+      later(() => fail('La vidéo met trop de temps à charger.'), 20000);
 
       // Charger la position avant de démarrer le lecteur.
       const progressPromise = fetch(
@@ -1629,26 +1696,38 @@ async function loadFormation() {
       const script = document.createElement('script');
       script.src = base + 'loader.min.js';
       script.async = true;
+      scripts.add(script);
+      script.onerror = () => fail('Impossible de charger le lecteur vidéo (réseau ou bloqueur).');
 
       script.onload = () => {
-        if (!container.isConnected) return;
+        if (!active()) return;
 
         const playerScript = document.createElement('script');
         playerScript.src = base + 'player.min.js';
         playerScript.async = true;
+        scripts.add(playerScript);
+        playerScript.onerror = () => fail('Impossible de charger le script de lecture vidéo.');
 
         playerScript.onload = () => {
-          if (!container.isConnected) return;
+          if (!active()) return;
 
           const Player = window.Vidalytics?.Embed;
-          if (typeof Player !== 'function') return;
+          if (typeof Player !== 'function') {
+            fail('Le lecteur vidéo est indisponible.');
+            return;
+          }
 
-          new Player().run(embedId);
+          try { new Player().run(embedId); }
+          catch (error) {
+            console.warn('[OTE vidéo] Initialisation impossible', error);
+            fail('Le lecteur vidéo n’a pas pu démarrer.');
+            return;
+          }
 
           // Attendre que Vidalytics initialise son lecteur.
           let attempts = 0;
           const check = () => {
-            if (!container.isConnected) return;
+            if (!active() || finished) return;
 
             const instance = window._vidalytics?.embeds?.[embedId];
             const player = instance?.player;
@@ -1661,6 +1740,10 @@ async function loadFormation() {
               typeof player.getDuration === 'function';
 
             if (ready) {
+              finished = true;
+              cleanup();
+              status.remove();
+              vidalyticsPending = null;
               // Récupérer automatiquement la durée.
               if (typeof player.getDuration === 'function') {
                 try {
@@ -1674,7 +1757,7 @@ async function loadFormation() {
 
               // Restaurer la position, puis lancer la lecture.
               progressPromise.then(savedPosition => {
-                if (!container.isConnected) return;
+                if (!active()) return;
 
                 const currentInstance =
                   window._vidalytics?.embeds?.[embedId];
@@ -1786,8 +1869,10 @@ async function loadFormation() {
               return;
             }
 
-            if (++attempts < 60) {
-              setTimeout(check, 150);
+            if (++attempts < 100) {
+              later(check, 150);
+            } else {
+              fail('Le lecteur ne répond pas.');
             }
           };
 
