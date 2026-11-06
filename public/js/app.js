@@ -3216,7 +3216,15 @@ async function loadNathanTrades() {
                 </span>
 
                 <span class="ote-trade-body">
-                  <span class="ote-trade-title">Analyse ${pair}</span>
+                  <span style="display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;">
+                      <span class="ote-trade-title">Analyse ${pair}</span>
+                      ${window._me?.role === 'admin' ? `
+                        <span style="display:flex;gap:6px;flex-shrink:0;">
+                          <span class="btn btn-secondary btn-sm" data-nathan-edit="${Number(t.id)}" style="padding:5px 8px;font-size:11px;">Modifier</span>
+                          <span class="btn btn-danger btn-sm" data-nathan-delete="${Number(t.id)}" style="padding:5px 8px;font-size:11px;">Supprimer</span>
+                        </span>
+                      ` : ''}
+                    </span>
                   <span class="ote-trade-meta">
                     <span class="ote-trade-pair">${pair}</span>
                     <span class="ote-trade-direction ${isBuy ? 'buy' : 'sell'}">
@@ -3320,9 +3328,36 @@ async function loadNathanTrades() {
 
     applyTradeFilters();
 
+    // Commandes d'administration des trades.
+    if (window._me?.role === 'admin') {
+      el.querySelectorAll('[data-nathan-edit]').forEach(button => {
+        button.addEventListener('click', () => {
+          const id = Number(button.dataset.nathanEdit);
+          openNathanTrade(id);
+          document.getElementById('nd-edit-btn').click();
+        });
+      });
+
+      el.querySelectorAll('[data-nathan-delete]').forEach(button => {
+        button.addEventListener('click', async () => {
+          const id = Number(button.dataset.nathanDelete);
+          if (!await confirmAction('Supprimer ce trade ?', '')) return;
+          try {
+            await api('DELETE', '/nathan-trades/' + id);
+            await loadNathanTrades();
+          } catch (error) {
+            alert('Impossible de supprimer ce trade.');
+          }
+        });
+      });
+    }
+
     // V57 : toute la carte ouvre directement la vidéo.
     el.querySelectorAll('[data-nathan-trade]').forEach(card => {
-      card.addEventListener('click', () => {
+      card.addEventListener('click', (event) => {
+        if (event.target.closest('[data-nathan-edit], [data-nathan-delete]')) {
+          return;
+        }
         const id = Number(card.dataset.nathanTrade);
         const trade = nathanTrades.find(t => Number(t.id) === id);
 
