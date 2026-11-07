@@ -9311,3 +9311,220 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
   border-radius: 8px !important;
 }
 
+
+
+/* ESPRIT SIDEBAR STUDIO V8 */
+
+/* Palette graphite */
+#sidebar.sidebar {
+  background: #0d0e11 !important;
+  border-right: 1px solid #24262c !important;
+  color: #e9e9eb !important;
+}
+
+/* En-tête plus compact */
+#sidebar .sb-logo {
+  min-height: 76px !important;
+  padding: 20px 22px 18px !important;
+  border-bottom: 1px solid #24262c !important;
+}
+
+#sidebar .sb-logo-text .name::before,
+#sidebar .sb-logo-text .name::after {
+  font-size: 15px !important;
+  letter-spacing: .015em !important;
+}
+
+#sidebar .sb-logo-text .name::after {
+  color: #c5a66c !important;
+}
+
+#sidebar .sb-logo-text .sub {
+  margin-top: 5px !important;
+}
+
+#sidebar .sb-logo-text .sub::after {
+  font-size: 9px !important;
+  letter-spacing: .2em !important;
+  color: #737782 !important;
+}
+
+/* Titres des deux espaces */
+#sidebar .nav-item[data-tab="formation"],
+#sidebar #journal-toggle {
+  margin: 14px 12px 5px !important;
+  width: calc(100% - 24px) !important;
+  padding: 12px 10px !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  color: #d6d7da !important;
+  font-size: 12px !important;
+  font-weight: 650 !important;
+  line-height: 1.4 !important;
+}
+
+#sidebar .nav-item[data-tab="formation"].active,
+#sidebar #journal-toggle.active {
+  color: #e5e5e7 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Icônes des espaces dans un carré */
+#sidebar .nav-item[data-tab="formation"] .ni,
+#sidebar #journal-toggle .ni {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 30px !important;
+  min-width: 30px !important;
+  height: 30px !important;
+  margin-right: 5px !important;
+  background: #202127 !important;
+  border: 1px solid #303139 !important;
+  border-radius: 7px !important;
+  color: #c5a66c !important;
+}
+
+#sidebar .nav-item[data-tab="formation"] .ni i,
+#sidebar #journal-toggle .ni i {
+  color: #c5a66c !important;
+}
+
+/* Sous-navigation façon logiciel professionnel */
+#sidebar #formation-subnav {
+  margin: 2px 14px 14px 27px !important;
+  padding: 2px 0 2px 12px !important;
+  border-left: 1px solid #34363e !important;
+}
+
+#sidebar #formation-subnav .nav-subitem {
+  position: relative !important;
+  width: calc(100% - 8px) !important;
+  margin: 2px 4px !important;
+  padding: 9px 10px !important;
+  border: 0 !important;
+  border-radius: 5px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #8e919b !important;
+  font-size: 12px !important;
+  font-weight: 450 !important;
+}
+
+#sidebar #formation-subnav .nav-subitem.active {
+  background: #1b1d22 !important;
+  box-shadow: none !important;
+  color: #f0f0f1 !important;
+  font-weight: 600 !important;
+}
+
+#sidebar #formation-subnav .nav-subitem.active::before {
+  content: "" !important;
+  position: absolute !important;
+  left: -17px !important;
+  top: 8px !important;
+  bottom: 8px !important;
+  width: 2px !important;
+  border-radius: 2px !important;
+  background: #c5a66c !important;
+}
+
+#sidebar #formation-subnav .nav-subitem.active i {
+  color: #c5a66c !important;
+}
+
+/* Journal : liste plus fine */
+#sidebar #journal-subnav {
+  padding: 0 10px 6px !important;
+}
+
+#sidebar #journal-subnav .sb-nav .nav-item {
+  width: calc(100% - 12px) !important;
+  margin: 2px 6px !important;
+  padding: 9px 12px !important;
+  border: 0 !important;
+  border-radius: 5px !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: #9598a2 !important;
+  font-weight: 450 !important;
+}
+
+#sidebar #journal-subnav .sb-nav .nav-item.active {
+  background: #1b1d22 !important;
+  color: #f0f0f1 !important;
+  box-shadow: inset 2px 0 0 #c5a66c !important;
+  font-weight: 600 !important;
+}
+
+#sidebar #journal-subnav .sb-nav .nav-item.active i {
+  color: #c5a66c !important;
+}
+
+/* Hover uniforme */
+#sidebar .nav-item:hover,
+#sidebar .nav-subitem:hover {
+  background: #1b1d22 !important;
+  color: #f0f0f1 !important;
+}
+
+/* Petits labels */
+#sidebar .sb-section {
+  padding: 13px 16px 6px !important;
+  color: #646873 !important;
+  font-size: 9px !important;
+  letter-spacing: .17em !important;
+}
+
+/* Compte Maven : carte neutre */
+#sidebar #sb-accounts {
+  padding: 8px 7px 12px !important;
+  border-bottom: 1px solid #25272d !important;
+}
+
+#sidebar #sb-acc-list .sb-acc-item,
+#sidebar #sb-acc-list .sb-acc-item[style*="var(--gold-light)"] {
+  background: #181a1f !important;
+  border: 1px solid #303239 !important;
+  border-left: 1px solid #303239 !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  padding: 10px 11px !important;
+}
+
+#sidebar #sb-acc-list .sb-acc-item:hover {
+  background: #22242b !important;
+}
+
+/* Profil minimaliste */
+#sidebar .sb-bottom {
+  background: #0d0e11 !important;
+  border-top: 1px solid #25272d !important;
+  padding: 10px 14px !important;
+}
+
+#sidebar .sb-user {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 8px 2px !important;
+}
+
+#sidebar .sb-avatar {
+  background: #202127 !important;
+  border: 1px solid #45403a !important;
+  color: #c5a66c !important;
+}
+
+/* Focus clavier : accessible mais cohérent */
+#sidebar button:focus:not(:focus-visible) {
+  outline: none !important;
+}
+
+#sidebar button:focus-visible {
+  outline: 2px solid #c5a66c !important;
+  outline-offset: 2px !important;
+}

@@ -165,6 +165,7 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => btn.addEventList
   const t = btn.dataset.tab;
 
   // Accompagnement : second clic = refermer sans changer de page.
+  if (t === 'formation' && (role === 'admin' || role === 'student')) return;
   if (t === 'formation' && !$('formation-subnav').classList.contains('hidden')) {
     $('formation-subnav').classList.add('hidden');
     btn.classList.remove('active');
@@ -199,7 +200,10 @@ function switchTab(t) {
       'analytics', 'eco-cal', 'outils'
     ].includes(t);
 
-    formationMenu.classList.toggle('hidden', !isFormation);
+    formationMenu.classList.toggle(
+      'hidden',
+      !(role === 'admin' || role === 'student') && !isFormation
+    );
     journalMenu.classList.toggle('hidden', !isJournal);
 
     const journalToggle = $('journal-toggle');
