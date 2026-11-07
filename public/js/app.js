@@ -165,7 +165,12 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => btn.addEventList
   const t = btn.dataset.tab;
 
   // Accompagnement : second clic = refermer sans changer de page.
-  if (t === 'formation' && (role === 'admin' || role === 'student')) return;
+  if (t === 'formation' && (role === 'admin' || role === 'student')) {
+    switchTab('formation');
+    loadFormation();
+    closeSb();
+    return;
+  }
   if (t === 'formation' && !$('formation-subnav').classList.contains('hidden')) {
     $('formation-subnav').classList.add('hidden');
     btn.classList.remove('active');
@@ -1181,6 +1186,10 @@ async function loadFormation() {
   // Gestion des sous-onglets sidebar
   document.querySelectorAll('.nav-subitem').forEach(btn => {
     btn.addEventListener('click', () => {
+      /* ESPRIT FIX RETOUR FORMATION V15 */
+      if (role === 'admin' || role === 'student') {
+        switchTab('formation');
+      }
       document.querySelectorAll('.nav-subitem').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       const ftab = btn.dataset.ftab;
