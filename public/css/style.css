@@ -9657,3 +9657,100 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
     font-size: 10px !important;
   }
 }
+
+
+/* ESPRIT LOGO SIDEBAR V18 */
+
+#sidebar .sb-logo {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  padding: 26px 18px 30px !important;
+}
+
+#sidebar .sb-brand-image {
+  display: block !important;
+  width: 190px !important;
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+  border-radius: 0 !important;
+}
+
+#sidebar .sb-brand-subtitle {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 2.5px !important;
+  color: #929398 !important;
+  text-align: center !important;
+}
+
+
+/* ESPRIT LOGO COMPACT V19 */
+
+#sidebar .sb-logo {
+  padding: 16px 18px 18px !important;
+  gap: 3px !important;
+  min-height: 0 !important;
+}
+
+#sidebar .sb-brand-image {
+  width: 145px !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+#sidebar .sb-brand-subtitle {
+  font-size: 9px !important;
+  font-weight: 500 !important;
+  letter-spacing: 1.8px !important;
+  color: #777981 !important;
+}
+
+/* ESPRIT LOGO MINIMAL V23 */
+
+#sidebar .sb-logo {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 21px 24px !important;
+  min-height: 0 !important;
+}
+
+#sidebar .sb-coded-logo {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 5px !important;
+  font-family: "Suisse Intl", "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 18px !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.5px !important;
+  line-height: 1.2 !important;
+}
+
+#sidebar .sb-coded-logo span:first-child {
+  color: #f2f2f3 !important;
+}
+
+#sidebar .sb-coded-logo span:last-child {
+  color: #d4b16a !important;
+}
+
+#sidebar .sb-coded-logo::after,
+#sidebar .sb-coded-subtitle::before {
+  content: none !important;
+}
+
+#sidebar .sb-coded-subtitle {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 10px !important;
+  font-weight: 450 !important;
+  letter-spacing: 1.7px !important;
+  line-height: 1.4 !important;
+  color: #85868d !important;
+}
