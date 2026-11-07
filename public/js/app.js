@@ -194,8 +194,13 @@ function switchTab(t) {
 
   if (formationMenu && journalMenu) {
     const isFormation = t === 'formation';
+    const isJournal = [
+      'dashboard', 'journal', 'calendar',
+      'analytics', 'eco-cal', 'outils'
+    ].includes(t);
+
     formationMenu.classList.toggle('hidden', !isFormation);
-    journalMenu.classList.toggle('hidden', isFormation);
+    journalMenu.classList.toggle('hidden', !isJournal);
 
     const journalToggle = $('journal-toggle');
     const formationToggle = document.querySelector(
@@ -203,8 +208,8 @@ function switchTab(t) {
     );
 
     if (journalToggle) {
-      journalToggle.setAttribute('aria-expanded', String(!isFormation));
-      journalToggle.classList.toggle('active', !isFormation);
+      journalToggle.setAttribute('aria-expanded', String(isJournal));
+      journalToggle.classList.toggle('active', isJournal);
     }
 
     if (formationToggle) {

@@ -8887,3 +8887,427 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
   margin-top: -50px !important;
 }
 
+
+
+/* ESPRIT SIDEBAR PREMIUM V2 - CSS ONLY */
+
+/* Identité générale */
+#sidebar.sidebar {
+  background: #111216;
+  border-right: 1px solid #2b2d33;
+  color: #f3f3f3;
+}
+
+/* En-tête typographique */
+#sidebar .sb-logo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 100px;
+  padding: 23px 20px;
+  border-bottom: 1px solid #2b2d33;
+}
+
+#sidebar .sb-logo > img {
+  display: none;
+}
+
+#sidebar .sb-logo-text {
+  min-width: 0;
+}
+
+#sidebar .sb-logo-text .name {
+  font-family: "Suisse Intl", "Helvetica Neue", Arial, sans-serif;
+  font-size: 0;
+  line-height: 1.2;
+  letter-spacing: -.025em;
+}
+
+#sidebar .sb-logo-text .name::before {
+  content: "ESPRIT";
+  color: #f5f5f5;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+#sidebar .sb-logo-text .name::after {
+  content: " TRADING";
+  color: #d8b66a;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+#sidebar .sb-logo-text .name > span {
+  display: none;
+}
+
+#sidebar .sb-logo-text .sub {
+  margin-top: 8px;
+  color: #92949d;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .16em;
+}
+
+#sidebar .sb-logo-text .sub {
+  font-size: 0;
+}
+
+#sidebar .sb-logo-text .sub::after {
+  content: "ESPACE FORMATION";
+  font-size: 10px;
+}
+
+/* Navigation */
+#sidebar .nav-item,
+#sidebar .nav-subitem {
+  box-sizing: border-box;
+  border-radius: 8px;
+  font-family: "Suisse Intl", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 500;
+  color: #a7a9b2;
+  transition: background .18s ease, color .18s ease;
+}
+
+#sidebar .nav-item {
+  width: calc(100% - 20px);
+  margin: 3px 10px;
+  padding: 11px 12px;
+  font-size: 12.5px;
+}
+
+#sidebar .nav-subitem {
+  width: calc(100% - 20px);
+  margin: 2px 10px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+}
+
+#sidebar .nav-item .ni,
+#sidebar .nav-subitem .ni {
+  width: 19px;
+  min-width: 19px;
+  font-size: 16px;
+  opacity: 1;
+  color: #92949e;
+}
+
+#sidebar .nav-item:hover,
+#sidebar .nav-subitem:hover {
+  background: #1d1f25 !important;
+  color: #f3f3f3 !important;
+}
+
+#sidebar .nav-item.active,
+#sidebar .nav-subitem.active {
+  background: #29261f !important;
+  color: #d8b66a !important;
+  border-color: transparent !important;
+  box-shadow: inset 3px 0 0 #d8b66a !important;
+  font-weight: 600;
+}
+
+#sidebar .nav-item.active .ni,
+#sidebar .nav-subitem.active .ni,
+#sidebar .nav-item.active i,
+#sidebar .nav-subitem.active i {
+  color: #d8b66a !important;
+}
+
+/* Section accompagnement */
+#sidebar .nav-item[data-tab="formation"] {
+  margin-top: 18px;
+  margin-bottom: 7px;
+  background: transparent !important;
+  background-image: none !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+#sidebar .nav-item[data-tab="formation"].active {
+  background: #29261f !important;
+  color: #d8b66a !important;
+  box-shadow: inset 3px 0 0 #d8b66a !important;
+}
+
+#sidebar #formation-subnav {
+  margin-top: 3px;
+  margin-bottom: 18px;
+}
+
+/* Journal et administration */
+#sidebar #journal-toggle {
+  background-image: none !important;
+}
+
+#sidebar .sb-section {
+  color: #777b86;
+  font-size: 10px;
+  letter-spacing: .14em;
+  padding: 17px 20px 9px;
+}
+
+#sidebar .ote-journal-group .nav-item {
+  padding-left: 22px;
+}
+
+#sidebar #sb-accounts {
+  border-bottom-color: #2b2d33 !important;
+}
+
+/* Profil */
+#sidebar .sb-bottom {
+  padding: 12px;
+  background: #111216;
+  border-top: 1px solid #2b2d33;
+}
+
+#sidebar .sb-user {
+  background: #1b1d23;
+  border: 1px solid #2c2e35;
+  border-radius: 9px;
+  padding: 10px;
+}
+
+#sidebar .sb-avatar {
+  background: #28241b;
+  color: #d8b66a;
+  border: 1px solid #b99a58;
+}
+
+#sidebar .sb-uname {
+  color: #f1f1f1;
+}
+
+#sidebar .sb-actions button {
+  color: #92949e;
+}
+
+#sidebar .sb-actions button:hover {
+  background: #292b32;
+  color: #f5f5f5;
+}
+
+
+/* ESPRIT SIDEBAR SCROLL V5 */
+
+/* Sidebar organisée verticalement */
+#sidebar.sidebar {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+/* En-tête toujours visible */
+#sidebar > .sb-logo {
+  flex: 0 0 auto !important;
+}
+
+/* Zone du Journal défilante */
+#sidebar > #journal-subnav {
+  flex: 0 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: thin;
+  scrollbar-color: #45464d transparent;
+}
+
+/* Admin reste hors du Journal */
+#sidebar > nav.sb-nav {
+  flex: 0 0 auto !important;
+}
+
+/* Profil toujours en bas */
+#sidebar > .sb-bottom {
+  flex: 0 0 auto !important;
+  margin-top: auto !important;
+  position: relative !important;
+}
+
+/* Conserver les sous-menus fermés */
+#sidebar .hidden {
+  display: none !important;
+}
+
+/* Scrollbar discrète */
+#sidebar #journal-subnav::-webkit-scrollbar {
+  width: 4px;
+}
+
+#sidebar #journal-subnav::-webkit-scrollbar-thumb {
+  background: #45464d;
+  border-radius: 8px;
+}
+
+
+/* ESPRIT SIDEBAR FINITIONS V6 */
+
+/* Titres de groupes : pas de double sélection */
+#sidebar .nav-item[data-tab="formation"].active,
+#sidebar #journal-toggle.active {
+  background: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #d8b66a !important;
+}
+
+/* Sous-onglet sélectionné */
+#sidebar #formation-subnav .nav-subitem.active {
+  background: #29261f !important;
+  color: #d8b66a !important;
+  border-color: transparent !important;
+  box-shadow: inset 3px 0 0 #d8b66a !important;
+}
+
+/* Compte Maven et autres comptes */
+#sidebar #sb-acc-list .sb-acc-item {
+  background: #1b1d23 !important;
+  border: 1px solid #35373e !important;
+  border-radius: 9px !important;
+}
+
+/* Compte sélectionné */
+#sidebar #sb-acc-list .sb-acc-item[style*="var(--gold-light)"] {
+  background: #29261f !important;
+  border-color: #b99a58 !important;
+}
+
+/* Nom du compte */
+#sidebar #sb-acc-list .sb-acc-item > div:first-child > div:first-child {
+  color: #f1f1f1 !important;
+}
+
+/* Survol discret */
+#sidebar #sb-acc-list .sb-acc-item:hover {
+  background: #25272e !important;
+}
+
+
+/* ESPRIT SIDEBAR PREMIUM V7 */
+
+/* 1. Navigation plus compacte */
+#sidebar .nav-item {
+  margin-top: 2px !important;
+  margin-bottom: 2px !important;
+  padding: 9px 11px !important;
+  font-size: 12px !important;
+}
+
+#sidebar .nav-subitem {
+  margin-top: 1px !important;
+  margin-bottom: 1px !important;
+  padding: 9px 11px !important;
+  font-size: 12px !important;
+}
+
+/* 2. Titres des groupes */
+#sidebar .nav-item[data-tab="formation"] {
+  margin-top: 13px !important;
+  margin-bottom: 4px !important;
+  font-size: 11.5px !important;
+  letter-spacing: -0.015em;
+}
+
+#sidebar #journal-toggle {
+  margin-top: 9px !important;
+  margin-bottom: 5px !important;
+  font-size: 12px !important;
+}
+
+/* Les titres de groupes ne sont pas des pages sélectionnées */
+#sidebar .nav-item[data-tab="formation"].active,
+#sidebar #journal-toggle.active {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+  color: #d8b66a !important;
+}
+
+/* 3. Sous-menu formation */
+#sidebar #formation-subnav {
+  margin-top: 2px !important;
+  margin-bottom: 9px !important;
+}
+
+#sidebar #formation-subnav .nav-subitem.active {
+  background: #29261f !important;
+  color: #d8b66a !important;
+  box-shadow: inset 3px 0 0 #d8b66a !important;
+}
+
+/* 4. Retirer le contour bleu de la souris,
+   conserver un focus visible au clavier */
+#sidebar button:focus:not(:focus-visible) {
+  outline: none !important;
+}
+
+#sidebar button:focus-visible {
+  outline: 2px solid #b99a58 !important;
+  outline-offset: 2px !important;
+}
+
+/* 5. Compte Maven et autres comptes */
+#sidebar #sb-acc-list .sb-acc-item {
+  background: #1b1d23 !important;
+  border: 1px solid #35373e !important;
+  border-radius: 7px !important;
+  box-shadow: none !important;
+  padding: 9px 10px !important;
+  margin-bottom: 4px !important;
+}
+
+/* Compte sélectionné : barre dorée discrète */
+#sidebar #sb-acc-list .sb-acc-item[style*="var(--gold-light)"] {
+  background: #24231f !important;
+  border-color: #35373e !important;
+  border-left: 3px solid #b99a58 !important;
+}
+
+#sidebar #sb-acc-list .sb-acc-item:hover {
+  background: #25272e !important;
+}
+
+/* Nom du compte */
+#sidebar #sb-acc-list .sb-acc-item > div:first-child > div:first-child {
+  color: #f1f1f1 !important;
+}
+
+/* 6. Titres de sections plus discrets */
+#sidebar .sb-section {
+  font-size: 9.5px !important;
+  color: #777b86 !important;
+  letter-spacing: .12em !important;
+  padding: 12px 17px 6px !important;
+}
+
+/* 7. Comptes */
+#sidebar #sb-accounts {
+  padding: 8px 10px !important;
+}
+
+/* 8. Profil */
+#sidebar .sb-bottom {
+  padding: 10px !important;
+}
+
+#sidebar .sb-user {
+  padding: 9px !important;
+}
+
+/* 9. Scrollbar discrète */
+#sidebar #journal-subnav::-webkit-scrollbar {
+  width: 3px !important;
+}
+
+#sidebar #journal-subnav::-webkit-scrollbar-thumb {
+  background: #383a42 !important;
+  border-radius: 8px !important;
+}
+
