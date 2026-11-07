@@ -9528,3 +9528,132 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
   outline: 2px solid #c5a66c !important;
   outline-offset: 2px !important;
 }
+
+
+/* ESPRIT SIDEBAR V16 LISIBILITE */
+
+@media (min-width: 1001px) {
+
+  /* Largeur de la sidebar */
+  :root {
+    --sidebar-w: 285px;
+  }
+
+  #sidebar {
+    width: 285px !important;
+  }
+
+  .main-wrap {
+    margin-left: 285px !important;
+  }
+
+  /* Logo */
+  #sidebar .sb-logo {
+    padding: 26px 24px !important;
+  }
+
+  #sidebar .sb-logo strong {
+    font-size: 19px !important;
+  }
+
+  #sidebar .sb-logo small {
+    font-size: 11px !important;
+  }
+
+  /* Menus principaux */
+  #sidebar .nav-item {
+    font-size: 15px !important;
+    line-height: 1.45 !important;
+    min-height: 50px;
+  }
+
+  /* Sous-onglets */
+  #sidebar .nav-subitem {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    min-height: 44px;
+  }
+
+  /* Espacements */
+  #sidebar .ote-menu-toggle {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  #sidebar #formation-subnav .nav-subitem,
+  #sidebar #journal-subnav .nav-subitem {
+    padding-top: 11px !important;
+    padding-bottom: 11px !important;
+  }
+
+  /* Icônes */
+  #sidebar .nav-item svg,
+  #sidebar .nav-subitem svg {
+    width: 19px !important;
+    height: 19px !important;
+  }
+
+  /* Titres de sections */
+  #sidebar .sb-section {
+    font-size: 12px !important;
+    letter-spacing: 1.2px !important;
+  }
+
+  /* Compte et profil */
+  #sidebar .sb-bottom {
+    padding: 18px !important;
+    font-size: 14px !important;
+  }
+
+  #sidebar #sb-accounts {
+    font-size: 14px !important;
+  }
+}
+
+
+/* ESPRIT SIDEBAR V17 HIERARCHIE */
+
+@media (min-width: 1001px) {
+
+  /* Accompagnement : priorité visuelle */
+  #sidebar .nav-item[data-tab="formation"] {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+  }
+
+  #sidebar #formation-subnav .nav-subitem {
+    font-size: 15px !important;
+    font-weight: 500 !important;
+  }
+
+  #sidebar #formation-subnav .nav-subitem.active {
+    font-weight: 650 !important;
+  }
+
+  #sidebar #formation-subnav .nav-subitem svg {
+    width: 19px !important;
+    height: 19px !important;
+  }
+
+  /* Journal : légèrement plus discret */
+  #sidebar #journal-toggle {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+  }
+
+  #sidebar #journal-subnav .nav-item,
+  #sidebar #journal-subnav .nav-subitem {
+    font-size: 13px !important;
+    font-weight: 450 !important;
+  }
+
+  #sidebar #journal-subnav .nav-item svg,
+  #sidebar #journal-subnav .nav-subitem svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
+
+  #sidebar #journal-subnav .sb-section {
+    font-size: 10px !important;
+  }
+}
