@@ -1,3 +1,4 @@
+/* V105 — IMAGES ÉTAPE 4 */
 
 /* V87 - Mon parcours OTE 705 */
 (() => {
@@ -249,9 +250,12 @@
                           >
                           <span>${index === 0 ? 'Structure HTF' : 'Structure LTF'}</span>
                         ` : `
-                          <i class="ti ti-photo"></i>
+                          <img
+                            src="${index === 0 ? '/images/IMAGE%202026-11-09%2015%3A57%3A38.jpg' : '/images/IMAGE%202026-11-09%2015%3A57%3A41.jpg'}"
+                            alt="${escapeHTML(label)}"
+                            loading="lazy"
+                          >
                           <span>${escapeHTML(label)}</span>
-                          <small>Exemple à ajouter</small>
                         `}
                       </div>
                     `).join('')}
