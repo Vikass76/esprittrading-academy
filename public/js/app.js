@@ -1545,7 +1545,7 @@ async function loadFormation() {
 
     // V58_MOBILE_INLINE_PLAYER
     // Déplacer le lecteur existant, sans le recréer.
-    const mobileVideoQuery = window.matchMedia('(max-width: 767px)');
+    const mobileVideoQuery = window.matchMedia('(max-width: 1000px)');
     const workspace = el.querySelector('.ote-workspace');
     const main = el.querySelector('.ote-main');
 

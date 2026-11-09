@@ -6044,7 +6044,7 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
 
 
 /* V58_MOBILE_INLINE_PLAYER — Formation : lecteur sous la vidéo */
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 1000px) {
 
   #ftab-videos .ote-learning .ote-workspace {
     display: block !important;
@@ -9840,5 +9840,192 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
     flex-shrink: 0 !important;
     margin-top: auto !important;
     background: #0d0e11 !important;
+  }
+}
+
+
+/* ESPRIT RESPONSIVE V26 */
+
+@media screen and (max-width: 1000px) {
+
+  /* Navigation mobile également sur tablette */
+  #sidebar.sidebar {
+    transform: translateX(-100%) !important;
+    width: min(285px, 85vw) !important;
+    z-index: 100 !important;
+  }
+
+  #sidebar.sidebar.on {
+    transform: translateX(0) !important;
+  }
+
+  #sb-ov {
+    display: block !important;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #sb-ov.on {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  #app .main-wrap {
+    margin-left: 0 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  #app .mob-header {
+    display: flex !important;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: 62px;
+    padding: 0 18px;
+    background: #0d0e11;
+    border-bottom: 1px solid #292b31;
+  }
+
+  /* Logo V25 adapté */
+  .mob-v26-brand {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .mob-v26-name {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    font-family: "Suisse Intl", "Helvetica Neue", Arial, sans-serif;
+    font-size: 17px;
+    font-weight: 650;
+    letter-spacing: -.025em;
+    line-height: 1.15;
+  }
+
+  .mob-v26-name span:first-child {
+    color: #f2f2f3;
+  }
+
+  .mob-v26-name span:last-child {
+    color: #d4b16a;
+  }
+
+  .mob-v26-subtitle {
+    color: #92949d;
+    font-family: "Suisse Intl", "Helvetica Neue", Arial, sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: .14em;
+  }
+
+  /* Bouton conservé dans le HTML pour le JS */
+  #mob-add {
+    display: none !important;
+  }
+
+  #hbg {
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+  }
+
+  /* Liste et lecteur dans une seule colonne */
+  #ftab-videos .ote-learning .ote-workspace {
+    display: block !important;
+  }
+
+  #ftab-videos .ote-learning .ote-video-list {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  #ftab-videos .ote-learning .ote-main.ote-mobile-inline-player {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 8px 0 18px !important;
+  }
+}
+
+
+/* ESPRIT V27 CALENDLY MOBILE FIX */
+@media screen and (max-width: 600px) {
+  #ftab-rdv .calendly-inline-widget {
+    margin-top: 0 !important;
+  }
+}
+
+
+/* ESPRIT SIDEBAR V28 MOBILE TABLET */
+
+@media screen and (max-width: 1000px) {
+
+  /* Toute la sidebar défile */
+  #sidebar.sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    overscroll-behavior-y: contain;
+  }
+
+  /* Le Journal ne possède plus son propre défilement */
+  #sidebar > #journal-subnav {
+    flex: 0 0 auto !important;
+    min-height: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Les menus conservent leur hauteur naturelle */
+  #sidebar > #formation-subnav,
+  #sidebar > nav.sb-nav {
+    flex-shrink: 0 !important;
+  }
+
+  /* Logo fixe en haut */
+  #sidebar > .sb-logo {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 20 !important;
+    flex-shrink: 0 !important;
+    background: #0d0e11 !important;
+  }
+
+  /* Profil fixe en bas */
+  #sidebar > .sb-bottom {
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 20 !important;
+    flex: 0 0 auto !important;
+    margin-top: auto !important;
+    background: #0d0e11 !important;
+  }
+
+  /* Barre de défilement discrète */
+  #sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: #383a42 transparent;
+  }
+
+  #sidebar::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  #sidebar::-webkit-scrollbar-thumb {
+    background: #383a42;
+    border-radius: 8px;
   }
 }
