@@ -33,6 +33,8 @@ async function attemptCharge(payment) {
       off_session: true,
       confirm: true,
       metadata: { email: payment.email, plan: payment.plan, type: 'second_installment' },
+    }, {
+      idempotencyKey: 'ote705-installment-' + payment.id
     });
 
     if (paymentIntent.status === 'succeeded') {

@@ -268,8 +268,9 @@ db.exec(`
 // Insérer le code OTE20 si pas encore là
 const existing = db.prepare("SELECT id FROM promo_codes WHERE code = 'OTE20'").get();
 if (!existing) {
-  db.prepare("INSERT INTO promo_codes (code, discount_percent) VALUES ('OTE20', 23)").run();
+  db.prepare("INSERT INTO promo_codes (code, discount_percent) VALUES ('OTE20', 20)").run();
 }
+db.prepare("UPDATE promo_codes SET discount_percent = 20 WHERE code = 'OTE20' AND discount_percent != 20").run();
 
 
 // V87 - Progression du parcours OTE 705

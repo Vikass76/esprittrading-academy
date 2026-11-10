@@ -6,8 +6,8 @@ const router = express.Router();
 const db = require('../db');
 
 const PRICES = {
-  full: 129000,   // 1290,00 EUR en centimes
-  split: 64500,   // 645,00 EUR en centimes (1er versement)
+  full: 149000,   // 1490,00 EUR en centimes
+  split: 55000,   // 550,00 EUR en centimes (1er versement)
 };
 
 router.post('/create-intent', async (req, res) => {
@@ -35,7 +35,7 @@ router.post('/create-intent', async (req, res) => {
         let amt = PRICES[plan];
         if (promo_code) {
           const promo = db.prepare("SELECT * FROM promo_codes WHERE UPPER(code) = UPPER(?) AND active = 1").get(promo_code.trim());
-          if (promo) amt = Math.max(0, amt - (plan === 'split' ? 15000 : 30000)); // Réduction fixe 300€ total
+          if (promo) amt = Math.round(amt * (1 - promo.discount_percent / 100));
         }
         return amt;
       })(),

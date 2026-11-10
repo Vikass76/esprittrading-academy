@@ -146,18 +146,31 @@ async function handleSuccessfulPayment({ email, firstname, lastname, plan, custo
     addContactToBrevo({ email: user.email, firstname: user.firstname, lastname: user.lastname, role: 'student' }).catch(()=>{});
   }
 
-  // Si paiement en 2 fois, enregistrer le suivi pour le 2e prelevement
+  // Paiement en 3 fois : enregistrer les 2 echeances restantes
   if (plan === 'split') {
-    const dueDate = Date.now() + 30 * 24 * 60 * 60 * 1000; // J+30
-    const secondAmount = promoUsed ? 49500 : 64500; // 495€ avec promo, 645€ sans
-    db.prepare(`
+    const installmentAmount = promoUsed ? 44000 : 55000;
+    const firstDueDate = Date.now();
+    const insertPayment = db.prepare(`
       INSERT INTO payments (
         email, stripe_customer_id, stripe_payment_method_id,
         plan, amount_due, due_date, status, stripe_payment_intent_id
       )
       VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)
       ON CONFLICT(stripe_payment_intent_id) DO NOTHING
-    `).run(emailLower, customerId, paymentMethodId, plan, secondAmount, dueDate, paymentIntentId);
+    `);
+
+    for (const days of [30, 60]) {
+      const dueDate = firstDueDate + days * 24 * 60 * 60 * 1000;
+      insertPayment.run(
+        emailLower,
+        customerId,
+        paymentMethodId,
+        plan,
+        installmentAmount,
+        dueDate,
+        paymentIntentId + '-installment-' + days
+      );
+    }
   }
 
   // Email de bienvenue
