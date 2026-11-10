@@ -10029,3 +10029,168 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
     border-radius: 8px;
   }
 }
+
+/* OTE 705 — Validation unique, en bas de chaque carte */
+#ftab-parcours .ote-path-step > .ote-path-validation-bottom {
+  position: relative !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  margin: 24px 0 0 !important;
+  padding: 0 !important;
+  grid-column: 1 / -1 !important;
+  grid-row: auto !important;
+  z-index: 6 !important;
+}
+#ftab-parcours .ote-path-step > .ote-path-validation-bottom > .ote-path-validation-confirm {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  width: calc(50% - 26px) !important;
+  min-width: 0 !important;
+  padding: 17px !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  background: #232326 !important;
+  border: 1px solid #51452f !important;
+  border-radius: 10px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+#ftab-parcours .ote-path-step .ote-path-validation-bottom .ote-path-confirm-label {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  color: #dedee0 !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  cursor: pointer;
+}
+#ftab-parcours .ote-path-step .ote-path-validation-bottom .ote-path-confirm-checkbox {
+  width: 17px !important;
+  height: 17px !important;
+  margin: 2px 0 0 !important;
+  flex: 0 0 17px !important;
+  accent-color: #d9b66f;
+}
+/* Important : neutralise l'ancien position:absolute/bottom:-245px des étapes 02/04. */
+#ftab-parcours .ote-path-step .ote-path-validation-bottom .ote-path-check {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  float: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  align-self: stretch !important;
+  width: 100% !important;
+  min-height: 44px !important;
+  margin: 0 !important;
+  padding: 11px 14px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  background: #d9b66f !important;
+  border: 1px solid #d9b66f !important;
+  border-radius: 8px !important;
+  color: #171717 !important;
+  cursor: pointer !important;
+}
+#ftab-parcours .ote-path-step .ote-path-validation-bottom .ote-path-check:disabled {
+  background: #343438 !important;
+  border-color: #45454b !important;
+  color: #85858d !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+#ftab-parcours .ote-path-step .ote-path-validation-bottom .ote-path-validation-confirm.is-complete {
+  background: #1b2925 !important;
+  border-color: #4a9576 !important;
+}
+#ftab-parcours .ote-path-step .ote-path-validation-bottom .ote-path-validation-confirm.is-complete .ote-path-confirm-label {
+  color: #72cba5 !important;
+}
+#ftab-parcours .ote-path-step .ote-path-validation-bottom .ote-path-check.checked {
+  background: #255c47 !important;
+  border-color: #4a9576 !important;
+  color: #a5e4c8 !important;
+}
+@media (max-width: 1000px) {
+  #ftab-parcours .ote-path-step > .ote-path-validation-bottom > .ote-path-validation-confirm {
+    width: 100% !important;
+  }
+}
+
+/* OTE 705 — grisé ciblé des contrôles verrouillés */
+#ftab-parcours .ote-path-step.is-locked {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+#ftab-parcours .ote-path-validation-confirm:has(.ote-path-confirm-checkbox:disabled),
+#ftab-parcours .ote-path-step.is-locked .ote-call-card {
+  border-color: #414248 !important;
+}
+
+#ftab-parcours .ote-path-validation-confirm .ote-path-confirm-checkbox:disabled,
+#ftab-parcours .ote-path-step.is-locked .ote-call-confirm {
+  opacity: .4 !important;
+  cursor: not-allowed !important;
+}
+
+#ftab-parcours .ote-path-validation-confirm:has(.ote-path-confirm-checkbox:disabled) .ote-path-confirm-label {
+  color: #77787e !important;
+}
+
+#ftab-parcours .ote-path-step.is-locked .ote-call-card > div,
+#ftab-parcours .ote-path-step.is-locked .ote-call-card p,
+#ftab-parcours .ote-path-step.is-locked .ote-call-card label {
+  color: #77787e !important;
+}
+
+#ftab-parcours .ote-path-validation-confirm .ote-path-check:disabled,
+#ftab-parcours .ote-path-step .ote-call-book:disabled {
+  background: #343438 !important;
+  border: 1px solid #444449 !important;
+  color: #85858b !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+}
+
+
+/* OTE 705 — uniformisation des encadrés verrouillés */
+#ftab-parcours .ote-path-step.is-locked .ote-call-card,
+#ftab-parcours .ote-path-step.is-locked .ote-path-validation-confirm {
+  background: #303136 !important;
+  border: 1px solid #45464b !important;
+  box-shadow: none !important;
+}
+
+#ftab-parcours .ote-path-step.is-locked .ote-call-card > div,
+#ftab-parcours .ote-path-step.is-locked .ote-call-card p,
+#ftab-parcours .ote-path-step.is-locked .ote-call-card label,
+#ftab-parcours .ote-path-step.is-locked .ote-path-validation-confirm .ote-path-confirm-label {
+  color: #85868c !important;
+}
+
+#ftab-parcours .ote-path-step.is-locked .ote-call-card .ote-call-book,
+#ftab-parcours .ote-path-step.is-locked .ote-path-validation-confirm .ote-path-check {
+  background: #35363b !important;
+  border: 1px solid #48494f !important;
+  color: #85868c !important;
+  opacity: 1 !important;
+}
+
+#ftab-parcours .ote-path-step.is-locked .ote-call-card .ote-call-confirm,
+#ftab-parcours .ote-path-step.is-locked .ote-path-validation-confirm .ote-path-confirm-checkbox {
+  opacity: .45 !important;
+}
+
+/* OTE 705 — texte des appels verrouillés */
+#ftab-parcours .ote-path-step.is-locked .ote-call-card div[style*="font-weight"],
+#ftab-parcours .ote-path-step.is-locked .ote-call-card div[style*="line-height"] {
+  color: #77787e !important;
+}

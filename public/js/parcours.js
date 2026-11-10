@@ -284,19 +284,12 @@
                       </ul>
                     </div>
 
+
+
+
                     
 
-                    ${!step.examples && i < 4 ? `<button
-                      type="button"
-                      class="ote-path-check ${done?'checked':''}"
-                      data-path-step="${i+1}"
-                      ${locked||busy?'disabled':''}
-                      aria-pressed="${done}"
-                      aria-label="${done?'Dévalider':'Valider'} : ${escapeHTML(step.title)}"
-                    >
-                      <i class="ti ti-${done?'check':locked?'lock':'circle'}"></i>
-                      <span>${done?'Étape validée':locked?'Étape verrouillée':'Valider cette étape'}</span>
-                    </button>` : ''}
+                    
 
                   </div>
 
@@ -330,19 +323,7 @@
                 ` : ''}
 
 
-                <div class="ote-path-bottom-action">
-                    ${i >= 4 && !step.examples ? `<button
-                      type="button"
-                      class="ote-path-check ${done?'checked':''}"
-                      data-path-step="${i+1}"
-                      ${locked||busy?'disabled':''}
-                      aria-pressed="${done}"
-                      aria-label="${done?'Dévalider':'Valider'} : ${escapeHTML(step.title)}"
-                    >
-                      <i class="ti ti-${done?'check':locked?'lock':'circle'}"></i>
-                      <span>${done?'Étape validée':locked?'Étape verrouillée':'Valider cette étape'}</span>
-                    </button>` : ''}
-                </div>
+                
 
                 ${step.examples ? `
                   <div class="ote-path-examples-heading">Exemples graphiques</div>
@@ -369,21 +350,33 @@
                   </div>
                 `:''}
 
-                ${step.examples ? `
-                  <div class="ote-path-bottom-action">
-                    <button
-                      type="button"
-                      class="ote-path-check ${done?'checked':''}"
-                      data-path-step="${i+1}"
-                      ${locked||busy?'disabled':''}
-                      aria-pressed="${done}"
-                      aria-label="${done?'Dévalider':'Valider'} : ${escapeHTML(step.title)}"
-                    >
-                      <i class="ti ti-${done?'check':locked?'lock':'circle'}"></i>
-                      <span>${done?'Étape validée':locked?'Étape verrouillée':'Valider cette étape'}</span>
-                    </button>
-                  </div>
-                ` : ''}
+                
+
+                <div class="ote-path-validation-bottom">
+                    <div class="ote-path-validation-confirm ${done ? 'is-complete' : ''}">
+                      <label class="ote-path-confirm-label">
+                        <input
+                          type="checkbox"
+                          class="ote-path-confirm-checkbox"
+                          data-confirm-step="${i+1}"
+                          ${done ? 'checked disabled' : locked || busy ? 'disabled' : ''}
+                        >
+                        <span>${done
+                          ? 'Cette étape a été validée.'
+                          : 'Je confirme avoir terminé le travail demandé pour cette étape.'}</span>
+                      </label>
+                      <button
+                        type="button"
+                        class="ote-path-check ${done ? 'checked' : ''}"
+                        data-path-step="${i+1}"
+                        ${locked || busy || !done ? 'disabled' : ''}
+                        aria-pressed="${done}"
+                      >
+                        <i class="ti ti-${done ? 'check' : locked ? 'lock' : 'circle'}"></i>
+                        <span>${done ? 'Étape validée' : locked ? 'Étape verrouillée' : 'Valider cette étape'}</span>
+                      </button>
+                    </div>
+                </div>
               </article>
             `;
           }).join('')}
@@ -548,6 +541,23 @@
     }
   }
 
+
+
+  document.addEventListener('change', event => {
+    const checkbox = event.target.closest('.ote-path-confirm-checkbox');
+    if (!checkbox || busy) return;
+
+    const box = checkbox.closest('.ote-path-validation-confirm');
+    const button = box?.querySelector('[data-path-step]');
+    if (!button) return;
+
+    const index = Number(checkbox.dataset.confirmStep) - 1;
+    if (!Number.isInteger(index) || index < 0 || index >= progress.length) return;
+    if (progress[index]) return;
+
+    button.disabled = !checkbox.checked || (index > 0 && !progress[index-1]);
+  });
+
   document.addEventListener('click',async event=>{
     const tab=event.target.closest('.nav-subitem[data-ftab="parcours"]');
     if (tab) {
@@ -560,6 +570,13 @@
 
     const index=Number(button.dataset.pathStep)-1;
     const completed=!progress[index];
+
+    if (completed) {
+      const checkbox = button.closest('.ote-path-validation-confirm')
+        ?.querySelector('.ote-path-confirm-checkbox');
+      if (!checkbox?.checked) return;
+      if (index > 0 && !progress[index-1]) return;
+    }
 
     busy=true;
     render();
