@@ -1235,6 +1235,59 @@ async function loadFormation() {
     let activeModule = 0;
     let activeVideo = 0;
 
+    // Déverrouillage visuel synchronisé avec les étapes du parcours.
+    let pathProgress = Array(7).fill(false);
+    const moduleRequiredSteps = [0, 2, 4, 6];
+    const moduleIsOpen = index => index === 0 || pathProgress[moduleRequiredSteps[index] - 1] === true;
+
+    async function refreshModuleLocks() {
+      try {
+        const data = await api('GET', '/parcours');
+        if (!Array.isArray(data.progress) || data.progress.length < 7) throw new Error('Progression invalide');
+        pathProgress = data.progress;
+      } catch (error) {
+        console.warn('Progression indisponible, modules verrouillés par sécurité visuelle :', error);
+        pathProgress = Array(7).fill(false);
+      }
+      if (!moduleIsOpen(activeModule)) {
+        stopPlayer();
+        learning.classList.add('ote-home-mode');
+        activeModule = 0;
+        activeVideo = 0;
+      }
+      renderTrainingHome();
+      renderModules();
+    }
+
+    // Le parcours signale chaque validation sans recharger la page.
+    window.addEventListener('ote-parcours-updated', refreshModuleLocks);
+    document.querySelectorAll('.nav-subitem[data-ftab="videos"]').forEach(tab => {
+      tab.addEventListener('click', refreshModuleLocks);
+    });
+
+    if (!document.getElementById('ote-module-lock-style')) {
+      const style = document.createElement('style');
+      style.id = 'ote-module-lock-style';
+      style.textContent = `
+        .ote-home-card.ote-module-locked { opacity:.72; }
+        .ote-home-card.ote-module-locked .ote-home-card-art { opacity:.72; }
+        .ote-home-card.ote-module-locked .ote-home-access {
+          background:#35363b!important; border-color:#55565b!important;
+          color:#a1a2a8!important; cursor:not-allowed!important;
+          opacity:1!important;
+        }
+        .ote-home-card .ote-home-lock {
+          display:inline-flex; align-items:center; gap:6px;
+          color:#aaaab1; font-size:12px; font-weight:600;
+        }
+        .ote-module-card.ote-module-locked {
+          opacity:.65; cursor:not-allowed!important;
+        }
+        .ote-module-card.ote-module-locked .ote-module-arrow { opacity:.5; }
+      `;
+      document.head.appendChild(style);
+    }
+
     el.innerHTML = `
       <div class="ote-learning ote-home-mode">
         <section class="ote-training-home" aria-label="Accueil formation">
@@ -1473,9 +1526,10 @@ async function loadFormation() {
           ? Math.round(completedCount * 100 / count)
           : 0;
         const color = homeColors[index % homeColors.length];
+        const locked = !moduleIsOpen(index);
 
         return `
-          <article class="ote-home-card"
+          <article class="ote-home-card ${locked ? 'ote-module-locked' : ''}"
             style="--home-color:${color}">
             <span class="ote-home-card-number">
               ${String(index + 1).padStart(2, '0')}
@@ -1501,8 +1555,9 @@ async function loadFormation() {
               </div>
               <button type="button"
                 class="ote-home-access"
-                data-home-module="${index}">
-                Accéder <i class="ti ti-arrow-right"></i>
+                data-home-module="${index}"
+                ${locked ? 'disabled aria-disabled="true"' : ''}>
+                ${locked ? '<i class="ti ti-lock"></i> Verrouillé' : 'Accéder <i class="ti ti-arrow-right"></i>'}
               </button>
             </div>
           </article>
@@ -1511,6 +1566,7 @@ async function loadFormation() {
     }
 
     function openTrainingModule(index) {
+      if (!Number.isInteger(index) || index < 0 || index >= mods.length || !moduleIsOpen(index)) return;
       activeModule = index;
       activeVideo = 0;
       search.value = '';
@@ -1524,7 +1580,7 @@ async function loadFormation() {
 
     homeGrid.addEventListener('click', event => {
       const button = event.target.closest('[data-home-module]');
-      if (!button) return;
+      if (!button || button.disabled) return;
       openTrainingModule(Number(button.dataset.homeModule));
     });
 
@@ -1913,19 +1969,21 @@ async function loadFormation() {
     function renderModules() {
       cards.innerHTML = mods.map((m, i) => `
         <button type="button"
-          class="ote-module-card ${i === activeModule ? 'selected' : ''}"
+          class="ote-module-card ${i === activeModule ? 'selected' : ''} ${!moduleIsOpen(i) ? 'ote-module-locked' : ''}"
           style="--module-color:${colors[i % colors.length]}"
-          data-module="${i}">
+          data-module="${i}"
+          ${!moduleIsOpen(i) ? 'disabled aria-disabled="true"' : ''}>
           <span class="ote-module-number">0${i+1}</span>
           <span class="ote-module-watermark">0${i+1}</span>
           <span class="ote-module-name">${esc(m.title)}</span>
           <span class="ote-module-sub">${esc(moduleDescriptions[i] || m.description || '')}</span>
-          <span class="ote-module-arrow"><i class="ti ti-arrow-right"></i></span>
+          <span class="ote-module-arrow"><i class="ti ${moduleIsOpen(i) ? 'ti-arrow-right' : 'ti-lock'}"></i></span>
         </button>
       `).join('');
 
       cards.querySelectorAll('[data-module]').forEach(button => {
         button.addEventListener('click', () => {
+          if (button.disabled || !moduleIsOpen(Number(button.dataset.module))) return;
           activeModule = Number(button.dataset.module);
           activeVideo = 0;
           search.value = '';
@@ -2213,6 +2271,7 @@ async function loadFormation() {
     renderPlayer();
     stopPlayer();
     renderTrainingHome();
+    await refreshModuleLocks();
   } catch{toast('Erreur formation','error');}
 }
 

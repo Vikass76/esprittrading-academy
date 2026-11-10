@@ -585,6 +585,7 @@
       const data=await request('PUT','/parcours/'+(index+1),{completed});
       ++loadVersion;
       progress=data.progress;
+      window.dispatchEvent(new Event('ote-parcours-updated'));
     } catch(error) {
       alert('Validation non enregistrée : '+error.message);
       try {
