@@ -353,9 +353,6 @@ async function oteRunStripeSync() {
       else if(meta.plan==='split'){
        const scheduled=db.prepare("SELECT amount_due FROM payments WHERE LOWER(email)=? AND stripe_payment_intent_id LIKE ?").all(email,pi.id+'-installment-%');
        if(scheduled.length===2){agreed=pi.amount_received+scheduled.reduce((a,p)=>a+Number(p.amount_due),0);installments=3;}
-      }else if(session&&lineItems.length===1&&lineItems[0].quantity===1&&session.amount_total===pi.amount_received && lineItems.some(l=>/OTE\s*705|accompagnement\s+OTE/i.test(l.description||''))){
-       // Uniquement un achat OTE en une fois explicitement identifié dans Checkout.
-       agreed=pi.amount_received;
       }
       if(agreed!==null){
        const result=db.prepare(`INSERT OR IGNORE INTO ote_student_offers
@@ -407,6 +404,23 @@ router.get('/student-finances', requireAdmin, (req,res) => {
  const addMonths=(iso,n)=>{const [y,m,d]=iso.split('-').map(Number);const first=new Date(Date.UTC(y,m-1+n,1));const last=new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth()+1,0)).getUTCDate();return new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth(),Math.min(d,last))).toISOString().slice(0,10);};
 
  for(const o of offers){
+  // OTE705_FINANCE_GUARD_V2
+  // Un versement ne prouve pas que le contrat est soldé.
+  const totalPaid = Number(o.paid_cents || 0);
+  const totalPrice = Number(o.agreed_cents || 0);
+  const ambiguous =
+    (totalPrice > 0 && totalPaid > totalPrice) ||
+    (o.payment_source === 'stripe_personnalise' &&
+     Number(o.installments) === 1 &&
+     totalPrice === 49500);
+
+  if (ambiguous) {
+    o.agreed_cents = null;
+    o.installments = null;
+    o.first_due = null;
+    o.finance_needs_review = true;
+  }
+
   o.next_due=null;o.next_due_cents=0;o.due_status=null;
   o.schedule=[];o.late_count=0;o.late_cents=0;
   o.upcoming_count=0;o.upcoming_cents=0;
