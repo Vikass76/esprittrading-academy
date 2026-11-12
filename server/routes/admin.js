@@ -352,7 +352,10 @@ async function oteRunStripeSync() {
       if(meta.plan==='full' && !meta.type)agreed=pi.amount_received;
       else if(meta.plan==='split'){
        const scheduled=db.prepare("SELECT amount_due FROM payments WHERE LOWER(email)=? AND stripe_payment_intent_id LIKE ?").all(email,pi.id+'-installment-%');
-       if(scheduled.length===2){agreed=pi.amount_received+scheduled.reduce((a,p)=>a+Number(p.amount_due),0);installments=3;}
+       if(scheduled.length===2){
+        agreed=pi.amount_received+scheduled.reduce((a,p)=>a+Math.round(Number(p.amount_due)),0);
+        installments=3;
+       }
       }
       if(agreed!==null){
        const result=db.prepare(`INSERT OR IGNORE INTO ote_student_offers
@@ -411,8 +414,7 @@ router.get('/student-finances', requireAdmin, (req,res) => {
   const ambiguous =
     (totalPrice > 0 && totalPaid > totalPrice) ||
     (o.payment_source === 'stripe_personnalise' &&
-     Number(o.installments) === 1 &&
-     totalPrice === 49500);
+     Number(o.installments) === 1);
 
   if (ambiguous) {
     o.agreed_cents = null;
