@@ -312,7 +312,11 @@ async function oteRunStripeSync() {
      const lines=await oteStripe.checkout.sessions.listLineItems(session.id,{limit:20});
      lineItems=lines.data||[];
     }
-    const isOte=native||lineItems.some(l=>/OTE\s*705|accompagnement\s+OTE/i.test(l.description||''));
+    const attachedByPi=db.prepare('SELECT user_id FROM ote_student_receipts WHERE stripe_payment_id=?').get(pi.id);
+    const chargeRef=typeof pi.latest_charge==='string'?pi.latest_charge:null;
+    const attachedByCharge=chargeRef?db.prepare('SELECT user_id FROM ote_student_receipts WHERE stripe_payment_id=?').get(chargeRef):null;
+    const attachedUserId=attachedByPi?.user_id||attachedByCharge?.user_id||null;
+    const isOte=native||lineItems.some(l=>/OTE\s*705|accompagnement\s+OTE/i.test(l.description||''))||!!attachedUserId;
     if(!isOte)continue;
     let email=(session?.customer_details?.email||session?.customer_email||meta.email||pi.receipt_email||'').trim().toLowerCase();
     if(email==='pending@esprittrading.fr')email='';
@@ -325,8 +329,13 @@ async function oteRunStripeSync() {
      email=String(customers.get(customerId)||'').trim().toLowerCase();
     }
     const ids=byEmail.get(email)||[];
-    if(ids.length!==1){unmatched++;continue;}
-    const id=ids[0];
+    // Un rattachement manuel déjà vérifié est prioritaire sur un email Stripe absent/différent.
+    // En cas de conflit explicite entre deux rattachements, ne rien modifier.
+    if(attachedByPi&&attachedByCharge&&attachedByPi.user_id!==attachedByCharge.user_id){unmatched++;continue;}
+    if(attachedUserId&& !db.prepare("SELECT id FROM users WHERE id=? AND role='student'").get(attachedUserId)){unmatched++;continue;}
+    if(attachedUserId&&ids.length===1&&ids[0]!==attachedUserId){unmatched++;continue;}
+    const id=attachedUserId||(ids.length===1?ids[0]:null);
+    if(!id){unmatched++;continue;}
     const chargeId=typeof pi.latest_charge==='string'?pi.latest_charge:null;
     const prev=db.prepare('SELECT user_id FROM ote_student_receipts WHERE stripe_payment_id=?').get(pi.id);
     const prevCharge=chargeId?db.prepare('SELECT user_id FROM ote_student_receipts WHERE stripe_payment_id=?').get(chargeId):null;
@@ -340,11 +349,11 @@ async function oteRunStripeSync() {
      const offer=db.prepare('SELECT user_id FROM ote_student_offers WHERE user_id=?').get(id);
      if(!offer){
       let agreed=null,installments=1;
-      if(meta.plan==='full')agreed=pi.amount_received;
+      if(meta.plan==='full' && !meta.type)agreed=pi.amount_received;
       else if(meta.plan==='split'){
        const scheduled=db.prepare("SELECT amount_due FROM payments WHERE LOWER(email)=? AND stripe_payment_intent_id LIKE ?").all(email,pi.id+'-installment-%');
        if(scheduled.length===2){agreed=pi.amount_received+scheduled.reduce((a,p)=>a+Number(p.amount_due),0);installments=3;}
-      }else if(session&&lineItems.length===1&&lineItems[0].quantity===1&&session.amount_total===pi.amount_received){
+      }else if(session&&lineItems.length===1&&lineItems[0].quantity===1&&session.amount_total===pi.amount_received && lineItems.some(l=>/OTE\s*705|accompagnement\s+OTE/i.test(l.description||''))){
        // Uniquement un achat OTE en une fois explicitement identifié dans Checkout.
        agreed=pi.amount_received;
       }
