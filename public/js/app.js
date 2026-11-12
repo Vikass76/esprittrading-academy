@@ -3688,7 +3688,7 @@ function renderOteStudentDashboard() {
       <td>${oteSdEscape(o?.offer_name || (u.role==='student'?'OTE 705':'—'))}</td>
       <td>${price ? oteMoney(price) : '—'}</td>
       <td>${price && o?.installments ? o.installments+'x' : '—'}</td>
-      <td>${o?.first_due ? oteSdDate(o.first_due) : '—'}</td>
+      <td>${(o?.first_payment_on || o?.first_due) ? oteSdDate(o.first_payment_on || o.first_due) : '—'}</td>
       <td>${o?.next_due ? oteSdDate(o.next_due) : '—'}</td>
       <td>${price ? oteMoney(remaining) : '—'}</td>
       <td class="ote-sd-payment">${progress}</td>

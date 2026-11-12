@@ -272,7 +272,11 @@ router.post('/student-finances/:id/stripe-attach', requireAdmin, async (req,res)
 });
 
 // OTE705_SYNC_V1 : import en lecture seule Stripe, sans prélèvement ni changement d'accès.
-router.post('/student-finances/sync-stripe', requireAdmin, async (req,res) => {
+let oteSyncRunning = false;
+let oteLastSync = null;
+async function oteRunStripeSync() {
+ if (oteSyncRunning) return {ok:true, busy:true};
+ oteSyncRunning = true;
  try {
   const users=db.prepare("SELECT id, LOWER(TRIM(email)) AS email FROM users WHERE email IS NOT NULL AND role='student'").all();
   const byEmail=new Map();
@@ -357,14 +361,32 @@ router.post('/student-finances/sync-stripe', requireAdmin, async (req,res) => {
    if(!batch.has_more||!batch.data.length)break;
    cursor=batch.data[batch.data.length-1].id;
   }
-  res.json({ok:true,scanned,sessionCount,imported,existing,unmatched,offersCreated,limitReached:scanned>=1000});
- }catch(e){console.error('[OTE Finance] Sync Stripe:',e);res.status(502).json({error:'Synchronisation Stripe interrompue : '+(e.type?.startsWith('Stripe')?'erreur Stripe':'erreur serveur')});}
+  oteLastSync = new Date().toISOString();
+  return {ok:true,scanned,sessionCount,imported,existing,unmatched,offersCreated,limitReached:scanned>=1000, lastSync:oteLastSync};
+ } finally { oteSyncRunning = false; }
+}
+router.post('/student-finances/sync-stripe', requireAdmin, async (req,res) => {
+ try { res.json(await oteRunStripeSync()); }
+ catch(e){console.error('[OTE Finance] Sync Stripe:',e);res.status(502).json({error:'Synchronisation Stripe interrompue'});}
 });
+// Lecture Stripe uniquement. Démarrage différé et synchronisation régulière,
+// sans requête admin, sans prélèvement ni modification des accès.
+if (process.env.STRIPE_SECRET_KEY && process.env.NODE_ENV !== 'test') {
+ const run = () => oteRunStripeSync()
+   .then(r => console.log('[OTE Finance] Sync automatique:', JSON.stringify(r)))
+   .catch(e => console.error('[OTE Finance] Sync automatique échouée:', e));
+ const initial = setTimeout(run, 90 * 1000);
+ initial.unref?.();
+ const periodic = setInterval(run, 15 * 60 * 1000);
+ periodic.unref?.();
+}
+
 
 // OTE705_FINANCE_V1 — suivi administratif ; ne modifie pas les prélèvements existants
 router.get('/student-finances', requireAdmin, (req,res) => {
  const offers=db.prepare(`SELECT u.id AS user_id, o.offer_name, o.agreed_cents, o.installments, o.first_due,
  o.payment_source, o.stripe_link, o.notes, o.updated_at,
+ COALESCE((SELECT MIN(r.paid_on) FROM ote_student_receipts r WHERE r.user_id=u.id), o.first_due) AS first_payment_on,
  COALESCE((SELECT SUM(r.amount_cents) FROM ote_student_receipts r WHERE r.user_id=u.id),0) AS paid_cents
  FROM users u LEFT JOIN ote_student_offers o ON o.user_id=u.id
  WHERE o.user_id IS NOT NULL OR EXISTS(SELECT 1 FROM ote_student_receipts r WHERE r.user_id=u.id)`).all();
