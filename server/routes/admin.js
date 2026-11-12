@@ -271,9 +271,103 @@ router.post('/student-finances/:id/stripe-attach', requireAdmin, async (req,res)
  }catch(e){if(e.code==='SQLITE_CONSTRAINT_UNIQUE')return res.status(409).json({error:'Paiement déjà enregistré'});if(e.type?.startsWith('Stripe'))return res.status(400).json({error:'Transaction introuvable dans le compte Stripe configuré'});console.error('Stripe attach:',e);res.status(500).json({error:'Échec du rattachement'});}
 });
 
+// OTE705_SYNC_V1 : import en lecture seule Stripe, sans prélèvement ni changement d'accès.
+router.post('/student-finances/sync-stripe', requireAdmin, async (req,res) => {
+ try {
+  const users=db.prepare("SELECT id, LOWER(TRIM(email)) AS email FROM users WHERE email IS NOT NULL AND role='student'").all();
+  const byEmail=new Map();
+  for(const u of users){if(!byEmail.has(u.email))byEmail.set(u.email,[]);byEmail.get(u.email).push(u.id);}
+  const sessions=new Map();
+  let cursor, sessionCount=0;
+  for(let page=0;page<10;page++){
+   const batch=await oteStripe.checkout.sessions.list({limit:100,...(cursor?{starting_after:cursor}:{})});
+   for(const sess of batch.data){
+    if(sess.mode!=='payment'||!sess.payment_intent)continue;
+    const pi=typeof sess.payment_intent==='string'?sess.payment_intent:sess.payment_intent.id;
+    sessions.set(pi,sess);
+   }
+   sessionCount+=batch.data.length;
+   if(!batch.has_more||!batch.data.length)break;
+   cursor=batch.data[batch.data.length-1].id;
+  }
+  let imported=0,existing=0,unmatched=0,offersCreated=0,scanned=0;
+  const customers=new Map();
+  cursor=undefined;
+  for(let page=0;page<10;page++){
+   const batch=await oteStripe.paymentIntents.list({limit:100,...(cursor?{starting_after:cursor}:{})});
+   for(const pi of batch.data){
+    scanned++;
+    if(pi.status!=='succeeded'||pi.currency!=='eur'||!(pi.amount_received>0))continue;
+    const session=sessions.get(pi.id);
+    const meta=pi.metadata||{};
+    // Ne pas importer d'autres produits : achat OTE identifié par ses métadonnées,
+    // ou par une ligne de commande Checkout explicitement OTE 705.
+    const native=meta.plan==='full'||meta.plan==='split'||meta.plan==='split-retry'||meta.type==='second_installment';
+    let lineItems=[];
+    if(!native&&session){
+     const lines=await oteStripe.checkout.sessions.listLineItems(session.id,{limit:20});
+     lineItems=lines.data||[];
+    }
+    const isOte=native||lineItems.some(l=>/OTE\s*705|accompagnement\s+OTE/i.test(l.description||''));
+    if(!isOte)continue;
+    let email=(session?.customer_details?.email||session?.customer_email||meta.email||pi.receipt_email||'').trim().toLowerCase();
+    if(email==='pending@esprittrading.fr')email='';
+    const customerId=typeof pi.customer==='string'?pi.customer:pi.customer?.id;
+    if(!email&&customerId){
+     if(!customers.has(customerId)){
+      try{const c=await oteStripe.customers.retrieve(customerId);customers.set(customerId,!c.deleted?c.email||'':'');}
+      catch(e){customers.set(customerId,'');}
+     }
+     email=String(customers.get(customerId)||'').trim().toLowerCase();
+    }
+    const ids=byEmail.get(email)||[];
+    if(ids.length!==1){unmatched++;continue;}
+    const id=ids[0];
+    const chargeId=typeof pi.latest_charge==='string'?pi.latest_charge:null;
+    const prev=db.prepare('SELECT user_id FROM ote_student_receipts WHERE stripe_payment_id=?').get(pi.id);
+    const prevCharge=chargeId?db.prepare('SELECT user_id FROM ote_student_receipts WHERE stripe_payment_id=?').get(chargeId):null;
+    if((prev&&prev.user_id!==id)||(prevCharge&&prevCharge.user_id!==id)){unmatched++;continue;}
+    const alreadyAttached=!!(prev||prevCharge);
+    if(alreadyAttached)existing++;
+    const paidOn=new Date(pi.created*1000).toISOString().slice(0,10);
+    db.transaction(()=>{
+     if(!alreadyAttached)db.prepare(`INSERT OR IGNORE INTO ote_student_receipts(user_id,amount_cents,paid_on,stripe_payment_id,source,note)
+       VALUES(?,?,?,?,?,?)`).run(id,pi.amount_received,paidOn,pi.id,session?'stripe_personnalise':'stripe_standard','Synchronisation Stripe vérifiée');
+     const offer=db.prepare('SELECT user_id FROM ote_student_offers WHERE user_id=?').get(id);
+     if(!offer){
+      let agreed=null,installments=1;
+      if(meta.plan==='full')agreed=pi.amount_received;
+      else if(meta.plan==='split'){
+       const scheduled=db.prepare("SELECT amount_due FROM payments WHERE LOWER(email)=? AND stripe_payment_intent_id LIKE ?").all(email,pi.id+'-installment-%');
+       if(scheduled.length===2){agreed=pi.amount_received+scheduled.reduce((a,p)=>a+Number(p.amount_due),0);installments=3;}
+      }else if(session&&lineItems.length===1&&lineItems[0].quantity===1&&session.amount_total===pi.amount_received){
+       // Uniquement un achat OTE en une fois explicitement identifié dans Checkout.
+       agreed=pi.amount_received;
+      }
+      if(agreed!==null){
+       const result=db.prepare(`INSERT OR IGNORE INTO ote_student_offers
+        (user_id,offer_name,agreed_cents,installments,first_due,payment_source)
+        VALUES(?,'OTE 705',?,?,?,?)`).run(id,agreed,installments,paidOn,session?'stripe_personnalise':'stripe_standard');
+       offersCreated+=result.changes;
+      }
+     }
+    })();
+    if(!alreadyAttached)imported++;
+   }
+   if(!batch.has_more||!batch.data.length)break;
+   cursor=batch.data[batch.data.length-1].id;
+  }
+  res.json({ok:true,scanned,sessionCount,imported,existing,unmatched,offersCreated,limitReached:scanned>=1000});
+ }catch(e){console.error('[OTE Finance] Sync Stripe:',e);res.status(502).json({error:'Synchronisation Stripe interrompue : '+(e.type?.startsWith('Stripe')?'erreur Stripe':'erreur serveur')});}
+});
+
 // OTE705_FINANCE_V1 — suivi administratif ; ne modifie pas les prélèvements existants
 router.get('/student-finances', requireAdmin, (req,res) => {
- const offers=db.prepare(`SELECT o.*, COALESCE((SELECT SUM(r.amount_cents) FROM ote_student_receipts r WHERE r.user_id=o.user_id),0) AS paid_cents FROM ote_student_offers o`).all();
+ const offers=db.prepare(`SELECT u.id AS user_id, o.offer_name, o.agreed_cents, o.installments, o.first_due,
+ o.payment_source, o.stripe_link, o.notes, o.updated_at,
+ COALESCE((SELECT SUM(r.amount_cents) FROM ote_student_receipts r WHERE r.user_id=u.id),0) AS paid_cents
+ FROM users u LEFT JOIN ote_student_offers o ON o.user_id=u.id
+ WHERE o.user_id IS NOT NULL OR EXISTS(SELECT 1 FROM ote_student_receipts r WHERE r.user_id=u.id)`).all();
  // Prévisions indicatives : mensualités égales, sans modifier les prélèvements existants.
  // Une date non renseignée ou un prix soldé ne génère aucune échéance.
  const today=new Date().toISOString().slice(0,10);

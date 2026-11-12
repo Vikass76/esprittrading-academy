@@ -3679,18 +3679,18 @@ function renderOteStudentDashboard() {
     const paid = Number(o?.paid_cents || 0);
     const remaining = Math.max(0, price - paid);
     const percent = price > 0 ? Math.min(100,Math.max(0,Math.round(paid / price * 100))) : 0;
-    const status = !o ? 'À renseigner' : price > 0 && remaining === 0 ? 'Soldé' : Number(o.late_count || 0) > 0 ? 'En retard' : 'En cours';
+    const status = !o || !price ? 'À renseigner' : price > 0 && remaining === 0 ? 'Soldé' : Number(o.late_count || 0) > 0 ? 'En retard' : 'En cours';
     const tone = status === 'Soldé' ? 'paid' : status === 'En retard' ? 'late' : status === 'En cours' ? 'current' : 'empty';
-    const progress = o ? `<div class="ote-sd-progress ${percent === 100 ? "is-complete" : ""}"><span style="width:${percent}%"></span></div><small>${percent} % · ${oteMoney(paid)} payés</small>` : '—';
+    const progress = o && price ? `<div class="ote-sd-progress ${percent === 100 ? "is-complete" : ""}"><span style="width:${percent}%"></span></div><small>${percent} % · ${oteMoney(paid)} payés</small>` : '—';
     return `<tr class="ote-sd-open-profile" data-student-id="${Number(u.id)}" tabindex="0" role="button" aria-label="Ouvrir la fiche élève">
       <td class="ote-sd-name"><strong>${oteSdEscape([u.firstname,u.lastname].filter(Boolean).join(' ') || u.username)}</strong><small>Inscrit le ${oteSdDate(u.created_at)}</small></td>
       <td>${oteSdEscape(u.email || '—')}</td>
       <td>${oteSdEscape(o?.offer_name || (u.role==='student'?'OTE 705':'—'))}</td>
-      <td>${o ? oteMoney(price) : '—'}</td>
-      <td>${o?.installments ? o.installments+'x' : '—'}</td>
+      <td>${price ? oteMoney(price) : '—'}</td>
+      <td>${price && o?.installments ? o.installments+'x' : '—'}</td>
       <td>${o?.first_due ? oteSdDate(o.first_due) : '—'}</td>
       <td>${o?.next_due ? oteSdDate(o.next_due) : '—'}</td>
-      <td>${o ? oteMoney(remaining) : '—'}</td>
+      <td>${price ? oteMoney(remaining) : '—'}</td>
       <td class="ote-sd-payment">${progress}</td>
       <td>${o ? `<span class="ote-sd-pill is-${tone}">${status}</span>` : "—"}</td>
     </tr>`;
@@ -3908,11 +3908,36 @@ document.getElementById('ote-sd-role')?.addEventListener('change', renderOteStud
 /* OTE705_FINANCE_V1 — fiche administrative, saisie manuelle, sans débit Stripe */
 let oteFinanceOffers = {};
 const oteMoney = cents => (Number(cents||0)/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'});
+// OTE705_SYNC_UI_V1
+function oteInstallStripeSyncButton(){
+ const heading=document.getElementById('ote-sd-count');
+ const section=document.getElementById('ote-sd-body');
+ if(!section||document.getElementById('ote-sync-stripe'))return;
+ const table=section.closest('table');
+ if(!table)return;
+ const wrap=table.parentElement;
+ const bar=document.createElement('div');
+ bar.style.cssText='display:flex;align-items:center;gap:12px;justify-content:flex-end;margin:10px 0;flex-wrap:wrap';
+ bar.innerHTML='<span id="ote-sync-status" style="color:#aaa;font-size:12px"></span><button type="button" id="ote-sync-stripe" class="btn btn-secondary">Synchroniser Stripe</button>';
+ wrap.parentElement.insertBefore(bar,wrap);
+ bar.querySelector('button').addEventListener('click',async()=>{
+  if(!confirm('Importer les paiements OTE 705 identifiables depuis Stripe ? Aucun prélèvement ne sera effectué.'))return;
+  const btn=bar.querySelector('button'),status=bar.querySelector('#ote-sync-status');
+  btn.disabled=true;status.textContent='Synchronisation en cours…';
+  try{
+   const r=await api('POST','/admin/student-finances/sync-stripe',{});
+   await oteLoadFinanceOverview();
+   status.textContent=`${r.imported} paiements importés · ${r.offersCreated} offres créées · ${r.unmatched} non attribués${r.limitReached?' · historique partiel':''}`;
+  }catch(e){status.textContent='Erreur : '+e.message;}
+  finally{btn.disabled=false;}
+ });
+}
 async function oteLoadFinanceOverview(){
  try {
   const d=await api('GET','/admin/student-finances');
   oteFinanceOffers=Object.fromEntries((d.offers||[]).map(o=>[o.user_id,o]));
   renderOteStudentDashboard();
+  oteInstallStripeSyncButton();
   const offers=Object.values(oteFinanceOffers);
   const remaining=offers.reduce((s,o)=>s+Math.max(0,Number(o.agreed_cents||0)-Number(o.paid_cents||0)),0);
   const upcomingCount=offers.reduce((s,o)=>s+Number(o.upcoming_count||0),0);
