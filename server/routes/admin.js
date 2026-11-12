@@ -399,6 +399,51 @@ router.get('/student-finances', requireAdmin, (req,res) => {
  COALESCE((SELECT SUM(r.amount_cents) FROM ote_student_receipts r WHERE r.user_id=u.id),0) AS paid_cents
  FROM users u LEFT JOIN ote_student_offers o ON o.user_id=u.id
  WHERE o.user_id IS NOT NULL OR EXISTS(SELECT 1 FROM ote_student_receipts r WHERE r.user_id=u.id)`).all();
+
+ // OTE705_REAL_SCHEDULE_V1
+ // Lecture seule : reconstitue les contrats ayant une unique échéance
+ // restante connue, sans toucher au prélèvement automatique.
+ const actualPayments = db.prepare(`
+  SELECT u.id AS user_id, p.amount_due, p.due_date, p.status
+  FROM users u
+  JOIN payments p ON LOWER(TRIM(p.email)) = LOWER(TRIM(u.email))
+  WHERE u.role = 'student'
+  ORDER BY p.due_date
+ `).all();
+
+ const paymentsByUser = new Map();
+ for (const payment of actualPayments) {
+  if (!paymentsByUser.has(payment.user_id))
+   paymentsByUser.set(payment.user_id, []);
+  paymentsByUser.get(payment.user_id).push(payment);
+ }
+
+ for (const offer of offers) {
+  const rows = paymentsByUser.get(offer.user_id) || [];
+  const pending = rows.filter(p => p.status !== 'paid');
+  const paid = Number(offer.paid_cents || 0);
+
+  // Uniquement si une seule échéance est enregistrée et non payée.
+  // Les contrats déjà renseignés correctement sont conservés.
+  if (
+   rows.length === 1 &&
+   pending.length === 1 &&
+   paid > 0 &&
+   (!offer.agreed_cents || offer.finance_needs_review)
+  ) {
+   const remaining = Math.round(Number(pending[0].amount_due));
+   if (remaining <= 0) continue;
+
+   offer.agreed_cents = paid + remaining;
+   offer.installments = 2;
+   offer.first_due = offer.first_payment_on;
+   offer.payment_source = 'stripe_standard';
+   offer.finance_needs_review = false;
+   offer.actual_next_due = new Date(Number(pending[0].due_date)).toISOString().slice(0,10);
+   offer.actual_next_due_cents = remaining;
+  }
+ }
+
  // Prévisions indicatives : mensualités égales, sans modifier les prélèvements existants.
  // Une date non renseignée ou un prix soldé ne génère aucune échéance.
  const today=new Date().toISOString().slice(0,10);
@@ -446,6 +491,23 @@ router.get('/student-finances', requireAdmin, (req,res) => {
    }
    if(status==='late'){o.late_count++;o.late_cents+=outstanding;}
    if(status==='upcoming'){o.upcoming_count++;o.upcoming_cents+=outstanding;}
+  }
+  if (o.actual_next_due) {
+   o.next_due = o.actual_next_due;
+   o.next_due_cents = o.actual_next_due_cents;
+   o.due_status = o.next_due < today ? 'late' :
+     o.next_due <= limitISO ? 'upcoming' : 'later';
+   o.schedule = [{
+    number: 2,
+    due: o.next_due,
+    amount_cents: o.actual_next_due_cents,
+    remaining_cents: o.actual_next_due_cents,
+    status: o.due_status
+   }];
+   o.late_count = o.due_status === 'late' ? 1 : 0;
+   o.late_cents = o.due_status === 'late' ? o.actual_next_due_cents : 0;
+   o.upcoming_count = o.due_status === 'upcoming' ? 1 : 0;
+   o.upcoming_cents = o.due_status === 'upcoming' ? o.actual_next_due_cents : 0;
   }
  }
 
