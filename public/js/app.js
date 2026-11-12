@@ -188,9 +188,46 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => btn.addEventList
   if (t==='eco-cal') loadEcoCalendar();
 }));
 
+/* OTE705_ADMIN_SEPARATION — affichage séparé, sans changement des fonctions métier */
+(function setupSeparateStudentAdmin() {
+  const admin = document.getElementById('tab-admin');
+  const nav = document.getElementById('admin-suivi-eleves-nav');
+  const modules = document.getElementById('atab-modules');
+  const studentNav = document.getElementById('atab-suivi');
+  if (!admin || !nav || !modules || !studentNav) return;
+  const section = document.createElement('section');
+  section.id = 'tab-suivi-eleves';
+  section.className = 'tab-section hidden admin-only';
+  section.innerHTML = '<div class="ph"><div><h2>Suivi des élèves</h2><p>Élèves, inscriptions et accès à la formation OTE 705.</p></div></div>';
+  admin.insertAdjacentElement('afterend', section);
+  ['atab-suivi', 'atab-users', 'atab-inscrits', 'atab-access'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) section.appendChild(el);
+  });
+  const topTabs = admin.querySelector('.atabs');
+  if (topTabs) topTabs.style.display = 'none';
+  modules.classList.remove('hidden');
+  nav.addEventListener('click', () => {
+    if (role !== 'admin') return;
+    switchTab('suivi-eleves');
+    nav.classList.add('active');
+    const usersTab = section.querySelector('.es-suivi-tab[data-atab="users"]');
+    if (usersTab) usersTab.click();
+    loadOteStudentDashboard();
+    closeSb();
+  });
+  document.querySelectorAll('.nav-item[data-tab="admin"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      modules.classList.remove('hidden');
+      section.classList.add('hidden');
+    });
+  });
+})();
+
 function switchTab(t) {
   document.querySelectorAll('.tab-section').forEach(s => s.classList.add('hidden'));
   document.querySelectorAll('.nav-item[data-tab]').forEach(b => b.classList.remove('active'));
+  document.getElementById('admin-suivi-eleves-nav')?.classList.remove('active');
   $(`tab-${t}`)?.classList.remove('hidden');
   document.querySelectorAll(`.nav-item[data-tab="${t}"]`).forEach(b => b.classList.add('active'));
 
@@ -2487,11 +2524,24 @@ document.getElementById('access-search-btn')?.addEventListener('click', async ()
   }
 });
 document.querySelectorAll('.atab').forEach(btn=>btn.addEventListener('click',()=>{
+  const tab = btn.dataset.atab;
+  const studentTab = ['users','inscrits','access'].includes(tab);
   document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));
-  document.querySelectorAll('#atab-modules,#atab-users,#atab-inscrits,#atab-access').forEach(s=>s.classList.add('hidden'));
-  btn.classList.add('on'); $(`atab-${btn.dataset.atab}`).classList.remove('hidden');
-  if(btn.dataset.atab==='users') loadAdminUsers();
-  if(btn.dataset.atab==='inscrits') loadInscrits();
+  document.querySelectorAll('#atab-modules,#atab-suivi,#atab-users,#atab-inscrits,#atab-access').forEach(s=>s.classList.add('hidden'));
+  if(tab === 'suivi') {
+    document.querySelector('[data-atab="suivi"]').classList.add('on');
+    $('atab-suivi').classList.remove('hidden');
+    document.querySelector('.es-suivi-tab[data-atab="users"]').click();
+    return;
+  }
+  if(studentTab) {
+    document.querySelector('[data-atab="suivi"]').classList.add('on');
+    $('atab-suivi').classList.remove('hidden');
+  }
+  btn.classList.add('on');
+  $(`atab-${tab}`).classList.remove('hidden');
+  if(tab==='users') loadAdminUsers();
+  if(tab==='inscrits') loadInscrits();
 }));
 async function loadAdmin(){await loadAdminMods();}
 
@@ -3601,4 +3651,329 @@ function openNathanVideo(url) {
   container.append(close, frame);
   modal.appendChild(container);
   document.body.appendChild(modal);
+}
+
+
+/* OTE705_SUIVI_DASH_V1 — lecture seule ; aucune écriture financière */
+let oteDashboardUsers = [];
+function oteSdEscape(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function oteSdDate(value) {
+  if (!value) return '—';
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? '—' : d.toLocaleDateString('fr-FR');
+}
+function renderOteStudentDashboard() {
+  const body = document.getElementById('ote-sd-body');
+  if (!body) return;
+  const q = (document.getElementById('ote-sd-search')?.value || '').toLocaleLowerCase('fr');
+  const roleFilter = document.getElementById('ote-sd-role')?.value || 'student';
+  const students = oteDashboardUsers.filter(u => (roleFilter === 'all' || u.role === roleFilter) &&
+    [u.username,u.email,u.firstname,u.lastname].some(v => String(v||'').toLocaleLowerCase('fr').includes(q)));
+  const count = document.getElementById('ote-sd-count');
+  if (count) count.textContent = oteDashboardUsers.filter(u => u.role === 'student').length;
+  body.innerHTML = students.length ? students.map(u => {
+    const o = oteFinanceOffers[u.id];
+    const price = Number(o?.agreed_cents || 0);
+    const paid = Number(o?.paid_cents || 0);
+    const remaining = Math.max(0, price - paid);
+    const percent = price > 0 ? Math.min(100,Math.max(0,Math.round(paid / price * 100))) : 0;
+    const status = !o ? 'À renseigner' : price > 0 && remaining === 0 ? 'Soldé' : Number(o.late_count || 0) > 0 ? 'En retard' : 'En cours';
+    const tone = status === 'Soldé' ? 'paid' : status === 'En retard' ? 'late' : status === 'En cours' ? 'current' : 'empty';
+    const progress = o ? `<div class="ote-sd-progress ${percent === 100 ? "is-complete" : ""}"><span style="width:${percent}%"></span></div><small>${percent} % · ${oteMoney(paid)} payés</small>` : '—';
+    return `<tr class="ote-sd-open-profile" data-student-id="${Number(u.id)}" tabindex="0" role="button" aria-label="Ouvrir la fiche élève">
+      <td class="ote-sd-name"><strong>${oteSdEscape([u.firstname,u.lastname].filter(Boolean).join(' ') || u.username)}</strong><small>Inscrit le ${oteSdDate(u.created_at)}</small></td>
+      <td>${oteSdEscape(u.email || '—')}</td>
+      <td>${oteSdEscape(o?.offer_name || (u.role==='student'?'OTE 705':'—'))}</td>
+      <td>${o ? oteMoney(price) : '—'}</td>
+      <td>${o?.installments ? o.installments+'x' : '—'}</td>
+      <td>${o?.first_due ? oteSdDate(o.first_due) : '—'}</td>
+      <td>${o?.next_due ? oteSdDate(o.next_due) : '—'}</td>
+      <td>${o ? oteMoney(remaining) : '—'}</td>
+      <td class="ote-sd-payment">${progress}</td>
+      <td>${o ? `<span class="ote-sd-pill is-${tone}">${status}</span>` : "—"}</td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="10">Aucun élève trouvé.</td></tr>';
+}
+async function loadOteStudentDashboard() {
+  const body = document.getElementById('ote-sd-body');
+  if (!body) return;
+  try {
+    const response = await api('GET','/admin/inscrits');
+    oteDashboardUsers = Array.isArray(response.users) ? response.users : [];
+    renderOteStudentDashboard();
+    await oteLoadFinanceOverview();
+  } catch(err) {
+    body.innerHTML = '<tr><td colspan="10">Impossible de charger les élèves.</td></tr>';
+    console.error('Suivi élèves :', err);
+  }
+}
+document.getElementById('ote-sd-search')?.addEventListener('input', renderOteStudentDashboard);
+document.getElementById('ote-sd-role')?.addEventListener('change', renderOteStudentDashboard);
+
+
+/* OTE705_FICHE_V1 — lecture seule, actions d'accès existantes */
+(function(){
+  const panel = document.getElementById('ote-sd-profile');
+  const content = document.getElementById('ote-sd-profile-content');
+  const manage = document.getElementById('ote-sd-manage');
+  const legacy = document.getElementById('ote-sd-legacy');
+  if (!panel || !content || !manage || !legacy) return;
+  function setLegacy(open) {
+    legacy.classList.toggle('hidden', !open);
+    manage.setAttribute('aria-expanded', String(open));
+    manage.textContent = open ? 'Masquer la gestion des inscriptions et des accès' : 'Gérer les inscriptions et les accès';
+    ['atab-users','atab-inscrits','atab-access'].forEach(id => {
+      if (!open) document.getElementById(id)?.classList.add('hidden');
+    });
+    if (open) document.querySelector('.es-suivi-tab[data-atab="users"]')?.click();
+  }
+  setLegacy(false);
+  manage.addEventListener('click', () => setLegacy(legacy.classList.contains('hidden')));
+  function close() { panel.classList.add('hidden'); }
+  document.getElementById('ote-sd-profile-close').addEventListener('click',close);
+  document.getElementById('ote-sd-profile-done').addEventListener('click',close);
+  panel.addEventListener('click',e=>{if(e.target===panel)close();});
+  function openProfile(id) {
+    const u = oteDashboardUsers.find(x=>String(x.id)===String(id));
+    if (!u) return;
+    const fullName = [u.firstname,u.lastname].filter(Boolean).join(' ') || u.username;
+    window.oteSelectedStudentId = id;
+    document.getElementById('ote-sd-profile-title').textContent = fullName || 'Fiche élève';
+    const row = (label,value) => `<div class="ote-sd-profile-row"><span>${label}</span><strong>${oteSdEscape(value || '—')}</strong></div>`;
+    content.innerHTML = row('Identifiant',u.username)+row('E-mail',u.email)+row('Date d’inscription',oteSdDate(u.created_at))+row('Type d’accès',u.role==='student'?'Accompagnement':u.role==='community'?'Communauté':u.role);
+    panel.classList.remove('hidden');
+    const financeBox=document.createElement('div');content.appendChild(financeBox);
+    oteRenderFinanceProfile(id,financeBox).catch(e=>{financeBox.textContent='Erreur de chargement financier : '+e.message;});
+  }
+  document.getElementById('ote-sd-body').addEventListener('click',e=>{
+    const row=e.target.closest('[data-student-id]'); if(row)openProfile(row.dataset.studentId);
+  });
+  document.getElementById('ote-sd-body').addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){const row=e.target.closest('[data-student-id]');if(row){e.preventDefault();openProfile(row.dataset.studentId);}}
+  });
+  document.getElementById('ote-sd-profile-access').addEventListener('click',()=>{
+    close();window.oteOpenSimpleAccess(window.oteSelectedStudentId);
+  });
+  document.getElementById('ote-sd-add')?.addEventListener('click',()=>window.oteOpenSimpleAccess());
+  document.getElementById('admin-suivi-eleves-nav')?.addEventListener('click',()=>setLegacy(false));
+})();
+
+
+
+/* OTE705_ACCESS_MODAL_V1 */
+(function(){
+  const modal = document.getElementById('ote-sd-access-modal');
+  const slot = document.getElementById('ote-sd-access-slot');
+  const closeBtn = document.getElementById('ote-sd-access-close');
+  const legacy = document.getElementById('ote-sd-legacy');
+  if (!modal || !slot || !closeBtn || !legacy) return;
+
+  let activeTab = 'inscrits';
+
+  function closeModal(){
+    modal.classList.add('hidden');
+    ['atab-users','atab-inscrits','atab-access'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) {
+        el.classList.add('hidden');
+        legacy.after(el);
+      }
+    });
+  }
+
+  window.oteOpenAccessModal = function(tab){
+    activeTab = tab === 'access' ? 'access' : 'inscrits';
+    modal.classList.remove('hidden');
+    document.querySelector('.es-suivi-tab[data-atab="'+activeTab+'"]')?.click();
+    const section = document.getElementById('atab-'+activeTab);
+    if(section) {
+      slot.appendChild(section);
+      section.classList.remove('hidden');
+    }
+    document.getElementById('ote-sd-access-title').textContent =
+      activeTab === 'access' ? 'Gérer les accès' : 'Ajouter un élève';
+  };
+
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', e => {
+    if(e.target === modal) closeModal();
+  });
+})();
+
+
+/* OTE705_ACCESS_SIMPLE_V1 */
+(function(){
+  const modal = document.getElementById('ote-simple-access');
+  const emailInput = document.getElementById('ote-simple-email');
+  const result = document.getElementById('ote-simple-result');
+  const title = document.getElementById('ote-simple-title');
+  if (!modal || !emailInput || !result || !title) return;
+
+  const close = () => modal.classList.add('hidden');
+
+  document.getElementById('ote-simple-close').addEventListener('click', close);
+  modal.addEventListener('click', e => { if(e.target === modal) close(); });
+
+  async function showUser(u) {
+    result.replaceChildren();
+
+    const card = document.createElement('div');
+    card.className = 'ote-simple-user';
+
+    const name = document.createElement('strong');
+    name.textContent = [u.firstname,u.lastname].filter(Boolean).join(' ') || u.username || 'Utilisateur';
+
+    const details = document.createElement('p');
+    details.textContent = (u.email || '—') + ' · ' +
+      (u.role === 'student' ? 'Accès actif' : u.role === 'admin' ? 'Administrateur' : 'Accès non actif');
+
+    card.append(name, details);
+
+    if (u.role !== 'admin') {
+      const btn = document.createElement('button');
+      btn.className = 'btn ' + (u.role === 'student' ? 'btn-secondary' : 'btn-primary');
+      btn.textContent = u.role === 'student'
+        ? "Retirer l'accès à l'accompagnement"
+        : "Donner accès à l'accompagnement";
+
+      btn.addEventListener('click', async () => {
+        const removing = u.role === 'student';
+        if (!await confirmAction(
+          (removing ? "Retirer l'accès de " : "Donner accès à ") + (u.email || u.username) + ' ?',
+          '',
+          'Confirmer'
+        )) return;
+
+        btn.disabled = true;
+        try {
+          await api('PATCH', '/admin/users/' + u.id + '/' + (removing ? 'demote' : 'promote'), {});
+          toast(removing ? 'Accès retiré' : 'Accès accordé', 'success');
+          close();
+          await loadOteStudentDashboard();
+        } catch(e) {
+          toast(e.message || 'Erreur de modification', 'error');
+          btn.disabled = false;
+        }
+      });
+      card.appendChild(btn);
+    }
+
+    result.appendChild(card);
+  }
+
+  window.oteOpenSimpleAccess = function(studentId) {
+    modal.classList.remove('hidden');
+    result.replaceChildren();
+    emailInput.value = '';
+
+    const u = studentId
+      ? oteDashboardUsers.find(x => String(x.id) === String(studentId))
+      : null;
+
+    title.textContent = u ? 'Gérer les accès' : 'Ajouter un élève';
+
+    const searchArea = document.getElementById('ote-simple-search-area');
+    searchArea.classList.toggle('hidden', !!u);
+
+    if (u) {
+      showUser(u);
+    } else {
+      emailInput.focus();
+    }
+  };
+
+  async function search() {
+    const email = emailInput.value.trim();
+    if (!email) {
+      toast('Saisis une adresse e-mail', 'error');
+      return;
+    }
+    result.textContent = 'Recherche…';
+    try {
+      const u = await api('GET', '/admin/users/search?email=' + encodeURIComponent(email));
+      showUser(u);
+    } catch(e) {
+      result.textContent = e.message || 'Compte introuvable';
+    }
+  }
+
+  document.getElementById('ote-simple-search').addEventListener('click', search);
+  emailInput.addEventListener('keydown', e => {
+    if(e.key === 'Enter') search();
+  });
+})();
+
+/* OTE705_FINANCE_V1 — fiche administrative, saisie manuelle, sans débit Stripe */
+let oteFinanceOffers = {};
+const oteMoney = cents => (Number(cents||0)/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'});
+async function oteLoadFinanceOverview(){
+ try {
+  const d=await api('GET','/admin/student-finances');
+  oteFinanceOffers=Object.fromEntries((d.offers||[]).map(o=>[o.user_id,o]));
+  renderOteStudentDashboard();
+  const offers=Object.values(oteFinanceOffers);
+  const remaining=offers.reduce((s,o)=>s+Math.max(0,Number(o.agreed_cents||0)-Number(o.paid_cents||0)),0);
+  const upcomingCount=offers.reduce((s,o)=>s+Number(o.upcoming_count||0),0);
+  const upcomingCents=offers.reduce((s,o)=>s+Number(o.upcoming_cents||0),0);
+  const lateCount=offers.reduce((s,o)=>s+Number(o.late_count||0),0);
+  const lateCents=offers.reduce((s,o)=>s+Number(o.late_cents||0),0);
+  const ids=['ote-sd-remaining','ote-sd-upcoming','ote-sd-late'];
+  const values=[oteMoney(remaining),upcomingCount+' ('+oteMoney(upcomingCents)+')',lateCount+' ('+oteMoney(lateCents)+')'];
+  ids.forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=values[i];});
+ }catch(e){console.error('Finances élèves :',e);}
+}
+async function oteRenderFinanceProfile(id, container){
+ const data=await api('GET','/admin/student-finances/'+id),o=data.offer||{},receipts=data.receipts||[];
+ const paid=receipts.reduce((s,r)=>s+r.amount_cents,0),price=o.agreed_cents;
+ const esc=oteSdEscape;
+ container.innerHTML=`<section style="margin-top:18px;border-top:1px solid #383842;padding-top:15px"><h3 style="margin-bottom:12px">Suivi financier</h3>
+ <form id="ote-finance-offer" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+ <label>Offre<input name="offer_name" value="${esc(o.offer_name||'OTE 705')}" required></label>
+ <label>Prix convenu (€)<input name="agreed_euros" type="number" min="0" step="0.01" value="${price==null?'':(price/100).toFixed(2)}" required></label>
+ <label>Nombre de versements<input name="installments" type="number" min="1" max="24" value="${o.installments||1}" required></label>
+ <label>Date du premier paiement prévu<input name="first_due" type="date" value="${esc(o.first_due||'')}"></label>
+ <label>Source<select name="payment_source">${[['stripe_standard','Stripe standard'],['stripe_personnalise','Stripe personnalisé'],['manuel','Manuel'],['autre','Autre']].map(([v,t])=>`<option value="${v}" ${o.payment_source===v?'selected':''}>${t}</option>`).join('')}</select></label>
+ <label>Lien Stripe personnalisé<input name="stripe_link" type="url" value="${esc(o.stripe_link||'')}"></label>
+ <label style="grid-column:1/-1">Notes<input name="notes" value="${esc(o.notes||'')}"></label>
+ <button class="btn btn-primary" type="submit" style="grid-column:1/-1">Enregistrer l'offre</button></form>
+ <p style="margin:14px 0">Payé (saisi) : <strong>${oteMoney(paid)}</strong> · Reste : <strong>${price==null?'—':oteMoney(Math.max(0,price-paid))}</strong></p>
+ <h4>Historique des paiements rattachés</h4>
+ <div style="max-height:130px;overflow:auto">${receipts.length?receipts.map(r=>`<div style="padding:7px 0;border-bottom:1px solid #333">${esc(r.paid_on)} — ${oteMoney(r.amount_cents)} — ${esc(r.source)} ${esc(r.stripe_payment_id||'')}</div>`).join(''):'Aucun paiement enregistré'}</div>
+ <form id="ote-finance-receipt" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+ <label>Montant reçu (€)<input name="amount_euros" type="number" min="0.01" step="0.01" required></label>
+ <label>Date du paiement<input name="paid_on" type="date" required></label>
+ <label>Source<select name="source"><option value="stripe_standard">Stripe standard</option><option value="stripe_personnalise">Stripe personnalisé</option><option value="manuel">Manuel</option><option value="autre">Autre</option></select></label>
+ <label>Référence Stripe (pi_ ou ch_)<input name="stripe_payment_id" placeholder="Facultatif si paiement manuel"></label>
+ <button class="btn btn-secondary" type="submit" style="grid-column:1/-1">Ajouter un paiement vérifié</button></form>
+ <div class="ote-stripe-recon"><h4>Transactions Stripe</h4><p>Consultez les paiements confirmés et rattachez uniquement ceux de cet élève.</p><button id="ote-stripe-load" class="btn btn-secondary" type="button">Rechercher dans Stripe</button><div id="ote-stripe-results"></div></div></section>`;
+ container.querySelector('#ote-stripe-load').addEventListener('click',async()=>{
+  const results=container.querySelector('#ote-stripe-results');results.textContent='Chargement des paiements confirmés…';
+  try{
+   const data=await api('GET','/admin/student-stripe-payments');
+   const rows=(data.payments||[]).filter(p=>!p.attached_user_id);
+   const currentUser=oteDashboardUsers.find(u=>String(u.id)===String(id));
+   const sameEmail=p=>p.email && currentUser?.email && p.email.trim().toLowerCase()===currentUser.email.trim().toLowerCase();
+   rows.sort((a,b)=>Number(!!sameEmail(b))-Number(!!sameEmail(a)));
+   results.innerHTML='<p class="ote-stripe-note">Correspondances par e-mail proposées en priorité. Vérifiez chaque transaction avant de la rattacher. Aucun rapprochement automatique n’est effectué en local.</p>'+(rows.length?rows.map(p=>`<div class="ote-stripe-item"><div><strong>${oteMoney(p.amount_cents)}</strong> · ${oteSdDate(new Date(p.created*1000).toISOString())}${sameEmail(p)?' · <span style="color:#f4c70f">E-mail correspondant</span>':''}<small>${oteSdEscape(p.email||'E-mail non fourni')} · ${oteSdEscape(p.id)}</small></div><button type="button" class="btn btn-secondary btn-sm" data-attach="${oteSdEscape(p.id)}">Rattacher</button></div>`).join(''):'Aucune transaction non rattachée dans les 100 dernières transactions Stripe.');
+   if(data.has_more)results.insertAdjacentHTML('beforeend','<p class="ote-stripe-note">Seules les 100 dernières transactions sont affichées. Les transactions plus anciennes restent accessibles dans Stripe.</p>');
+  }catch(e){results.textContent=e.message;}
+ });
+ container.querySelector('#ote-stripe-results').addEventListener('click',async e=>{
+  const button=e.target.closest('[data-attach]');if(!button)return;
+  const ref=button.dataset.attach;
+  if(!confirm('Confirmer que la transaction '+ref+' appartient à cet élève ?'))return;
+  button.disabled=true;
+  try{await api('POST','/admin/student-finances/'+id+'/stripe-attach',{payment_intent_id:ref});await oteRenderFinanceProfile(id,container);await oteLoadFinanceOverview();}
+  catch(err){alert(err.message);button.disabled=false;}
+ });
+ for(const [selector,url,method] of [['#ote-finance-offer','/admin/student-finances/'+id,'PUT'],['#ote-finance-receipt','/admin/student-finances/'+id+'/receipts','POST']]){
+  container.querySelector(selector).addEventListener('submit',async e=>{
+   e.preventDefault();const form=e.currentTarget;const b=Object.fromEntries(new FormData(form));
+   const button=form.querySelector('button');button.disabled=true;
+   try{await api(method,url,b);await oteRenderFinanceProfile(id,container);await oteLoadFinanceOverview();}
+   catch(err){alert(err.message);button.disabled=false;}
+  });
+ }
 }

@@ -235,3 +235,113 @@ router.patch('/payments/:email/paid', requireAdmin, (req, res) => {
   db.prepare("UPDATE payments SET status = 'paid', retry_count = 99 WHERE LOWER(email) = ?").run(email);
   res.json({ success: true, message: `Paiement de ${email} marqué comme payé` });
 });
+
+
+
+// OTE705_STRIPE_RECON_V2 — lecture Stripe + rattachement vérifié, sans débit
+const oteStripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+router.get('/student-stripe-payments', requireAdmin, async (req,res) => {
+ try {
+  const page = await oteStripe.paymentIntents.list({limit:100, ...(req.query.before ? {starting_after:String(req.query.before)} : {})});
+  const ids = page.data.map(p=>p.id);
+  const attached = ids.length ? db.prepare(`SELECT stripe_payment_id,user_id FROM ote_student_receipts WHERE stripe_payment_id IN (${ids.map(()=>'?').join(',')})`).all(...ids) : [];
+  const attachedMap = new Map(attached.map(x=>[x.stripe_payment_id,x.user_id]));
+  res.json({payments:page.data.filter(p=>p.status==='succeeded' && p.currency==='eur').map(p=>({
+   id:p.id,amount_cents:p.amount_received||p.amount,created:p.created,
+   email:p.receipt_email||p.metadata?.email||null,customer:p.customer||null,
+   description:p.description||'',attached_user_id:attachedMap.get(p.id)||null
+  })),has_more:page.has_more,next_cursor:page.data.at(-1)?.id||null});
+ }catch(e){console.error('Stripe reconciliation:',e.message);res.status(502).json({error:'Impossible de consulter Stripe. Vérifiez la clé et le mode Stripe du serveur.'});}
+});
+router.post('/student-finances/:id/stripe-attach', requireAdmin, async (req,res) => {
+ const id=Number(req.params.id), ref=String(req.body?.payment_intent_id||'');
+ if(!Number.isSafeInteger(id)||!db.prepare('SELECT id FROM users WHERE id=?').get(id))return res.status(404).json({error:'Élève introuvable'});
+ if(!/^pi_[a-zA-Z0-9_]+$/.test(ref))return res.status(400).json({error:'Référence Stripe invalide'});
+ try {
+  const pi=await oteStripe.paymentIntents.retrieve(ref);
+  if(pi.status!=='succeeded'||pi.currency!=='eur'||!(pi.amount_received>0))return res.status(400).json({error:'Paiement non confirmé en EUR'});
+  const existing=db.prepare('SELECT user_id FROM ote_student_receipts WHERE stripe_payment_id=?').get(ref);
+  if(existing)return res.status(409).json({error:'Paiement déjà rattaché à un élève'});
+  // Les anciennes saisies avec un identifiant ch_ peuvent représenter le même paiement.
+  const chargeId=typeof pi.latest_charge==='string'?pi.latest_charge:null;
+  if(chargeId && db.prepare('SELECT id FROM ote_student_receipts WHERE stripe_payment_id=?').get(chargeId))return res.status(409).json({error:'Paiement déjà saisi avec sa référence ch_'});
+  db.prepare('INSERT INTO ote_student_receipts(user_id,amount_cents,paid_on,stripe_payment_id,source,note) VALUES(?,?,?,?,?,?)')
+   .run(id,pi.amount_received,new Date(pi.created*1000).toISOString().slice(0,10),ref,'stripe_personnalise','Import vérifié depuis Stripe');
+  res.json({ok:true});
+ }catch(e){if(e.code==='SQLITE_CONSTRAINT_UNIQUE')return res.status(409).json({error:'Paiement déjà enregistré'});if(e.type?.startsWith('Stripe'))return res.status(400).json({error:'Transaction introuvable dans le compte Stripe configuré'});console.error('Stripe attach:',e);res.status(500).json({error:'Échec du rattachement'});}
+});
+
+// OTE705_FINANCE_V1 — suivi administratif ; ne modifie pas les prélèvements existants
+router.get('/student-finances', requireAdmin, (req,res) => {
+ const offers=db.prepare(`SELECT o.*, COALESCE((SELECT SUM(r.amount_cents) FROM ote_student_receipts r WHERE r.user_id=o.user_id),0) AS paid_cents FROM ote_student_offers o`).all();
+ // Prévisions indicatives : mensualités égales, sans modifier les prélèvements existants.
+ // Une date non renseignée ou un prix soldé ne génère aucune échéance.
+ const today=new Date().toISOString().slice(0,10);
+ const limit=new Date();limit.setUTCDate(limit.getUTCDate()+30);
+ const limitISO=limit.toISOString().slice(0,10);
+ const addMonths=(iso,n)=>{const [y,m,d]=iso.split('-').map(Number);const first=new Date(Date.UTC(y,m-1+n,1));const last=new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth()+1,0)).getUTCDate();return new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth(),Math.min(d,last))).toISOString().slice(0,10);};
+
+ for(const o of offers){
+  o.next_due=null;o.next_due_cents=0;o.due_status=null;
+  o.schedule=[];o.late_count=0;o.late_cents=0;
+  o.upcoming_count=0;o.upcoming_cents=0;
+  const price=Number(o.agreed_cents||0);
+  const paid=Number(o.paid_cents||0);
+  const count=Number(o.installments||0);
+  if(!o.first_due||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(o.first_due)||!price||count<1)continue;
+  const base=Math.floor(price/count),remainder=price-base*count;
+  let covered=Math.max(0,paid);
+  for(let i=0;i<count;i++){
+   const amount=base+(i===count-1?remainder:0);
+   const applied=Math.min(covered,amount);
+   covered-=applied;
+   const outstanding=amount-applied;
+   const due=addMonths(o.first_due,i);
+   const status=outstanding===0?'paid':due<today?'late':due<=limitISO?'upcoming':'later';
+   o.schedule.push({number:i+1,due,amount_cents:amount,remaining_cents:outstanding,status});
+   if(!outstanding)continue;
+   if(!o.next_due){
+    o.next_due=due;o.next_due_cents=outstanding;o.due_status=status;
+   }
+   if(status==='late'){o.late_count++;o.late_cents+=outstanding;}
+   if(status==='upcoming'){o.upcoming_count++;o.upcoming_cents+=outstanding;}
+  }
+ }
+
+ res.json({offers});
+});
+router.get('/student-finances/:id', requireAdmin, (req,res) => {
+ const user=db.prepare('SELECT id FROM users WHERE id=?').get(req.params.id);
+ if(!user) return res.status(404).json({error:'Élève introuvable'});
+ const offer=db.prepare('SELECT * FROM ote_student_offers WHERE user_id=?').get(user.id)||null;
+ const receipts=db.prepare('SELECT * FROM ote_student_receipts WHERE user_id=? ORDER BY paid_on DESC,id DESC').all(user.id);
+ res.json({offer,receipts});
+});
+router.put('/student-finances/:id', requireAdmin, (req,res) => {
+ const id=Number(req.params.id), b=req.body||{};
+ if(!Number.isSafeInteger(id)||!db.prepare('SELECT id FROM users WHERE id=?').get(id))return res.status(404).json({error:'Élève introuvable'});
+ const euros=Number(b.agreed_euros), n=Number(b.installments);
+ if(!Number.isFinite(euros)||euros<0||euros>1000000||!Number.isInteger(n)||n<1||n>24)return res.status(400).json({error:'Prix ou échéancier invalide'});
+ const cents=Math.round(euros*100);
+ const due=String(b.first_due||'');
+ if(due&&!/^\d{4}-\d{2}-\d{2}$/.test(due))return res.status(400).json({error:'Date invalide'});
+ const source=String(b.payment_source||'stripe_standard');
+ if(!['stripe_standard','stripe_personnalise','manuel','autre'].includes(source))return res.status(400).json({error:'Source invalide'});
+ const name=String(b.offer_name||'OTE 705').slice(0,120), link=String(b.stripe_link||'').slice(0,1000), notes=String(b.notes||'').slice(0,2000);
+ if(link && !/^https:\/\//i.test(link))return res.status(400).json({error:'Lien HTTPS requis'});
+ db.prepare(`INSERT INTO ote_student_offers(user_id,offer_name,agreed_cents,installments,first_due,payment_source,stripe_link,notes) VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(user_id) DO UPDATE SET offer_name=excluded.offer_name,agreed_cents=excluded.agreed_cents,installments=excluded.installments,first_due=excluded.first_due,payment_source=excluded.payment_source,stripe_link=excluded.stripe_link,notes=excluded.notes,updated_at=CURRENT_TIMESTAMP`).run(id,name,cents,n,due||null,source,link||null,notes);
+ res.json({ok:true});
+});
+router.post('/student-finances/:id/receipts', requireAdmin, (req,res) => {
+ const id=Number(req.params.id),b=req.body||{};
+ if(!db.prepare('SELECT id FROM users WHERE id=?').get(id))return res.status(404).json({error:'Élève introuvable'});
+ const amount=Number(b.amount_euros),paidOn=String(b.paid_on||''),ref=String(b.stripe_payment_id||'').trim();
+ if(!Number.isFinite(amount)||amount<=0||amount>1000000||!/^\d{4}-\d{2}-\d{2}$/.test(paidOn))return res.status(400).json({error:'Montant ou date invalide'});
+ if(ref&&!/^(pi_|ch_)[A-Za-z0-9_]+$/.test(ref))return res.status(400).json({error:'Référence Stripe invalide (pi_ ou ch_)'});
+ const source=String(b.source||'manuel');
+ if(!['stripe_standard','stripe_personnalise','manuel','autre'].includes(source))return res.status(400).json({error:'Source invalide'});
+ try {
+  db.prepare('INSERT INTO ote_student_receipts(user_id,amount_cents,paid_on,stripe_payment_id,source,note) VALUES(?,?,?,?,?,?)').run(id,Math.round(amount*100),paidOn,ref||null,source,String(b.note||'').slice(0,1000));
+  res.json({ok:true});
+ } catch(e) { if(e.code==='SQLITE_CONSTRAINT_UNIQUE')return res.status(409).json({error:'Cette référence Stripe est déjà enregistrée'});throw e; }
+});

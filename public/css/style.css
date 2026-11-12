@@ -10194,3 +10194,163 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
 #ftab-parcours .ote-path-step.is-locked .ote-call-card div[style*="line-height"] {
   color: #77787e !important;
 }
+
+/* Suivi des élèves : navigation uniquement, sans modifier les accès ni les paiements */
+.es-suivi-header{margin:6px 0 15px}
+.es-suivi-header h3{font-size:1.15rem;font-weight:700;color:var(--text)}
+.es-suivi-header p{font-size:.78rem;color:var(--text-muted);margin-top:4px}
+.es-suivi-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.es-suivi-tab{font-size:.78rem!important}
+
+/* OTE705_SUIVI_DASH_V1 */
+.ote-sd{margin:0 0 26px;max-width:100%}
+.ote-sd-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+.ote-sd-head h3{font-size:1.05rem;margin:0 0 3px}
+.ote-sd-head p,.ote-sd-note{color:var(--text-muted);font-size:.75rem}
+.ote-sd-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.ote-sd-kpi{padding:17px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;display:flex;flex-direction:column;gap:7px}
+.ote-sd-kpi span{font-size:.72rem;color:var(--text-muted)}
+.ote-sd-kpi strong{font-size:1.35rem;font-weight:700;color:var(--text)}
+.ote-sd-filters{display:flex;gap:10px;margin-bottom:14px}
+.ote-sd-filters input,.ote-sd-filters select{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:10px 12px;font:inherit;font-size:.8rem}
+.ote-sd-filters input{flex:1;min-width:150px}
+.ote-sd-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px;background:var(--bg-card)}
+.ote-sd-table{width:100%;border-collapse:collapse;min-width:930px;text-align:left}
+.ote-sd-table th{background:var(--bg-input);color:var(--text-muted);font-size:.69rem;font-weight:600;padding:12px;white-space:nowrap}
+.ote-sd-table td{padding:13px 12px;border-top:1px solid var(--border);font-size:.77rem;white-space:nowrap}
+.ote-sd-table td small{display:block;color:var(--text-muted);margin-top:3px}
+.ote-sd-status{border:1px solid var(--border);border-radius:20px;padding:4px 8px}
+.ote-sd-note{margin-top:10px}
+@media(max-width:950px){.ote-sd-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.ote-sd-kpis{grid-template-columns:1fr}.ote-sd-head{align-items:flex-start;flex-direction:column}.ote-sd-filters{flex-direction:column}}
+
+/* OTE705_FICHE_V1 */
+.ote-sd-legacy-controls{display:flex;justify-content:flex-end;margin:4px 0 16px}
+.ote-sd-legacy-controls .btn{font-size:.76rem}
+.ote-sd-open-profile{cursor:pointer}
+.ote-sd-open-profile:hover,.ote-sd-open-profile:focus{background:rgba(244,199,15,.055);outline:none}
+.ote-sd-open-profile:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.ote-sd-profile-modal{max-width:550px}
+.ote-sd-profile-row{display:flex;justify-content:space-between;gap:15px;padding:12px 0;border-bottom:1px solid var(--border);font-size:.82rem}
+.ote-sd-profile-row span{color:var(--text-muted)}
+.ote-sd-profile-row strong{text-align:right;overflow-wrap:anywhere;font-weight:600}
+.ote-sd-profile-info{margin-top:18px;color:var(--text-muted);font-size:.76rem;line-height:1.6}
+
+/* OTE705 — finition suivi financier */
+#ote-sd-profile-content #ote-finance-offer label,
+#ote-sd-profile-content #ote-finance-receipt label{display:flex;flex-direction:column;align-items:stretch;gap:7px;font-size:12px;color:#a6a6b2;min-width:0}
+#ote-sd-profile-content #ote-finance-offer input,
+#ote-sd-profile-content #ote-finance-offer select,
+#ote-sd-profile-content #ote-finance-receipt input,
+#ote-sd-profile-content #ote-finance-receipt select{width:100%;min-width:0;height:40px;border:1px solid #363642;border-radius:8px;padding:8px 11px;background:#20202a;color:#f4f4f6;font:inherit;font-size:13px}
+#ote-sd-profile-content #ote-finance-offer input:focus,
+#ote-sd-profile-content #ote-finance-receipt input:focus{outline:1px solid #f4c70f}
+.ote-stripe-recon{margin-top:20px;padding-top:16px;border-top:1px solid #383842}
+.ote-stripe-recon p,.ote-stripe-note{font-size:12px;color:#a6a6b2;margin:7px 0 12px}
+.ote-stripe-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #30303b;font-size:13px}
+.ote-stripe-item small{display:block;font-size:11px;color:#9999a8;overflow-wrap:anywhere}
+@media(max-width:620px){#ote-sd-profile-content #ote-finance-offer,#ote-sd-profile-content #ote-finance-receipt{grid-template-columns:1fr!important}}
+
+/* OTE 705 — tableau de suivi compact */
+#atab-suivi,#ote-students-dashboard {
+  min-width:0;max-width:100%;width:100%;box-sizing:border-box;
+}
+#ote-students-dashboard .ote-sd-table-wrap {
+  width:100%;max-width:100%;min-width:0;
+  overflow-x:auto;box-sizing:border-box;
+}
+#ote-students-dashboard .ote-sd-table {
+  width:100%;min-width:0;table-layout:fixed;border-collapse:collapse;
+}
+#ote-students-dashboard .ote-sd-table th {
+  padding:12px 8px;font-size:10px;white-space:normal;line-height:1.3;
+}
+#ote-students-dashboard .ote-sd-table td {
+  padding:13px 8px;font-size:11px;white-space:normal;
+  overflow-wrap:anywhere;line-height:1.4;vertical-align:middle;
+}
+#ote-students-dashboard .ote-sd-table td small {
+  font-size:10px;line-height:1.3;
+}
+#ote-students-dashboard .ote-sd-progress {
+  height:6px;border-radius:8px;background:#34343c;
+  overflow:hidden;margin-bottom:5px;
+}
+#ote-students-dashboard .ote-sd-progress span {
+  display:block;height:100%;border-radius:8px;background:#e9b937;
+}
+#ote-students-dashboard .ote-sd-pill {
+  display:inline-block;padding:4px 7px;border-radius:20px;
+  font-size:10px;font-weight:650;line-height:1.2;
+}
+#ote-students-dashboard .ote-sd-pill.is-current {
+  background:#e5bb4b;color:#201900;
+}
+#ote-students-dashboard .ote-sd-pill.is-paid {
+  background:#24683d;color:#e8f9ed;
+}
+#ote-students-dashboard .ote-sd-pill.is-late {
+  background:#813030;color:#fff0f0;
+}
+#ote-students-dashboard .ote-sd-pill.is-empty {
+  background:#303039;color:#b5b5bd;
+}
+#ote-students-dashboard .ote-sd-note {
+  max-width:100%;overflow-wrap:anywhere;
+}
+@media(max-width:1150px) {
+  #ote-students-dashboard .ote-sd-table {min-width:1000px;}
+}
+@media(max-width:700px) {
+  #ote-students-dashboard .ote-sd-kpis {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+
+/* Finitions du suivi des élèves */
+#ote-students-dashboard .ote-sd-pill {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+#ote-students-dashboard .ote-sd-progress.is-complete span {
+  background: #31965b;
+}
+
+/* OTE705_ACCESS_MODAL_V1 */
+.ote-sd-access-modal {
+  width: min(1050px, 94vw);
+  max-width: 1050px;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+.ote-sd-access-modal #ote-sd-access-slot {
+  padding: 12px 0 20px;
+}
+.ote-sd-access-modal .adm-grid {
+  width: 100%;
+}
+.ote-sd-access-modal .card {
+  margin: 0;
+}
+
+/* OTE705_ACCESS_SIMPLE_V1 */
+.ote-simple-modal {
+  width: min(520px, 94vw);
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.ote-simple-modal .mh { margin-bottom: 22px; }
+.ote-simple-help { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
+.ote-simple-modal label { display:block; font-size:12px; color:var(--text-muted); margin-bottom:9px; }
+.ote-simple-search-row { display:flex; gap:10px; }
+.ote-simple-search-row input { flex:1; min-width:0; }
+.ote-simple-user { margin-top:20px; padding:18px; border:1px solid var(--border); border-radius:10px; }
+.ote-simple-user strong { display:block; margin-bottom:7px; }
+.ote-simple-user p { color:var(--text-muted); font-size:13px; margin-bottom:18px; }
+@media(max-width:550px) {
+  .ote-simple-search-row { flex-direction:column; }
+}

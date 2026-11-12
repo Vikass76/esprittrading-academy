@@ -285,4 +285,32 @@ db.exec(`
   );
 `);
 
+
+// OTE705_FINANCE_V1 : suivi administratif indépendant des prélèvements Stripe
+// Montants stockés en centimes ; les écritures manuelles ne déclenchent aucun paiement.
+db.exec(`
+ CREATE TABLE IF NOT EXISTS ote_student_offers (
+  user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  offer_name TEXT NOT NULL DEFAULT 'OTE 705',
+  agreed_cents INTEGER NOT NULL CHECK(agreed_cents >= 0),
+  installments INTEGER NOT NULL DEFAULT 1 CHECK(installments BETWEEN 1 AND 24),
+  first_due TEXT,
+  payment_source TEXT NOT NULL DEFAULT 'stripe_standard',
+  stripe_link TEXT,
+  notes TEXT,
+  updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+ );
+ CREATE TABLE IF NOT EXISTS ote_student_receipts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  amount_cents INTEGER NOT NULL CHECK(amount_cents > 0),
+  paid_on TEXT NOT NULL,
+  stripe_payment_id TEXT UNIQUE,
+  source TEXT NOT NULL DEFAULT 'manuel',
+  note TEXT,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+ );
+ CREATE INDEX IF NOT EXISTS idx_ote_receipts_user ON ote_student_receipts(user_id);
+`);
+
 module.exports = db;

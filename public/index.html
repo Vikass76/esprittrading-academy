@@ -1222,6 +1222,9 @@
           <button class="nav-item admin-only hidden" data-tab="admin">
             <span class="ni"><i class="ti ti-settings-2"></i></span>Admin
           </button>
+          <button id="admin-suivi-eleves-nav" class="nav-item admin-only hidden" type="button" style="padding-left:28px;font-size:.79rem">
+            <span class="ni"><i class="ti ti-users"></i></span>Suivi des élèves
+          </button>
         </nav>
         <div class="sb-bottom">
           <div class="sb-user">
@@ -2101,9 +2104,7 @@ style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;
               <button class="atab on" data-atab="modules">
                 Modules & Vidéos
               </button>
-              <button class="atab" data-atab="users">Élèves</button>
-              <button class="atab" data-atab="inscrits">Inscrits</button>
-              <button class="atab" data-atab="access">Accès formation</button>
+              <button class="atab" data-atab="suivi">Suivi des élèves</button>
             </div>
             <div id="atab-modules">
               <div class="adm-grid">
@@ -2237,6 +2238,81 @@ style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:8px;
                     </form>
                   </div>
                 </div>
+              </div>
+            </div>
+            <div id="atab-suivi" class="hidden">
+<!-- OTE705_SUIVI_DASH_V1 : vue de synthèse sans modifier les actions existantes -->
+              <!-- OTE705_FICHE_V1 -->
+              <div id="ote-sd-profile" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="ote-sd-profile-title">
+                <div class="modal ote-sd-profile-modal">
+                  <div class="mh"><h3 id="ote-sd-profile-title">Fiche élève</h3><button id="ote-sd-profile-close" class="mclose" type="button" aria-label="Fermer">×</button></div>
+                  <div id="ote-sd-profile-content"></div>
+                  <div class="mfoot"><button id="ote-sd-profile-access" class="btn btn-secondary" type="button">Gérer les accès</button><button id="ote-sd-profile-done" class="btn btn-primary" type="button">Fermer</button></div>
+                </div>
+              </div>
+              
+              <!-- OTE705_ACCESS_MODAL_V1 -->
+              <div id="ote-sd-access-modal" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="ote-sd-access-title">
+                <div class="modal ote-sd-access-modal">
+                  <div class="mh">
+                    <h3 id="ote-sd-access-title">Gestion des élèves</h3>
+                    <button id="ote-sd-access-close" class="mclose" type="button" aria-label="Fermer">×</button>
+                  </div>
+                  <div id="ote-sd-access-slot"></div>
+                </div>
+              </div>
+
+              <!-- OTE705_ACCESS_SIMPLE_V1 -->
+              <div id="ote-simple-access" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="ote-simple-title">
+                <div class="modal ote-simple-modal">
+                  <div class="mh">
+                    <h3 id="ote-simple-title">Ajouter un élève</h3>
+                    <button id="ote-simple-close" class="mclose" type="button" aria-label="Fermer">×</button>
+                  </div>
+                  <div id="ote-simple-search-area">
+                    <p class="ote-simple-help">Recherchez une personne déjà inscrite sur la plateforme.</p>
+                    <label for="ote-simple-email">Adresse e-mail</label>
+                    <div class="ote-simple-search-row">
+                      <input id="ote-simple-email" type="email" placeholder="exemple@gmail.com">
+                      <button id="ote-simple-search" class="btn btn-primary" type="button">Rechercher</button>
+                    </div>
+                  </div>
+                  <div id="ote-simple-result"></div>
+                </div>
+              </div>
+<div id="ote-students-dashboard" class="ote-sd">
+                <!-- OTE705_SUIVI_FINITION_V1 --><div class="ote-sd-head"><div><p>Retrouvez vos élèves, leurs accès et leur suivi financier.</p></div><button id="ote-sd-add" class="btn btn-primary btn-sm" type="button">Ajouter un élève</button></div>
+                <div class="ote-sd-kpis"><div class="ote-sd-kpi"><span>Élèves actifs</span><strong id="ote-sd-count">—</strong></div><div class="ote-sd-kpi"><span>Reste à encaisser</span><strong id="ote-sd-remaining">—</strong></div><div class="ote-sd-kpi"><span>Paiements à venir (30 j)</span><strong id="ote-sd-upcoming">—</strong></div><div class="ote-sd-kpi"><span>Paiements en retard</span><strong id="ote-sd-late">—</strong></div></div>
+                <div class="ote-sd-filters"><input id="ote-sd-search" type="search" placeholder="Rechercher un élève (nom, e-mail…)" aria-label="Rechercher un élève"><select id="ote-sd-role" aria-label="Filtrer les comptes"><option value="student">Élèves accompagnés</option><option value="all">Tous les inscrits</option><option value="community">Comptes communauté</option></select></div>
+                <div class="ote-sd-table-wrap">
+    <table class="ote-sd-table">
+    <colgroup>
+    <col style="width:13%"><col style="width:17%">
+    <col style="width:8%"><col style="width:9%">
+    <col style="width:6%"><col style="width:10%">
+    <col style="width:10%"><col style="width:9%">
+    <col style="width:11%"><col style="width:7%">
+    </colgroup>
+    <thead><tr>
+    <th>Élève</th><th>E-mail</th><th>Offre</th>
+    <th>Prix</th><th>Plan</th><th>1er paiement</th>
+    <th>Prochaine échéance</th><th>Restant</th>
+    <th>Progression</th><th>Statut</th>
+    </tr></thead>
+    <tbody id="ote-sd-body"><tr><td colspan="10">Chargement…</td></tr></tbody>
+    </table></div>
+                <p class="ote-sd-note">Prévisions d'échéances indicatives : calculées à partir du prix convenu, du nombre de versements et de la première date prévue. Les montants payés reflètent uniquement les transactions déjà rattachées à chaque élève ; une échéance prévue ne prouve pas qu'un prélèvement Stripe a été effectué.</p>
+              </div>
+              
+              
+              <!-- OTE705_FICHE_V1 : les actions existantes restent disponibles -->
+              <div class="ote-sd-legacy-controls" style="display:none!important" hidden><button id="ote-sd-manage" class="btn btn-secondary btn-sm" type="button" aria-expanded="false">Gérer les inscriptions et les accès</button></div>
+              <div id="ote-sd-legacy" class="hidden">
+              <div class="es-suivi-tabs">
+                <button class="atab es-suivi-tab" data-atab="users">Élèves</button>
+                <button class="atab es-suivi-tab" data-atab="inscrits">Inscrits</button>
+                <button class="atab es-suivi-tab" data-atab="access">Accès formation</button>
+              </div>
               </div>
             </div>
             <div id="atab-users" class="hidden">
