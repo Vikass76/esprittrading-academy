@@ -3675,7 +3675,7 @@ function renderOteStudentDashboard() {
   // OTE705_SORT_FIRST_PAYMENT : plus récent en premier, dates absentes à la fin.
   const firstPaymentTime = u => {
     const o = oteFinanceOffers[u.id];
-    const date = o?.first_payment_on || o?.first_due;
+    const date = o?.first_due || o?.first_payment_on;
     if (!date) return -Infinity;
     const time = Date.parse(String(date));
     return Number.isFinite(time) ? time : -Infinity;
@@ -3698,7 +3698,7 @@ function renderOteStudentDashboard() {
       <td>${oteSdEscape(o?.offer_name || (u.role==='student'?'OTE 705':'—'))}</td>
       <td>${price ? oteMoney(price) : '—'}</td>
       <td>${price && o?.installments ? o.installments+'x' : '—'}</td>
-      <td>${(o?.first_payment_on || o?.first_due) ? oteSdDate(o.first_payment_on || o.first_due) : '—'}</td>
+      <td>${(o?.first_due || o?.first_payment_on) ? oteSdDate(o.first_due || o.first_payment_on) : '—'}</td>
       <td>${o?.next_due ? oteSdDate(o.next_due) : '—'}</td>
       <td>${price ? oteMoney(remaining) : '—'}</td>
       <td class="ote-sd-payment">${progress}</td>
