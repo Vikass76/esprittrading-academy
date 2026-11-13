@@ -3671,6 +3671,16 @@ function renderOteStudentDashboard() {
   const roleFilter = document.getElementById('ote-sd-role')?.value || 'student';
   const students = oteDashboardUsers.filter(u => (roleFilter === 'all' || u.role === roleFilter) &&
     [u.username,u.email,u.firstname,u.lastname].some(v => String(v||'').toLocaleLowerCase('fr').includes(q)));
+
+  // OTE705_SORT_FIRST_PAYMENT : plus récent en premier, dates absentes à la fin.
+  const firstPaymentTime = u => {
+    const o = oteFinanceOffers[u.id];
+    const date = o?.first_payment_on || o?.first_due;
+    if (!date) return -Infinity;
+    const time = Date.parse(String(date));
+    return Number.isFinite(time) ? time : -Infinity;
+  };
+  students.sort((a, b) => firstPaymentTime(b) - firstPaymentTime(a));
   const count = document.getElementById('ote-sd-count');
   if (count) count.textContent = oteDashboardUsers.filter(u => u.role === 'student').length;
   body.innerHTML = students.length ? students.map(u => {
