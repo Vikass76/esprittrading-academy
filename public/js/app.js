@@ -3947,7 +3947,7 @@ async function oteLoadFinanceOverview(){
   const d=await api('GET','/admin/student-finances');
   oteFinanceOffers=Object.fromEntries((d.offers||[]).map(o=>[o.user_id,o]));
   renderOteStudentDashboard();
-  oteInstallStripeSyncButton();
+  // Bouton de synchronisation manuelle masqué.
   const offers=Object.values(oteFinanceOffers);
   const remaining=offers.reduce((s,o)=>s+Math.max(0,Number(o.agreed_cents||0)-Number(o.paid_cents||0)),0);
   const upcomingCount=offers.reduce((s,o)=>s+Number(o.upcoming_count||0),0);
