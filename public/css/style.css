@@ -10046,8 +10046,10 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
 #ftab-parcours .ote-path-step > .ote-path-validation-bottom > .ote-path-validation-confirm {
   position: relative !important;
   display: flex !important;
-  flex-direction: column !important;
-  gap: 14px !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
   width: calc(50% - 26px) !important;
   min-width: 0 !important;
   padding: 17px !important;
@@ -10061,10 +10063,10 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
 }
 #ftab-parcours .ote-path-step .ote-path-validation-bottom .ote-path-confirm-label {
   display: flex !important;
-  align-items: flex-start !important;
+  align-items: center !important;
   gap: 10px !important;
   color: #dedee0 !important;
-  font-size: 13px !important;
+  font-size: 11px !important;
   line-height: 1.5 !important;
   cursor: pointer;
 }
@@ -10086,7 +10088,7 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
   justify-content: center !important;
   gap: 8px !important;
   align-self: stretch !important;
-  width: 100% !important;
+  width: auto !important;
   min-height: 44px !important;
   margin: 0 !important;
   padding: 11px 14px !important;
@@ -10097,6 +10099,10 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
   border-radius: 8px !important;
   color: #171717 !important;
   cursor: pointer !important;
+
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+  margin: 0 !important;
 }
 #ftab-parcours .ote-path-step .ote-path-validation-bottom .ote-path-check:disabled {
   background: #343438 !important;
