@@ -10354,3 +10354,16 @@ body:has(#login-page:not(.hidden)) #feedback-link{display:none !important}
 @media(max-width:550px) {
   .ote-simple-search-row { flex-direction:column; }
 }
+
+/* OTE705 — fiche financière automatique / manuelle */
+.ote-finance-profile{margin-top:18px;border-top:1px solid #383842;padding-top:18px}
+.ote-finance-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.ote-finance-head h3{margin:0}.ote-finance-tag{border:1px solid #595143;color:#f4c70f;border-radius:7px;padding:5px 10px;font-size:12px}
+.ote-finance-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.ote-finance-summary>div{background:#20202a;border:1px solid #33333e;border-radius:9px;padding:14px;display:flex;flex-direction:column;gap:7px}
+.ote-finance-summary small{color:#a6a6b2;font-size:12px}.ote-finance-summary strong{font-size:17px;color:#f5f5f7}
+.ote-finance-help{color:#a6a6b2;font-size:12px;line-height:1.6;margin:12px 0 18px}
+.ote-finance-history>div{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #33333e;font-size:13px}
+.ote-finance-history span{color:#aaaab5}.ote-finance-history strong{white-space:nowrap}
+.ote-finance-details{margin-top:22px;border-top:1px solid #33333e;padding-top:15px}.ote-finance-details summary{cursor:pointer;color:#ddd}
+@media(max-width:620px){.ote-finance-summary{grid-template-columns:1fr}}

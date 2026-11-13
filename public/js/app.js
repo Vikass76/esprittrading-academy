@@ -3950,55 +3950,54 @@ async function oteLoadFinanceOverview(){
  }catch(e){console.error('Finances élèves :',e);}
 }
 async function oteRenderFinanceProfile(id, container){
- const data=await api('GET','/admin/student-finances/'+id),o=data.offer||{},receipts=data.receipts||[];
- const paid=receipts.reduce((s,r)=>s+r.amount_cents,0),price=o.agreed_cents;
- const esc=oteSdEscape;
- container.innerHTML=`<section style="margin-top:18px;border-top:1px solid #383842;padding-top:15px"><h3 style="margin-bottom:12px">Suivi financier</h3>
+ const data=await api('GET','/admin/student-finances/'+id);
+ const o=data.offer||{},receipts=data.receipts||[],schedule=data.schedule||[];
+ const automatic=!!data.isAutomatic,esc=oteSdEscape;
+ const paid=receipts.reduce((n,r)=>n+Number(r.amount_cents||0),0),price=o.agreed_cents;
+ const summary=`<div class="ote-finance-summary"><div><small>Prix convenu</small><strong>${price==null?'À renseigner':oteMoney(price)}</strong></div><div><small>Plan</small><strong>${o.installments?o.installments+' versement(s)':'À renseigner'}</strong></div><div><small>Déjà encaissé</small><strong>${oteMoney(paid)}</strong></div><div><small>Reste à encaisser</small><strong>${price==null?'À renseigner':oteMoney(Math.max(0,price-paid))}</strong></div></div>`;
+ const history=`<h4 style="margin:20px 0 10px">Historique des versements</h4><div class="ote-finance-history">${receipts.length?receipts.map(r=>`<div><span>${esc(r.paid_on)} · ${esc(r.source)}</span><strong>${oteMoney(r.amount_cents)}</strong></div>`).join(''):'Aucun paiement enregistré'}</div>`;
+ const timeline=schedule.length?`<h4 style="margin:20px 0 10px">Échéances du Checkout</h4><div class="ote-finance-history">${schedule.map(p=>`<div><span>${esc(new Date(Number(p.due_date)).toLocaleDateString('fr-FR'))} · ${p.status==='paid'?'Payée':'À venir / en attente'}</span><strong>${oteMoney(Math.round(Number(p.amount_due)))}</strong></div>`).join('')}</div>`:'';
+ const manual=`<p class="ote-finance-help">Renseigne uniquement les modalités convenues. Les versements déjà enregistrés sont conservés.</p>
  <form id="ote-finance-offer" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
- <label>Offre<input name="offer_name" value="${esc(o.offer_name||'OTE 705')}" required></label>
- <label>Prix convenu (€)<input name="agreed_euros" type="number" min="0" step="0.01" value="${price==null?'':(price/100).toFixed(2)}" required></label>
+ <input type="hidden" name="offer_name" value="${esc(o.offer_name||'OTE 705')}">
+ <input type="hidden" name="payment_source" value="${esc(o.payment_source==='stripe_personnalise'?'stripe_personnalise':'manuel')}">
+ <label>Prix total convenu (€)<input name="agreed_euros" type="number" min="0" step="0.01" value="${price==null?'':(price/100).toFixed(2)}" required></label>
  <label>Nombre de versements<input name="installments" type="number" min="1" max="24" value="${o.installments||1}" required></label>
- <label>Date du premier paiement prévu<input name="first_due" type="date" value="${esc(o.first_due||'')}"></label>
- <label>Source<select name="payment_source">${[['stripe_standard','Stripe standard'],['stripe_personnalise','Stripe personnalisé'],['manuel','Manuel'],['autre','Autre']].map(([v,t])=>`<option value="${v}" ${o.payment_source===v?'selected':''}>${t}</option>`).join('')}</select></label>
- <label>Lien Stripe personnalisé<input name="stripe_link" type="url" value="${esc(o.stripe_link||'')}"></label>
- <label style="grid-column:1/-1">Notes<input name="notes" value="${esc(o.notes||'')}"></label>
- <button class="btn btn-primary" type="submit" style="grid-column:1/-1">Enregistrer l'offre</button></form>
- <p style="margin:14px 0">Payé (saisi) : <strong>${oteMoney(paid)}</strong> · Reste : <strong>${price==null?'—':oteMoney(Math.max(0,price-paid))}</strong></p>
- <h4>Historique des paiements rattachés</h4>
- <div style="max-height:130px;overflow:auto">${receipts.length?receipts.map(r=>`<div style="padding:7px 0;border-bottom:1px solid #333">${esc(r.paid_on)} — ${oteMoney(r.amount_cents)} — ${esc(r.source)} ${esc(r.stripe_payment_id||'')}</div>`).join(''):'Aucun paiement enregistré'}</div>
- <form id="ote-finance-receipt" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
- <label>Montant reçu (€)<input name="amount_euros" type="number" min="0.01" step="0.01" required></label>
+ <label>Date du premier paiement<input name="first_due" type="date" value="${esc(o.first_due||receipts[receipts.length-1]?.paid_on||'')}"></label>
+ <label>Notes<input name="notes" value="${esc(o.notes||'')}"></label>
+ <button class="btn btn-primary" type="submit" style="grid-column:1/-1">Enregistrer le contrat</button></form>
+ <form id="ote-finance-receipt" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px">
+ <label>Montant du nouveau versement (€)<input name="amount_euros" type="number" min="0.01" step="0.01" required></label>
  <label>Date du paiement<input name="paid_on" type="date" required></label>
- <label>Source<select name="source"><option value="stripe_standard">Stripe standard</option><option value="stripe_personnalise">Stripe personnalisé</option><option value="manuel">Manuel</option><option value="autre">Autre</option></select></label>
- <label>Référence Stripe (pi_ ou ch_)<input name="stripe_payment_id" placeholder="Facultatif si paiement manuel"></label>
- <button class="btn btn-secondary" type="submit" style="grid-column:1/-1">Ajouter un paiement vérifié</button></form>
- <div class="ote-stripe-recon"><h4>Transactions Stripe</h4><p>Consultez les paiements confirmés et rattachez uniquement ceux de cet élève.</p><button id="ote-stripe-load" class="btn btn-secondary" type="button">Rechercher dans Stripe</button><div id="ote-stripe-results"></div></div></section>`;
- container.querySelector('#ote-stripe-load').addEventListener('click',async()=>{
-  const results=container.querySelector('#ote-stripe-results');results.textContent='Chargement des paiements confirmés…';
-  try{
-   const data=await api('GET','/admin/student-stripe-payments');
-   const rows=(data.payments||[]).filter(p=>!p.attached_user_id);
-   const currentUser=oteDashboardUsers.find(u=>String(u.id)===String(id));
-   const sameEmail=p=>p.email && currentUser?.email && p.email.trim().toLowerCase()===currentUser.email.trim().toLowerCase();
-   rows.sort((a,b)=>Number(!!sameEmail(b))-Number(!!sameEmail(a)));
-   results.innerHTML='<p class="ote-stripe-note">Correspondances par e-mail proposées en priorité. Vérifiez chaque transaction avant de la rattacher. Aucun rapprochement automatique n’est effectué en local.</p>'+(rows.length?rows.map(p=>`<div class="ote-stripe-item"><div><strong>${oteMoney(p.amount_cents)}</strong> · ${oteSdDate(new Date(p.created*1000).toISOString())}${sameEmail(p)?' · <span style="color:#f4c70f">E-mail correspondant</span>':''}<small>${oteSdEscape(p.email||'E-mail non fourni')} · ${oteSdEscape(p.id)}</small></div><button type="button" class="btn btn-secondary btn-sm" data-attach="${oteSdEscape(p.id)}">Rattacher</button></div>`).join(''):'Aucune transaction non rattachée dans les 100 dernières transactions Stripe.');
-   if(data.has_more)results.insertAdjacentHTML('beforeend','<p class="ote-stripe-note">Seules les 100 dernières transactions sont affichées. Les transactions plus anciennes restent accessibles dans Stripe.</p>');
-  }catch(e){results.textContent=e.message;}
- });
- container.querySelector('#ote-stripe-results').addEventListener('click',async e=>{
-  const button=e.target.closest('[data-attach]');if(!button)return;
-  const ref=button.dataset.attach;
-  if(!confirm('Confirmer que la transaction '+ref+' appartient à cet élève ?'))return;
-  button.disabled=true;
-  try{await api('POST','/admin/student-finances/'+id+'/stripe-attach',{payment_intent_id:ref});await oteRenderFinanceProfile(id,container);await oteLoadFinanceOverview();}
-  catch(err){alert(err.message);button.disabled=false;}
- });
+ <input type="hidden" name="source" value="manuel">
+ <button class="btn btn-secondary" type="submit" style="grid-column:1/-1">Ajouter un versement manuel</button></form>
+ <details class="ote-finance-details"><summary>Rattacher une transaction Stripe existante</summary><p class="ote-finance-help">Vérifie l'identité de l'élève avant de rattacher un paiement.</p><button id="ote-stripe-load" class="btn btn-secondary" type="button">Rechercher dans Stripe</button><div id="ote-stripe-results"></div></details>`;
+ container.innerHTML=`<section class="ote-finance-profile"><div class="ote-finance-head"><h3>Suivi financier</h3><span class="ote-finance-tag">${automatic?'Automatique':'Manuel'}</span></div>${summary}${automatic?'<p class="ote-finance-help">Données synchronisées avec le Checkout intégré. Aucun champ à renseigner.</p>':manual}${history}${timeline}</section>`;
+ if(automatic)return;
  for(const [selector,url,method] of [['#ote-finance-offer','/admin/student-finances/'+id,'PUT'],['#ote-finance-receipt','/admin/student-finances/'+id+'/receipts','POST']]){
   container.querySelector(selector).addEventListener('submit',async e=>{
-   e.preventDefault();const form=e.currentTarget;const b=Object.fromEntries(new FormData(form));
+   e.preventDefault();const form=e.currentTarget,b=Object.fromEntries(new FormData(form));
    const button=form.querySelector('button');button.disabled=true;
    try{await api(method,url,b);await oteRenderFinanceProfile(id,container);await oteLoadFinanceOverview();}
    catch(err){alert(err.message);button.disabled=false;}
   });
  }
+ container.querySelector('#ote-stripe-load').addEventListener('click',async()=>{
+  const results=container.querySelector('#ote-stripe-results');results.textContent='Chargement…';
+  try{
+   const d=await api('GET','/admin/student-stripe-payments');
+   const user=oteDashboardUsers.find(u=>String(u.id)===String(id));
+   const rows=(d.payments||[]).filter(p=>!p.attached_user_id);
+   const same=p=>p.email&&user?.email&&p.email.trim().toLowerCase()===user.email.trim().toLowerCase();
+   rows.sort((a,b)=>Number(!!same(b))-Number(!!same(a)));
+   results.innerHTML=rows.length?rows.map(p=>`<div class="ote-stripe-item"><div><strong>${oteMoney(p.amount_cents)}</strong><small>${esc(p.email||'Sans e-mail')} · ${esc(p.id)}</small></div><button type="button" class="btn btn-secondary btn-sm" data-attach="${esc(p.id)}">Rattacher</button></div>`).join(''):'Aucune transaction disponible dans les 100 dernières.';
+  }catch(e){results.textContent=e.message;}
+ });
+ container.querySelector('#ote-stripe-results').addEventListener('click',async e=>{
+  const btn=e.target.closest('[data-attach]');if(!btn)return;
+  if(!confirm('Confirmer que cette transaction appartient à cet élève ?'))return;
+  btn.disabled=true;
+  try{await api('POST','/admin/student-finances/'+id+'/stripe-attach',{payment_intent_id:btn.dataset.attach});await oteRenderFinanceProfile(id,container);await oteLoadFinanceOverview();}
+  catch(err){alert(err.message);btn.disabled=false;}
+ });
 }

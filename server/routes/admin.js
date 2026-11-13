@@ -271,6 +271,34 @@ router.post('/student-finances/:id/stripe-attach', requireAdmin, async (req,res)
  }catch(e){if(e.code==='SQLITE_CONSTRAINT_UNIQUE')return res.status(409).json({error:'Paiement déjà enregistré'});if(e.type?.startsWith('Stripe'))return res.status(400).json({error:'Transaction introuvable dans le compte Stripe configuré'});console.error('Stripe attach:',e);res.status(500).json({error:'Échec du rattachement'});}
 });
 
+// OTE705_FINANCE_PERSIST_V4 — conserve les contrats issus du Checkout intégré.
+// Lecture des échéances existantes uniquement : aucun prélèvement.
+function otePersistScheduledContracts() {
+ const students=db.prepare("SELECT id,email FROM users WHERE role='student' AND email IS NOT NULL").all();
+ const getSchedule=db.prepare("SELECT amount_due,status FROM payments WHERE LOWER(TRIM(email))=LOWER(TRIM(?)) ORDER BY due_date,id");
+ const getReceipts=db.prepare("SELECT amount_cents,paid_on,source FROM ote_student_receipts WHERE user_id=? ORDER BY paid_on,id");
+ const getOffer=db.prepare('SELECT user_id FROM ote_student_offers WHERE user_id=?');
+ const insert=db.prepare(`INSERT OR IGNORE INTO ote_student_offers
+  (user_id,offer_name,agreed_cents,installments,first_due,payment_source,notes)
+  VALUES(?,'OTE 705',?,?,?,'stripe_standard','Échéancier issu du Checkout intégré')`);
+ let created=0;
+ for(const u of students){
+  if(getOffer.get(u.id))continue;
+  const schedule=getSchedule.all(u.email);
+  if(!schedule.length)continue;
+  const receipts=getReceipts.all(u.id);
+  if(!receipts.length)continue;
+  // Premier versement + toutes les échéances, payées OU impayées.
+  // Une échéance payée ne doit jamais faire disparaître le contrat.
+  const first=receipts[0];
+  const total=Math.round(Number(first.amount_cents))+schedule.reduce((n,p)=>n+Math.round(Number(p.amount_due)),0);
+  const received=receipts.reduce((n,r)=>n+Number(r.amount_cents),0);
+  if(!Number.isSafeInteger(total)||total<=0||received>total)continue;
+  created+=insert.run(u.id,total,1+schedule.length,first.paid_on).changes;
+ }
+ return created;
+}
+
 // OTE705_SYNC_V1 : import en lecture seule Stripe, sans prélèvement ni changement d'accès.
 let oteSyncRunning = false;
 let oteLastSync = null;
@@ -370,6 +398,7 @@ async function oteRunStripeSync() {
    if(!batch.has_more||!batch.data.length)break;
    cursor=batch.data[batch.data.length-1].id;
   }
+  offersCreated += otePersistScheduledContracts();
   oteLastSync = new Date().toISOString();
   return {ok:true,scanned,sessionCount,imported,existing,unmatched,offersCreated,limitReached:scanned>=1000, lastSync:oteLastSync};
  } finally { oteSyncRunning = false; }
@@ -393,6 +422,7 @@ if (process.env.STRIPE_SECRET_KEY && process.env.NODE_ENV !== 'test') {
 
 // OTE705_FINANCE_V1 — suivi administratif ; ne modifie pas les prélèvements existants
 router.get('/student-finances', requireAdmin, (req,res) => {
+ otePersistScheduledContracts();
  const offers=db.prepare(`SELECT u.id AS user_id, o.offer_name, o.agreed_cents, o.installments, o.first_due,
  o.payment_source, o.stripe_link, o.notes, o.updated_at,
  COALESCE((SELECT MIN(r.paid_on) FROM ote_student_receipts r WHERE r.user_id=u.id), o.first_due) AS first_payment_on,
@@ -461,9 +491,7 @@ router.get('/student-finances', requireAdmin, (req,res) => {
   const totalPaid = Number(o.paid_cents || 0);
   const totalPrice = Number(o.agreed_cents || 0);
   const ambiguous =
-    (totalPrice > 0 && totalPaid > totalPrice) ||
-    (o.payment_source === 'stripe_personnalise' &&
-     Number(o.installments) === 1);
+    (totalPrice > 0 && totalPaid > totalPrice);
 
   if (ambiguous) {
     o.agreed_cents = null;
@@ -522,7 +550,10 @@ router.get('/student-finances/:id', requireAdmin, (req,res) => {
  if(!user) return res.status(404).json({error:'Élève introuvable'});
  const offer=db.prepare('SELECT * FROM ote_student_offers WHERE user_id=?').get(user.id)||null;
  const receipts=db.prepare('SELECT * FROM ote_student_receipts WHERE user_id=? ORDER BY paid_on DESC,id DESC').all(user.id);
- res.json({offer,receipts});
+ const userEmail=db.prepare('SELECT email FROM users WHERE id=?').get(user.id).email;
+ const schedule=db.prepare('SELECT amount_due,due_date,status FROM payments WHERE LOWER(TRIM(email))=LOWER(TRIM(?)) ORDER BY due_date,id').all(userEmail);
+ const isAutomatic=!!schedule.length || !!(offer && offer.payment_source==='stripe_standard' && receipts.some(r=>r.source==='stripe_standard'));
+ res.json({offer,receipts,schedule,isAutomatic});
 });
 router.put('/student-finances/:id', requireAdmin, (req,res) => {
  const id=Number(req.params.id), b=req.body||{};
