@@ -400,47 +400,51 @@ router.get('/student-finances', requireAdmin, (req,res) => {
  FROM users u LEFT JOIN ote_student_offers o ON o.user_id=u.id
  WHERE o.user_id IS NOT NULL OR EXISTS(SELECT 1 FROM ote_student_receipts r WHERE r.user_id=u.id)`).all();
 
- // OTE705_REAL_SCHEDULE_V1
- // Lecture seule : reconstitue les contrats ayant une unique échéance
- // restante connue, sans toucher au prélèvement automatique.
- const actualPayments = db.prepare(`
-  SELECT u.id AS user_id, p.amount_due, p.due_date, p.status
+ // OTE705_AUTO_FINANCE_V3
+ // Reconstitution administrative des contrats automatiques.
+ // Aucun prélèvement ni accès élève n'est modifié.
+ const autoSchedules = db.prepare(`
+  SELECT
+   u.id AS user_id,
+   p.amount_due,
+   p.due_date,
+   p.status
   FROM users u
-  JOIN payments p ON LOWER(TRIM(p.email)) = LOWER(TRIM(u.email))
+  JOIN payments p
+   ON LOWER(TRIM(p.email)) = LOWER(TRIM(u.email))
   WHERE u.role = 'student'
   ORDER BY p.due_date
  `).all();
 
- const paymentsByUser = new Map();
- for (const payment of actualPayments) {
-  if (!paymentsByUser.has(payment.user_id))
-   paymentsByUser.set(payment.user_id, []);
-  paymentsByUser.get(payment.user_id).push(payment);
+ const autoByUser = new Map();
+
+ for (const item of autoSchedules) {
+  if (!autoByUser.has(item.user_id))
+   autoByUser.set(item.user_id, []);
+  autoByUser.get(item.user_id).push(item);
  }
 
  for (const offer of offers) {
-  const rows = paymentsByUser.get(offer.user_id) || [];
-  const pending = rows.filter(p => p.status !== 'paid');
+  const rows = autoByUser.get(offer.user_id) || [];
+  if (!rows.length) continue;
+
+  // Ne pas modifier les contrats personnalisés.
+  if (offer.payment_source === 'stripe_personnalise') continue;
+
   const paid = Number(offer.paid_cents || 0);
+  const pending = rows.filter(r => r.status !== 'paid');
+  const pendingTotal = pending.reduce(
+   (sum, r) => sum + Math.round(Number(r.amount_due)), 0
+  );
 
-  // Uniquement si une seule échéance est enregistrée et non payée.
-  // Les contrats déjà renseignés correctement sont conservés.
-  if (
-   rows.length === 1 &&
-   pending.length === 1 &&
-   paid > 0 &&
-   (!offer.agreed_cents || offer.finance_needs_review)
-  ) {
-   const remaining = Math.round(Number(pending[0].amount_due));
-   if (remaining <= 0) continue;
-
-   offer.agreed_cents = paid + remaining;
-   offer.installments = 2;
+  // Prix reconstitué à partir des paiements déjà enregistrés
+  // et des échéances restantes.
+  if (paid > 0 && pending.length > 0 && !offer.agreed_cents) {
+   offer.agreed_cents = paid + pendingTotal;
+   offer.installments = 1 + rows.length;
    offer.first_due = offer.first_payment_on;
    offer.payment_source = 'stripe_standard';
    offer.finance_needs_review = false;
-   offer.actual_next_due = new Date(Number(pending[0].due_date)).toISOString().slice(0,10);
-   offer.actual_next_due_cents = remaining;
   }
  }
 
