@@ -7,6 +7,7 @@ const LIST_IDS = {
   videoLeadMagnet: 11,
   pdfLeadMagnet: 12,
   entreeSniperLeadMagnet: 13,
+  chochLeadMagnet: 14,
 };
 
 async function addContactToBrevo({ email, firstname, lastname, role }) {
@@ -14,7 +15,7 @@ async function addContactToBrevo({ email, firstname, lastname, role }) {
     const body = JSON.stringify({
       email,
       attributes: { PRENOM: firstname || '', NOM: lastname || '' },
-      listIds: [role === 'student' ? LIST_IDS.student : role === 'leadMagnet' ? LIST_IDS.leadMagnet : role === 'videoLeadMagnet' ? LIST_IDS.videoLeadMagnet : role === 'pdfLeadMagnet' ? LIST_IDS.pdfLeadMagnet : role === 'entreeSniperLeadMagnet' ? LIST_IDS.entreeSniperLeadMagnet : LIST_IDS.community],
+      listIds: [role === 'student' ? LIST_IDS.student : role === 'leadMagnet' ? LIST_IDS.leadMagnet : role === 'videoLeadMagnet' ? LIST_IDS.videoLeadMagnet : role === 'pdfLeadMagnet' ? LIST_IDS.pdfLeadMagnet : role === 'entreeSniperLeadMagnet' ? LIST_IDS.entreeSniperLeadMagnet : role === 'chochLeadMagnet' ? LIST_IDS.chochLeadMagnet : LIST_IDS.community],
       updateEnabled: true,
     });
 

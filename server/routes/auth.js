@@ -199,6 +199,28 @@ router.post('/lead-magnet-entree-sniper', async (req, res) => {
   }
 });
 
+
+// Lead magnet PDF CHOCH ou prise de liquidité
+router.post('/lead-magnet-choch', async (req, res) => {
+  const { email, firstname, lastname } = req.body;
+  if (!email || !email.includes('@')) {
+    return res.status(400).json({ error: 'Email invalide' });
+  }
+  try {
+    const { addContactToBrevo } = require('../brevo');
+    await addContactToBrevo({
+      email,
+      firstname: firstname || '',
+      lastname: lastname || '',
+      role: 'chochLeadMagnet'
+    });
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Erreur lead-magnet-choch:', err);
+    res.status(500).json({ error: 'Inscription impossible' });
+  }
+});
+
 router.post('/lead-magnet-pdf', async (req, res) => {
   const { email, firstname, lastname } = req.body;
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'Email invalide' });
